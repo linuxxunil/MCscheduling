@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/layout_home"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+	android:background="#2EFEF7"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+		android:layout_marginTop="0dp">
+			<TableRow
+				android:gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="0dp"
+				android:layout_marginLeft="0dp">
+			    <ImageView
+			        android:layout_width="wrap_content"
+			        android:layout_marginBottom="0dp"
+			        android:layout_marginLeft="-5dp"
+			        android:layout_marginRight="0dp"
+			        android:layout_marginTop="0dp"
+			        android:adjustViewBounds="true"
+			        android:src="@drawable/image_theme" />
+
+			    <ImageButton
+			        android:id="@+id/ImageButton_Homeback"
+			        android:background="#00000000"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginLeft="-80dp"
+			        android:layout_marginTop="1dp"
+			        android:layout_marginBottom="1dp"
+			        android:adjustViewBounds="true"
+			        android:contentDescription="@string/StringButton"
+			        android:src="@drawable/ic_action_back" />
+  	        
+			</TableRow>	
+			
+
+			<TableRow
+				android:gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginTop="0dp">
+			    <ImageView
+			        android:id="@+id/image_index"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+
+			        android:layout_marginTop="0dp"
+			        android:adjustViewBounds="true"
+			        android:src="@drawable/image_index" />
+			</TableRow>	
+
+			<TableRow
+				android:gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+			    android:layout_marginRight="10dp"
+				android:layout_marginTop="10dp">
+				<ImageButton
+			        android:id="@+id/ImageButton_enroll"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:layout_marginBottom="5dp"
+			        android:adjustViewBounds="true"
+			        android:contentDescription="@string/StringButton"
+			        android:src="@drawable/image_enroll" />  
+			</TableRow>	 
+			<TableRow
+				android:gravity="center"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_marginLeft="10dp"
+			    android:layout_marginRight="10dp"
+				android:layout_marginTop="10dp">
+				<ImageButton
+			        android:id="@+id/ImageButton_login"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+					android:layout_marginBottom="20dp"
+			        android:adjustViewBounds="true"
+			        android:contentDescription="@string/StringButton"
+			        android:src="@drawable/image_login" />    
+			</TableRow>	 			
+			  
+	</TableLayout>
+	
+
+</ScrollView>
