@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import edu.mcscheduling.utilities.StringUtility;
+import edu.mcsheduling.common.StatusCode;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
@@ -17,110 +18,177 @@ public class SqliteDriver extends DatabaseDriver{
 	private final String dbPath;
 	private SQLiteDatabase db = null;
 	
-	public SqliteDriver(final String dbPath) throws Exception{
+	public SqliteDriver(final String dbPath) {
 		this.dbPath = dbPath;
-
-		onConnect();
 	}
 	
-	public void onConnect() throws Exception{
-		System.out.println("Initial Database: Path = " + dbPath);
+
+	public int onConnect() {
 		File dir;
 		try {
 			dir = new File(StringUtility.getDirectory(dbPath));
 			
 			if ( !dir.exists() && !dir.mkdirs() )
-				throw new IOException("Error: mkdir fail");
+				return StatusCode.ERR_OPEN_DIR(StringUtility.getDirectory(dbPath));
 			
 			db = SQLiteDatabase.openDatabase(dbPath, null , SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE  );
-		} catch ( IOException e ) {
-			throw e;
 		} catch ( SQLiteException  e ) {
-			throw e;
-		} catch ( Exception e ) {
-			throw e;
-		}
+			return StatusCode.ERR_OPEN_SQLITE_FILE(dbPath);
+		} 
+		return StatusCode.success;
 	}
 	
 	@Override
-	@SuppressLint("NewApi")	
-	public void createTable(String sql) throws Exception {
+	public void beginTransaction() {
+		db.beginTransaction();
+	}
+	
+	@Override
+	public void setTransactionSuccessful(){
+		db.setTransactionSuccessful();
+	}
+	
+	@Override
+	public void endTransaction() {
+		db.endTransaction();
+	}
+	
+	@Override
+	public int createTable(String sql) {
 		
-		if ( db == null || sql.isEmpty() ) return ;
+		if ( db == null )
+			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+		else if ( sql.isEmpty() )
+			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
+		
 		try {
 			db.execSQL(sql);
-		} catch ( Exception e ) {
-			throw e;
+		} catch ( SQLiteException e ) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
 		}
+	
+		return StatusCode.success;
 	}
 	
 	@Override
-	@SuppressLint("NewApi")
-	public void inset(String sql) throws Exception {
-		if ( db == null && sql.isEmpty() ) return;
+	public int inset(String sql) {
+		if ( db == null )
+			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+		else if ( sql.isEmpty() )
+			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
+		
+		try {
+			db.execSQL(sql);
+		} catch ( SQLiteException e ) {
+			System.out.println(e.getMessage());
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+		}
+	
+		return StatusCode.success;
+	}
+
+	public int inset(String tblName, String colsName, String colsValue ) {
+		
+		String sql = String.format("INSERT INTO '%s' (%s) VALUES (%s)", 
+										tblName, colsName, colsValue);
+		return inset(sql);
+	}
+
+	@Override
+	public Cursor select(String sql) {
+		if ( db == null ) {
+			StatusCode.ERR_INITIAL_DB_NOT_SUCCESS(); 
+			return null;
+		} else if ( sql.isEmpty() ) {
+			StatusCode.ERR_SQL_SYNTAX_IS_NULL(); 
+			return null;
+		}
+			
 		try {
 			System.out.println(sql);
-			db.execSQL(sql);
-		} catch ( Exception e ) {
-			throw e;
-		}
-	}
-
-	public void inset(String tblName, String colsName, 
-							String colsValue ) throws Exception {
-		
-		String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", 
-										tblName, colsName, colsValue);
-	
-		this.inset(sql);
-	}
-
-	@Override
-	public Cursor select(String sql) throws Exception {
-		if ( db == null ) return null;
-		try {
 			cursor = db.rawQuery(sql, null);
-		} catch ( Exception e ) {
-			throw e;
+		} catch ( SQLiteException e ) {
+			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+			return null;
 		}
 		return cursor;
 	}
 	
-	public Cursor select(String tblName, String cols, String whereExpr) throws Exception  {
+	public Cursor select(String tblName, String cols, String whereExpr)   {
 		String sql = String.format("SELECT %s FROM %s", cols, tblName);
+		
 		if ( whereExpr != null ) {
 			sql += " WHERE " + whereExpr;
 		}
+		System.out.println(sql);
 		return select( sql );
 	}
 	
 	@Override
-	public void delete(String tblName) throws Exception {
-		if ( db == null ) return ;
-		String sql = "DELETE FROM `"+ tblName+"`";
+	public int delete(String sql) {
+		if ( db == null )
+			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+		else if ( sql.isEmpty() )
+			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
+		
+		try {
+			db.execSQL(sql);
+		} catch ( SQLiteException e ) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+		} 
+		return StatusCode.success;
+	}
+
+	
+	/**
+	 * ㄧ计嘿 : update
+	 * ㄧ计弧 : sql update command for sqlite
+	 * ㄧ计絛ㄒ : 
+	 * 	sql = "UPDATE Table SET userid='b@b.com' where userid='a@a.com'"
+	 * 	update(sql);
+	 * 
+	 * @param sql
+	 * @return 
+	 */
+	public int update(String sql) {
+		if ( db == null )
+			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+		else if ( sql.isEmpty() )
+			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
+		
 		try {
 			db.execSQL(sql);
 		} catch ( Exception e ) {
-			throw e;
-		} 
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+		}
+		return StatusCode.success;
+	}
+	
+	
+	/**
+	 *
+	 * ㄧ计嘿 : update
+	 * ㄧ计弧 : sql update command for sqlite
+	 * ㄧ计絛ㄒ :  
+	 * 	String values = String.format("%s='%s'",Table.User.colUserid,"b@b.com");
+	 *	String where = String.format("%s='", Table.User.colUserid, "a@a.com");
+	 * 	update(DatabaseTable.User.name, values,where);
+	 * 
+	 * @param table
+	 * @param repValues	
+	 * @param whereExpr
+	 * @return 
+	 */
+	@Override
+	public int update(String table, String repValues, String whereExpr)  {
+		String sql = String.format("UPDATE '%s' SET %s WHERE %s", table, repValues, whereExpr);
+		System.out.println(sql);
+		return update(sql);
 	}
 	
 	protected void finalize() {
 		
 		if (db != null && db.isOpen())
 			db.close();
-	}
-
-	@Override
-	public void update(String table, String repValues, String whereExpr) throws Exception {
-		if ( db == null ) return ;
-		
-		String sql = String.format("UPDATE %s SET %s WHERE %s");
-		
-		try {
-			db.execSQL(sql);
-		} catch ( Exception e ) {
-			throw e;
-		}
 	}
 }

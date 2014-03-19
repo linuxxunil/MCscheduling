@@ -7,6 +7,7 @@ public class DatabaseTable {
 		// columns definie
 		public static final String colHospitalNo = "HospitalNo";
 		public static final String colItemType = "ItemType";
+		public static final String colItemCode = "colItemCode";
 		public static final String colItemDescription = "ItemDescription";
 		public static final String colRemark = "Remark";
 		public static final String colCheckFlag = "CheckFlag";
@@ -18,7 +19,8 @@ public class DatabaseTable {
 			return "CREATE TABLE IF NOT EXISTS " + name + "(" 
 				+ colHospitalNo 		+ " nvarchar(10)	NOT NULL,"
 				+ colItemType 			+ " nvarchar(2)		NOT NULL,"
-				+ colItemDescription 	+ " nvarchar(50)	NOT NULL,"
+				+ colItemCode 			+ " nvarchar(8)		NOT NULL,"
+				+ colItemDescription 	+ " nvarchar(50)	NULL,"
 				+ colRemark 			+ " nvarchar(50)	NULL,"
 				+ colCheckFlag 			+ " char(1) 		NULL,"
 				+ colUpdateID			+ " nvarchar(256) 	NULL,"
@@ -52,7 +54,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class Dcotor {
+	static class Doctor {
 		// table name define
 		public static String name = "Dcotor";
 		// columns definie
@@ -98,7 +100,7 @@ public class DatabaseTable {
 		public static final String colDepName = "DepName";
 		public static final String colDorNo = "DorNo";
 		public static final String colSchYear = "SchYear";
-		public static final String colSchMoth = "SchMoth";
+		public static final String colSchMonth = "SchMonth";
 		public static final String colSchedule 	= "Schedule";
 		public static final String colUpdateID = "UpdateID";
 		public static final String colUpdateDate = "UpdateDate";
@@ -107,11 +109,11 @@ public class DatabaseTable {
 		public static String create() {	
 			return "CREATE TABLE IF NOT EXISTS " + name + "(" 
 					+ colHospitalNo 	+ " nvarchar(10) 	NOT NULL,"
-					+ colDepName 		+ " nvarchar(50)	NULL,"
-					+ colDorNo 			+ " nvarchar(5)		NULL,"
-					+ colSchYear 		+ " char(4)			NULL,"
-					+ colSchMoth 		+ " char(2)			NULL,"
-					+ colSchedule 		+ " char(3)			NULL,"
+					+ colDepName 		+ " nvarchar(50)	NOT NULL,"
+					+ colDorNo 			+ " nvarchar(5)		NOT NULL,"
+					+ colSchYear 		+ " char(4)			NOT NULL,"
+					+ colSchMonth 		+ " char(2)			NOT NULL,"
+					+ colSchedule		+ " char(31)		NOT NULL,"
 					+ colUpdateID 		+ " nvarchar(256) 	NULL,"
 					+ colUpdateDate 	+ " datetime 		NULL,"
 					+ colDesc 			+ " nvarchar(300) 	NULL"
@@ -166,8 +168,16 @@ public class DatabaseTable {
 				+  colOPD_ST3 			+ " nvarchar(300) 	NULL,"
 				+  colOPD_ET3 			+ " nvarchar(300) 	NULL,"
 				+  colHospitalschedule 	+ " nvarchar(300) 	NULL,"
-				+  colhospitalstate 		+ " char(2) 	NULL,"
-				+  colPicPath 				+ " nvarchar(300) NULL"
+				+  colhospitalstate 	+ " char(2) 		NULL,"
+				+  colPicPath 			+ " nvarchar(300) 	NULL,"
+				+ "PRIMARY KEY("		+ colHospitalNo 	+ "),"
+				+ "FOREIGN KEY("+CodeFile.colHospitalNo		+ ") REFERENCES "+CodeFile.name+","
+				+ "FOREIGN KEY("+Department.colHospitalNo	+ ") REFERENCES "+Department.name+","
+				+ "FOREIGN KEY("+Doctor.colHospitalNo 		+ ") REFERENCES "+Doctor.name+","
+				+ "FOREIGN KEY("+DocSchedule.colHospitalNo	+ ") REFERENCES "+DocSchedule.name+","
+				+ "FOREIGN KEY("+User.colHospitalNo			+ ") REFERENCES "+User.name+""
+				//+ "FOREIGN KEY("+OpdRegister.colHospitalNo+ ") REFERENCES "+OpdRegister.name+","
+				//+ "FOREIGN KEY("+Patient.colHospitalNo+ ") REFERENCES "+Patient.name+","
 				+  ")";
 		}
 		
@@ -207,7 +217,8 @@ public class DatabaseTable {
 				+ colCompetence		+ " char(2) 		NULL,"
 				+ colUserstate		+ " char(2) 		NULL,"
 				+ colPicPath		+ " nvarchar(300) 	NULL,"
-				+ colHospitalNo		+ " nvarchar(10) 	NULL"
+				+ colHospitalNo		+ " nvarchar(10) 	NULL,"
+				+ "PRIMARY KEY("	+ 	colUserid 		+ ")"
 				+	")";
 		}
 	}

@@ -1,5 +1,7 @@
 package edu.mcscheduling.view;
 
+import edu.mcscheduling.model.SqliteDB;
+
 import edu.mcscheduling.R;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -38,13 +40,17 @@ public class HomeActivity extends Activity {
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		SqliteDB sqlitDB = new SqliteDB();
 		setLayout();
 
 		thisActivity = this;
 
 		// Listen for button clicks
+		
+		
 		setListeners();
+		
+		
 	}
 
 	/**
