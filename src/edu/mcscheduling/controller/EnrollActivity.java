@@ -1,6 +1,4 @@
-package edu.mcscheduling.view;
-
-import edu.mcscheduling.model.SqliteDB;
+package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
 import android.net.ConnectivityManager;
@@ -19,13 +17,12 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class HomeActivity extends Activity {
+public class EnrollActivity extends Activity {
 
 	/**
 	 * 以下為imageButton變數
 	 */
 	private ImageButton button_enroll;
-	private ImageButton button_login;
 	private ImageButton button_back;
 
 	/**
@@ -40,17 +37,13 @@ public class HomeActivity extends Activity {
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SqliteDB sqlitDB = new SqliteDB();
+
 		setLayout();
 
 		thisActivity = this;
 
 		// Listen for button clicks
-		
-		
 		setListeners();
-		
-		
 	}
 
 	/**
@@ -74,10 +67,13 @@ public class HomeActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		// set layout
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.activity_enroll);
 
 		// let screen orientation be landscape
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+		// Sets the focus on the layout not the edittext
+		findViewById(R.id.layout_enroll).requestFocus();
 	}
 
 	/**
@@ -86,14 +82,11 @@ public class HomeActivity extends Activity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_Homeback);
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_enroll);
-		button_login = (ImageButton) findViewById(R.id.ImageButton_login);
+		button_back = (ImageButton) findViewById(R.id.ImageButton_Enrollback);
+		button_enroll = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_enroll);
 
 		button_back.setOnClickListener(back);
 		button_enroll.setOnClickListener(enroll);
-		button_login.setOnClickListener(login);
-
 	}
 
 	/**
@@ -104,7 +97,10 @@ public class HomeActivity extends Activity {
 	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			openOptionsDialog_leaveAPP();
+			Intent intent = new Intent();
+			intent.setClass(EnrollActivity.this, HomeActivity.class);
+			startActivity(intent);
+			finish();
 		}
 	};
 
@@ -116,25 +112,8 @@ public class HomeActivity extends Activity {
 	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, EnrollActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
-
-	/**
-	 * login
-	 * 
-	 * 當你按下登入按鈕，執行對應的操作
-	 */
-	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, LoginActivity.class);
-			startActivity(intent);
-			finish();
+			Toast.makeText(getApplicationContext(), "enroll", Toast.LENGTH_LONG)
+					.show();
 		}
 	};
 
@@ -144,7 +123,8 @@ public class HomeActivity extends Activity {
 	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
 	 */
 	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				EnrollActivity.this);
 		builder.setTitle("APP訊息");
 		builder.setMessage("真的要離開此APP");
 		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {

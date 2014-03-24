@@ -41,10 +41,10 @@ public class Hospital {
 		} 
 	}
 	
-	private boolean existsUpdateID(String updateID) {
+	private boolean existsUpdateID(String userid) {
 		if ( this.exist == false ) {
 			return false;
-		} else if ( updateID == null || updateID.isEmpty() ) {
+		} else if ( userid == null || userid.isEmpty() ) {
 			return false;
 		}
 		
@@ -54,7 +54,7 @@ public class Hospital {
 				DatabaseTable.Hospital.colHospitalNo,
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,
-				updateID);
+				userid);
 		
 		Cursor cursor = db.select(sql);
 		
@@ -73,10 +73,10 @@ public class Hospital {
 		return ret;
 	}
 	
-	private int createHospitalNo(String updateID) {
+	private int createHospitalNo(String userid) {
 		if ( this.exist == false ) {
 			
-		} else if ( updateID == null || updateID.isEmpty() ) {
+		} else if ( userid == null || userid.isEmpty() ) {
 			
 		} 
 		int ret = StatusCode.success;
@@ -108,7 +108,7 @@ public class Hospital {
 					DatabaseTable.Hospital.colHospitalNo,
 					DatabaseTable.Hospital.colHospitalName,
 					DatabaseTable.Hospital.colUpdateID,
-					hospitalNo, "NULL", updateID);
+					hospitalNo, "NULL", userid);
 			
 			if ( db.inset(sql) < 0)  
 				ret = 1;
@@ -123,7 +123,7 @@ public class Hospital {
 		
 	}
 	
-	private int updateHospital(String updateID, String hospitalName, String areaID,
+	private int updateHospital(String userid, String hospitalName, String areaID,
 					String hospitalPhone, String hospitalAddress, 
 					String contactName, String contactPhone, String depName,
 					String opdSt1, String opdEt1, 
@@ -162,7 +162,7 @@ public class Hospital {
 				DatabaseTable.Hospital.colhospitalstate, hospitalState,
 				DatabaseTable.Hospital.colPicPath, picPath,
 				// WHERE
-				DatabaseTable.Hospital.colUpdateID,updateID
+				DatabaseTable.Hospital.colUpdateID,userid
 				);
 	
 		System.out.println(sql);
@@ -170,11 +170,10 @@ public class Hospital {
 			return StatusCode.WAR_REGISTER_FAIL();
 		return StatusCode.success;
 	}
-	
-	
-	public String getHospitalNo(String updateID) {
+		
+	public String getHospitalNo(String userid) {
 		if ( this.exist == false ) {
-		} else if ( updateID == null || updateID.isEmpty() )
+		} else if ( userid == null || userid.isEmpty() )
 			return null;
 
 		String hospitalNo = null;
@@ -183,8 +182,8 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,
-				updateID);
-		
+				userid);
+
 		Cursor cursor = db.select(sql);
 		
 		if ( cursor == null )
@@ -225,7 +224,7 @@ public class Hospital {
 	 * @param picPath
 	 * @return
 	 */
-	public int setHospital(String updateID, String hospitalName, String areaID, 
+	public int setHospital(String userid, String hospitalName, String areaID, 
 					String hospitalPhone, String hospitalAddress, 
 					String contactName, String contactPhone, String depName,
 					String opdSt1, String opdEt1, 
@@ -234,15 +233,13 @@ public class Hospital {
 					String hispitalSchedule,String hospitalState,
 					String picPath) {
 		
-		String userid = updateID;
-		
 		if ( userid == null || userid.isEmpty() )
 			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
 		else if ( !existsUpdateID(userid) ) {
 			createHospitalNo(userid);
 		} 
 		
-		return updateHospital(updateID, hospitalName, areaID, 
+		return updateHospital(userid, hospitalName, areaID, 
 						hospitalPhone, hospitalAddress,
 						contactName, contactPhone, depName,
 						opdSt1, opdEt1,  
@@ -259,24 +256,26 @@ public class Hospital {
 	 *
 	 * @return ContentValues[]
 	 */
-	public ContentValues[] getHospital(){
+	public ContentValues[] getHospital(String userid){
 		
-		String sql = String.format("SELECT * FROM %s", DatabaseTable.Hospital.name);
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
+				DatabaseTable.Hospital.colUpdateID,userid);
 		
 		Cursor cursor = db.select(sql);
-	
+		
 		if ( cursor == null ) 
 			return null;
 		
-		ContentValues[] content = null;
 		cursor.moveToFirst(); 
 		int rows = cursor.getCount();
-		int columns = cursor.getColumnCount();
-
-		if ( rows <= 0 ) 
+		if ( rows <= 0 ) {
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
+		}
 		
-		content = new ContentValues[rows];
+		int columns = cursor.getColumnCount();
+		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();

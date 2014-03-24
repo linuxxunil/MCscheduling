@@ -92,7 +92,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class DocSchedule {
+	static class DoctorSchedule {
 		// table name define
 		public static String name = "DocSchedule";
 		// columns definie
@@ -174,7 +174,7 @@ public class DatabaseTable {
 				+ "FOREIGN KEY("+CodeFile.colHospitalNo		+ ") REFERENCES "+CodeFile.name+","
 				+ "FOREIGN KEY("+Department.colHospitalNo	+ ") REFERENCES "+Department.name+","
 				+ "FOREIGN KEY("+Doctor.colHospitalNo 		+ ") REFERENCES "+Doctor.name+","
-				+ "FOREIGN KEY("+DocSchedule.colHospitalNo	+ ") REFERENCES "+DocSchedule.name+","
+				+ "FOREIGN KEY("+DoctorSchedule.colHospitalNo	+ ") REFERENCES "+DoctorSchedule.name+","
 				+ "FOREIGN KEY("+User.colHospitalNo			+ ") REFERENCES "+User.name+""
 				//+ "FOREIGN KEY("+OpdRegister.colHospitalNo+ ") REFERENCES "+OpdRegister.name+","
 				//+ "FOREIGN KEY("+Patient.colHospitalNo+ ") REFERENCES "+Patient.name+","

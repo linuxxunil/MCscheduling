@@ -45,7 +45,7 @@ public class Department {
 			
 			for ( int i=0; i<depart.length; i++ ) {
 				sql = String.format("INSERT INTO %s (%s,%s,%s,%s,%s) " +
-						"VALUES ('%05d','%s,'%s','%s','%s')",
+						"VALUES ('%05d','%s','%s','%s','%s')",
 						DatabaseTable.Department.name,
 						DatabaseTable.Department.colHospitalNo,
 						DatabaseTable.Department.colDepName,
@@ -57,12 +57,12 @@ public class Department {
 						updateID,
 						new DateTime().getDateTime(),
 						desc );
+					if ( db.inset(sql) < 0 ) { 
+						db.endTransaction();
+						return -3;
+					}
 			}
-			
-			if ( db.inset(sql) < 0 ) {
-				return -2;
-			}
-	
+
 			db.setTransactionSuccessful();
 		} finally {
 			db.endTransaction();
@@ -71,24 +71,26 @@ public class Department {
 		return StatusCode.success;
 	}
 	
-	public ContentValues[] getDepartment() {
+	public ContentValues[] getDepartment(String userid) {
 		
-		String sql = String.format("SELECT * FROM %s", DatabaseTable.Department.name);
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Department.name,
+				DatabaseTable.Department.colUpdateID, userid);
 		
 		Cursor cursor = db.select(sql);
-	
+		
 		if ( cursor == null ) 
 			return null;
 		
-		ContentValues[] content = null;
 		cursor.moveToFirst(); 
 		int rows = cursor.getCount();
-		int columns = cursor.getColumnCount();
-
-		if ( rows <= 0 ) 
+		if ( rows <= 0 ) {
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
+		}
 		
-		content = new ContentValues[rows];
+		int columns = cursor.getColumnCount();
+		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();

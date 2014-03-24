@@ -157,6 +157,7 @@ public class SqliteDriver extends DatabaseDriver{
 			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
 		
 		try {
+			System.out.println(sql);
 			db.execSQL(sql);
 		} catch ( Exception e ) {
 			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);

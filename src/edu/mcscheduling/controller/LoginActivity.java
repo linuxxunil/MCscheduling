@@ -1,4 +1,4 @@
-package edu.mcscheduling.view;
+package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
 import android.net.ConnectivityManager;
@@ -17,12 +17,12 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class EnrollActivity extends Activity {
+public class LoginActivity extends Activity {
 
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_enroll;
+	private ImageButton button_login;
 	private ImageButton button_back;
 
 	/**
@@ -67,13 +67,13 @@ public class EnrollActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		// set layout
-		setContentView(R.layout.activity_enroll);
+		setContentView(R.layout.activity_login);
 
 		// let screen orientation be landscape
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Sets the focus on the layout not the edittext
-		findViewById(R.id.layout_enroll).requestFocus();
+		findViewById(R.id.layout_login).requestFocus();
 	}
 
 	/**
@@ -82,11 +82,11 @@ public class EnrollActivity extends Activity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_Enrollback);
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_enroll);
+		button_back = (ImageButton) findViewById(R.id.ImageButton_Loginback);
+		button_login = (ImageButton) findViewById(R.id.ImageButton_LoginPage_login);
 
 		button_back.setOnClickListener(back);
-		button_enroll.setOnClickListener(enroll);
+		button_login.setOnClickListener(login);
 	}
 
 	/**
@@ -98,21 +98,21 @@ public class EnrollActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.setClass(EnrollActivity.this, HomeActivity.class);
+			intent.setClass(LoginActivity.this, HomeActivity.class);
 			startActivity(intent);
 			finish();
 		}
 	};
 
 	/**
-	 * enroll
+	 * login
 	 * 
-	 * 當你按下註冊按鈕，執行對應的操作
+	 * 當你按下登入按鈕，執行對應的操作
 	 */
-	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
+	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "enroll", Toast.LENGTH_LONG)
+			Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
 					.show();
 		}
 	};
@@ -124,7 +124,7 @@ public class EnrollActivity extends Activity {
 	 */
 	public void openOptionsDialog_leaveAPP() {
 		AlertDialog.Builder builder = new AlertDialog.Builder(
-				EnrollActivity.this);
+				LoginActivity.this);
 		builder.setTitle("APP訊息");
 		builder.setMessage("真的要離開此APP");
 		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {

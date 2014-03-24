@@ -1,5 +1,5 @@
 package edu.mcscheduling.model;
 
-public class Member {
+public class MSSqlDriver {
 
 }
