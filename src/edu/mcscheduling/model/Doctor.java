@@ -2,8 +2,8 @@ package edu.mcscheduling.model;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Hospital;
-import edu.mcsheduling.common.StatusCode;
 
 public class Doctor {
 	private DatabaseDriver db;

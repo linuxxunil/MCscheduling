@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.utilities.StringUtility;
-import edu.mcsheduling.common.StatusCode;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;

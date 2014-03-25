@@ -6,7 +6,7 @@ import java.util.Locale;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import edu.mcsheduling.common.StatusCode;
+import edu.mcscheduling.common.StatusCode;
 
 /*
 class HospitalContent {

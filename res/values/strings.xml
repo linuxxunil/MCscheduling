@@ -4,4 +4,6 @@
     <string name="action_settings">About</string>
     <string name="hello_world">Hello world!</string>
 	<string name="StringButton">Button</string>
+	<string name="StringConfirm">確認</string>
+	<string name="StringCancel">取消</string>		
 </resources>

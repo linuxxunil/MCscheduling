@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import edu.mcsheduling.common.StatusCode;
+import edu.mcscheduling.common.StatusCode;
 
 public class Account {
 	private DatabaseDriver db;

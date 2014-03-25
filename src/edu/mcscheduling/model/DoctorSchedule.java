@@ -1,6 +1,6 @@
 package edu.mcscheduling.model;
 
-import edu.mcsheduling.common.StatusCode;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Hospital;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;

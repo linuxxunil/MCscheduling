@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import edu.mcsheduling.common.StatusCode;
+import edu.mcscheduling.common.StatusCode;
 
 import android.content.ContentValues;
 import android.database.Cursor;

@@ -1,4 +1,4 @@
-package edu.mcsheduling.common;
+package edu.mcscheduling.common;
 
 /**
  * StatusCode Definition 
