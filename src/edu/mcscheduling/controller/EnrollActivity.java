@@ -1,6 +1,8 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.model.Account;
+import edu.mcscheduling.model.Encrypt;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,10 +16,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class EnrollActivity extends Activity {
+public class EnrollActivity extends ControllerActivity {
 
 	/**
 	 * 以下為imageButton變數
@@ -112,8 +115,27 @@ public class EnrollActivity extends Activity {
 	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "enroll", Toast.LENGTH_LONG)
-					.show();
+			EditText textAccount =  (EditText)findViewById(R.id.userAccount);
+			EditText textName   = (EditText)findViewById(R.id.userName);
+			EditText textPasswd = (EditText)findViewById(R.id.password);
+			EditText textPasswdConfirm = (EditText)findViewById(R.id.passwordConfirm);
+			
+			String userid = textAccount.getText().toString();
+			String username = textName.getText().toString();
+			String userpasswd = textPasswd.getText().toString();
+			String userPasswdConfirm = textPasswdConfirm.getText().toString();
+			
+			if ( !userpasswd.equals(userPasswdConfirm) ) {
+				// Yu - 密碼不一致
+			}
+						
+			Account account = new Account(db);
+			
+			if ( account.register(userid, username, userpasswd) < 0 )  {
+				// Yu - 註冊失敗
+			} else {
+				// Yu - 註冊成功
+			}
 		}
 	};
 

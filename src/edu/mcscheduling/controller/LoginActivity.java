@@ -1,6 +1,7 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.model.Account;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,10 +15,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends ControllerActivity {
 
 	/**
 	 * 以下為imageButton變數
@@ -112,8 +114,20 @@ public class LoginActivity extends Activity {
 	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
-					.show();
+			EditText userAccount =  (EditText)findViewById(R.id.userAccount);
+			EditText userPasswd = (EditText)findViewById(R.id.password);
+			String userid = userAccount.getText().toString();
+			String userpasswd = userPasswd.getText().toString();
+			Account account = new Account(db);
+			
+			if ( account.login(userid, userpasswd) < 0 )  {
+				// Yu - 登入失敗
+			} else {
+				// Yu - 登入成功
+			}
+			
+			//Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
+			//		.show();
 		}
 	};
 

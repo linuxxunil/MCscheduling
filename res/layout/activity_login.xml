@@ -90,7 +90,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
-					   	    android:hint="請輸入您的WebStorage ID"
+					   	    android:hint="請輸入您的電子郵件"
 					    	android:text=""
 						/>  
 					</TableRow>

@@ -19,7 +19,7 @@ import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends ControllerActivity {
 
 	/**
 	 * 以下為imageButton變數
@@ -40,14 +40,11 @@ public class HomeActivity extends Activity {
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		TestDB sqlitDB = new TestDB();
 		setLayout();
 
 		thisActivity = this;
 
 		// Listen for button clicks
-		
-		
 		setListeners();
 		
 		

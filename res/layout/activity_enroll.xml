@@ -98,6 +98,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
+					   	    android:hint="請輸入您的電子郵件"
 					    	android:text=""
 						/>  
 					</TableRow>
@@ -144,6 +145,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
+					   	    android:hint="密碼至少要有6~10個字元"
 					    	android:text=""
 						/>  
 					</TableRow>							
@@ -168,6 +170,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
+					   	    android:hint="密碼至少要有6~10個字元"
 					    	android:text=""
 						/>  
 					</TableRow>							
