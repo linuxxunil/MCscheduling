@@ -120,8 +120,7 @@ public class DoctorSchedule {
 			return StatusCode.WAR_REGISTER_FAIL();
 		return StatusCode.success;
 	}
-	
-	
+		
 	public int deleteDoctorSchedule(String userid, String dorNo) {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
@@ -158,6 +157,44 @@ public class DoctorSchedule {
 		
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.DoctorSchedule.name,
 							DatabaseTable.DoctorSchedule.colUpdateID, updateID);
+		
+		Cursor cursor = db.select(sql);
+	
+		if ( cursor == null ) 
+			return null;
+		
+		ContentValues[] content = null;
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
+		int columns = cursor.getColumnCount();
+
+		if ( rows <= 0 ) 
+			return null;
+		
+		content = new ContentValues[rows];
+	
+		for ( int i=0; i<rows; i++ ) {
+			content[i] = new ContentValues();
+			for ( int j=0; j<columns; j++ ) {
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+			}
+			cursor.moveToNext(); 
+		}
+		
+		if ( !cursor.isClosed() )
+			cursor.close();
+		
+		return content;
+	}
+
+	public ContentValues[] getDoctorScheduleByDorNo(String userid, String dorNo) {
+		Hospital hospital = new Hospital(db);
+		String hospitalNo = hospital.getHospitalNo(userid);
+		String updateID = hospitalNo;
+		
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s'", DatabaseTable.DoctorSchedule.name,
+							DatabaseTable.DoctorSchedule.colUpdateID, updateID,
+							DatabaseTable.DoctorSchedule.colDorNo, dorNo);
 		
 		Cursor cursor = db.select(sql);
 	

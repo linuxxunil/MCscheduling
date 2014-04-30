@@ -62,6 +62,14 @@ public class StatusCode {
 		return log("-105","SQL syntax is illegal");
 	}
 	
+	public static int ERR_MSSQL_CONNECT_ERROR() {
+		return log("-106","Cannot connect to MSSQL ");
+	}
+	
+	public static int ERR_JTDS_ERROR() {
+		return log("-107","Cannot found JTDS or version error ");
+	}
+	
 	// Account
 	public static int WAR_USERID_NULL_OR_EMPTY() {
 		return log("101","userid is null or empty");

@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -76,7 +77,7 @@ public class MenuActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_menu);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
@@ -112,41 +113,68 @@ public class MenuActivity extends ControllerActivity {
 	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			//for test
-			Intent intent = new Intent();
-			intent.setClass(MenuActivity.this, TestActivity.class);
-			startActivity(intent);
-			finish();
 			
-			/*
-			Intent intent = new Intent();
-			intent.setClass(MenuActivity.this, HomeActivity.class);
-			startActivity(intent);
-			finish();
-			*/
+			Builder alertDialog = new AlertDialog.Builder(MenuActivity.this);
+			alertDialog.setMessage("確定登出");
+			
+			DialogInterface.OnClickListener OkClick = new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int which) {
+					logoutID();
+					Intent intent = new Intent();
+					intent.setClass(MenuActivity.this, HomeActivity.class);
+					startActivity(intent);
+					finish();
+				}
+			};
+			
+			alertDialog.setNegativeButton("確定", OkClick );
+			alertDialog.setPositiveButton("取消", null );
+			alertDialog.show();
 		}
 	};
-
+	
+	
+	/**
+	 * Hospital Information
+	 */
 	private ImageButton.OnClickListener hospital_profile = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "hospital_profile", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(MenuActivity.this, HospitalInformationActivity.class);
+			startActivity(intent);
+			finish();
 		}
 	};
 	
-	
+	/**
+	 * Doctor Information
+	 */
 	private ImageButton.OnClickListener doctor_profile = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "doctor_profile", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(MenuActivity.this, DoctorInformation_Display_Activity.class);
+			startActivity(intent);
+			finish();
+			
 		}
 	};
 
+	/**
+	 * schedule
+	 */
 	
 	private ImageButton.OnClickListener schedule = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "schedule", Toast.LENGTH_LONG).show();
+			
+			Intent intent = new Intent();
+			intent.setClass(MenuActivity.this, DoctorSchedulingCalendarActivity.class);
+			startActivity(intent);
+			finish();
+			
+			
 		}
 	};
 	
@@ -162,7 +190,11 @@ public class MenuActivity extends ControllerActivity {
 	private ImageButton.OnClickListener membershipInformation = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "membershipInformation", Toast.LENGTH_LONG).show();
+			
+			Intent intent = new Intent();
+			intent.setClass(MenuActivity.this, MemberInformationActivity.class);
+			startActivity(intent);
+			finish();
 		}
 	};
 	

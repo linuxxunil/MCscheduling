@@ -1,6 +1,7 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -71,7 +72,7 @@ public class LoginActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_login);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Sets the focus on the layout not the edittext
@@ -84,7 +85,7 @@ public class LoginActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_Loginback);
+		button_back = (ImageButton) findViewById(R.id.ImageButton_LoginPage_back);
 		button_login = (ImageButton) findViewById(R.id.ImageButton_LoginPage_login);
 
 		button_back.setOnClickListener(back);
@@ -105,7 +106,49 @@ public class LoginActivity extends ControllerActivity {
 			finish();
 		}
 	};
-
+	
+	
+	/**
+	 * Controller : Login
+	 * 
+	 * 
+	 */
+	
+	private void handleLogin(View v) {
+		String userid = ((EditText)
+				findViewById(R.id.userAccount)).getText().toString();
+		String userpasswd = ((EditText)
+				findViewById(R.id.password)).getText().toString();
+		
+		if ( userid == null || userid.equals("")) {
+			Toast.makeText(getApplicationContext(), "使用者帳號不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if ( userpasswd == null || userpasswd.equals("")) {
+			Toast.makeText(getApplicationContext(), "使用者密碼不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else {
+		
+			Account account = new Account(db);
+		
+			if ( account.login(userid, userpasswd) == StatusCode.success ) {
+				Toast.makeText(getApplicationContext(), "登入成功", Toast.LENGTH_LONG)	
+				.show();
+			
+				// keep loginid
+				setLoginID(userid);
+			
+				Intent intent = new Intent();
+				intent.setClass(LoginActivity.this, MenuActivity.class);
+				startActivity(intent);
+				finish();
+			} else {
+				Toast.makeText(getApplicationContext(), "登入失敗", Toast.LENGTH_LONG)
+				.show();
+			}
+		}
+	}
+	
+	
 	/**
 	 * login
 	 * 
@@ -114,20 +157,7 @@ public class LoginActivity extends ControllerActivity {
 	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			EditText userAccount =  (EditText)findViewById(R.id.userAccount);
-			EditText userPasswd = (EditText)findViewById(R.id.password);
-			String userid = userAccount.getText().toString();
-			String userpasswd = userPasswd.getText().toString();
-			Account account = new Account(db);
-			
-			if ( account.login(userid, userpasswd) < 0 )  {
-				// Yu - 登入失敗
-			} else {
-				// Yu - 登入成功
-			}
-			
-			//Toast.makeText(getApplicationContext(), "login", Toast.LENGTH_LONG)
-			//		.show();
+			handleLogin(v);
 		}
 	};
 

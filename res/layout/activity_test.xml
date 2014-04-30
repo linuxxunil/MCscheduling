@@ -76,7 +76,7 @@
 				    android:id="@+id/button_05"    
 				    android:layout_height="wrap_content"
 				    android:layout_width="wrap_content"	  
-				    android:text="5.醫院資料維護"/>	
+				    android:text="5.醫院資料維護(ok)"/>	
 		    </TableRow>	 	
 			<TableRow
 				android:gravity="left"
@@ -88,7 +88,7 @@
 				    android:id="@+id/button_06"    
 				    android:layout_height="wrap_content"
 				    android:layout_width="wrap_content"	  
-				    android:text="6.醫生資料維護"/>	
+				    android:text="6.醫生資料維護(ok)"/>	
 		    </TableRow>	 
 			<TableRow
 				android:gravity="left"
@@ -100,7 +100,7 @@
 				    android:id="@+id/button_07"    
 				    android:layout_height="wrap_content"
 				    android:layout_width="wrap_content"	  
-				    android:text="7.醫師排班"/>
+				    android:text="7.醫師排班(ok)"/>
 			</TableRow>	 		
 			<TableRow
 				android:gravity="left"
@@ -112,7 +112,7 @@
 				    android:id="@+id/button_08"    
 				    android:layout_height="wrap_content"
 				    android:layout_width="wrap_content"	  
-				    android:text="8.查看班表"/>	  
+				    android:text="8.查看班表(ok)"/>	  
 		    </TableRow>	 
 			<TableRow
 				android:gravity="left"

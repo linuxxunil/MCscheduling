@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/layout_memberInformation"
+	android:id="@+id/layout_hospitalInformation"
     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
 	android:theme="@style/AppTheme"
@@ -9,13 +9,6 @@
     android:background="#2EFEF7"
     android:layout_marginLeft="0dp"
     >
-	<LinearLayout 
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-	    android:layout_marginTop="0dp"
-	    android:layout_marginLeft="0dp"
-	    >
 	    <TableLayout
 	    	android:layout_gravity="top" 
 	    	android:layout_marginTop="0dp"
@@ -212,7 +205,6 @@
 					    	android:paddingLeft="10dp"
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
-					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:layout_width="190dp"
 					   	    android:hint="請輸入醫院地址"
@@ -302,6 +294,30 @@
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
 					        android:layout_span="1"
+					        android:text="科別" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_medicalDepartment"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    
+					   	    android:textSize="20sp"
+					   	    android:layout_width="190dp"
+					   	    android:hint="多筆資料使用 ,分開"
+					    	android:text=""
+						/>  
+					</TableRow>	 
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="5dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:layout_span="1"
 					        android:text="門診時間" 
 					    />	
 
@@ -310,26 +326,26 @@
 					        android:layout_height="wrap_content"
 					        android:gravity="fill_horizontal" >	
 						    <TextView
-						    	android:gravity="top"
+						    	android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="早" 
 						    />	
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test1"
+							    android:id="@+id/Spinner_HospitalInformationPage_mornStartTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
 						    <TextView
-						    	android:gravity="top"
+						    	android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="~" 
 						    />							    
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test2"
+							    android:id="@+id/Spinner_HospitalInformationPage_mornEndTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
@@ -353,26 +369,26 @@
 					        android:layout_height="wrap_content"
 					        android:gravity="fill_horizontal" >	
 						    <TextView
-						        android:gravity="top"
+						        android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="中" 
 						    />	
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test3"
+							    android:id="@+id/Spinner_HospitalInformationPage_noonStartTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
 						    <TextView
-						    	android:gravity="top"
+						    	android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="~" 
 						    />							    
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test4"
+							    android:id="@+id/Spinner_HospitalInformationPage_noonEndTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
@@ -396,26 +412,26 @@
 					        android:layout_height="wrap_content"
 					        android:gravity="fill_horizontal" >	
 						    <TextView
-						        android:gravity="top"
+						        android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="晚" 
 						    />	
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test5"
+							    android:id="@+id/Spinner_HospitalInformationPage_nightStartTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
 						    <TextView
-						    	android:gravity="top"
+						    	android:paddingTop="-5dp"
 						        android:layout_width="wrap_content"
 						        android:layout_height="wrap_content"
 						        android:textSize="20sp"
 						        android:text="~" 
 						    />							    
 							<Spinner
-							    android:id="@+id/Spinner_HospitalInformationPage_test6"
+							    android:id="@+id/Spinner_HospitalInformationPage_nightEndTime"
 							    android:layout_width="80dp"
 							    android:layout_height="wrap_content"
 							    android:background="@drawable/spinner_style2_half"/>	
@@ -433,13 +449,12 @@
 					        android:layout_span="1"
 					        android:text="看診時間" 
 					    />	
-					    <TextView
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:textSize="20sp"
-					        android:layout_span="1"
-					        android:text="尚未完成" 
-					    />	
+    				<Button 
+			         	android:id="@+id/button_HospitalInformationPage_selectConsultingHour"
+			         	android:layout_span="1"
+			         	android:layout_width="wrap_content"
+	            		android:layout_height="wrap_content"
+	            		android:text="選擇看診時間" />   
 					</TableRow>	 								
 			     </TableLayout>
 	        
@@ -459,7 +474,6 @@
 		        android:gravity="center_horizontal" >
     				<Button 
 			         	android:id="@+id/button_HospitalInformationPage_revise"
-			         	android:layout_span="1"
 			         	android:layout_width="wrap_content"
 	            		android:layout_height="wrap_content"
 	            		android:text="修改" />   
@@ -467,5 +481,4 @@
            	</TableRow>	
 		      						
         </TableLayout>
-	</LinearLayout>
 </ScrollView>

@@ -18,7 +18,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class TestActivity extends ControllerActivity {
+public class TestActivity extends Activity {
 
 	/**
 	 * 以下為imageButton變數
@@ -77,7 +77,7 @@ public class TestActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_test);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
@@ -155,29 +155,40 @@ public class TestActivity extends ControllerActivity {
 	private ImageButton.OnClickListener setLayout05 = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"show Layout05", Toast.LENGTH_LONG).show();	
-			setContentView(R.layout.activity_hospital_information);
+			Intent intent = new Intent();
+			intent.setClass(TestActivity.this, HospitalInformationActivity.class);
+			startActivity(intent);
+			finish();	
 		}
 	};
 
 	private ImageButton.OnClickListener setLayout06 = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"show Layout06", Toast.LENGTH_LONG).show();	
+			Intent intent = new Intent();
+			intent.setClass(TestActivity.this, DoctorInformation_Display_Activity.class);
+			startActivity(intent);
+			finish();	
 		}
 	};
 
 	private ImageButton.OnClickListener setLayout07 = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"show Layout07", Toast.LENGTH_LONG).show();		
+			Intent intent = new Intent();
+			intent.setClass(TestActivity.this, DoctorSchedulingCalendarActivity.class);
+			startActivity(intent);
+			finish();	
 		}
 	};
 
 	private ImageButton.OnClickListener setLayout08 = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"show Layout08", Toast.LENGTH_LONG).show();	
+			Intent intent = new Intent();
+			intent.setClass(TestActivity.this,ScheduleActivity.class);
+			startActivity(intent);
+			finish();	
 		}
 	};
 
@@ -195,9 +206,9 @@ public class TestActivity extends ControllerActivity {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			//intent.setClass(TestActivity.this, RevisePasswordActivity.class);
-			//startActivity(intent);
-			//finish();					
+			intent.setClass(TestActivity.this, RevisePasswordActivity.class);
+			startActivity(intent);
+			finish();					
 		}
 	};
 

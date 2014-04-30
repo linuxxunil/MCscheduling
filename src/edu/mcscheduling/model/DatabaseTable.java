@@ -1,7 +1,7 @@
 package edu.mcscheduling.model;
 
 public class DatabaseTable {
-	static class CodeFile {
+	static public class CodeFile {
 		// table name define
 		public static String name = "CodeFile";
 		// columns definie
@@ -30,7 +30,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class Department {
+	static public class Department {
 		// table name define
 		public static String name = "Department";
 
@@ -54,7 +54,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class Doctor {
+	static public class Doctor {
 		// table name define
 		public static String name = "Dcotor";
 		// columns definie
@@ -92,7 +92,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class DoctorSchedule {
+	static public class DoctorSchedule {
 		// table name define
 		public static String name = "DocSchedule";
 		// columns definie
@@ -122,7 +122,7 @@ public class DatabaseTable {
 	}
 	
 	
-	static class Hospital {
+	static public class Hospital {
 		// table name define
 		public static String name = "Hospital";
 		// columns definie
@@ -184,7 +184,7 @@ public class DatabaseTable {
 	}
 	
 
-	static class User {
+	static public class User {
 		// table name define
 		public static final String name = "User";
 		

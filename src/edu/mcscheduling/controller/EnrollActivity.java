@@ -1,8 +1,9 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
-import edu.mcscheduling.model.Encrypt;
+import edu.mcscheduling.model.DatabaseTable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.database.Cursor;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
@@ -72,7 +74,7 @@ public class EnrollActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_enroll);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Sets the focus on the layout not the edittext
@@ -85,7 +87,7 @@ public class EnrollActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_Enrollback);
+		button_back = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_back);
 		button_enroll = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_enroll);
 
 		button_back.setOnClickListener(back);
@@ -107,6 +109,54 @@ public class EnrollActivity extends ControllerActivity {
 		}
 	};
 
+	
+	/**
+	 * Controller : Enroll
+	 * 
+	 * 
+	 */
+	
+	private void handleEnroll(View v) {
+		String userid = ((EditText)
+				findViewById(R.id.userAccount)).getText().toString();
+		String username = ((EditText)
+				findViewById(R.id.userName)).getText().toString();
+		String userpasswd = ((EditText)
+				findViewById(R.id.password)).getText().toString();
+		String userpasswdConfirm = ((EditText)
+				findViewById(R.id.passwordConfirm)).getText().toString();
+		
+		if ( userid == null || userid.equals("")) {
+			Toast.makeText(getApplicationContext(), "使用者帳號不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if ( username == null || userpasswd.equals("")) {
+			Toast.makeText(getApplicationContext(), "使用者姓名不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if ( userpasswd == null || userpasswd.equals("")) {
+			Toast.makeText(getApplicationContext(), "密碼不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if ( !userpasswd.equals(userpasswdConfirm)) {
+			Toast.makeText(getApplicationContext(), "密碼確認不一致", Toast.LENGTH_LONG)
+			.show();
+		} else {
+			
+			Account account = new Account(db);
+	
+			if ( account.register(userid, username, userpasswd) == StatusCode.success ) {
+				Toast.makeText(getApplicationContext(), "註冊成功", Toast.LENGTH_LONG)
+				.show();
+			
+				Intent intent = new Intent();
+				intent.setClass(this, LoginActivity.class);
+				startActivity(intent);
+				finish();
+			} else {
+				Toast.makeText(getApplicationContext(), "註冊失敗:使用者已存在", Toast.LENGTH_LONG)
+				.show();
+			}
+		}
+	}
+	
 	/**
 	 * enroll
 	 * 
@@ -115,27 +165,8 @@ public class EnrollActivity extends ControllerActivity {
 	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			EditText textAccount =  (EditText)findViewById(R.id.userAccount);
-			EditText textName   = (EditText)findViewById(R.id.userName);
-			EditText textPasswd = (EditText)findViewById(R.id.password);
-			EditText textPasswdConfirm = (EditText)findViewById(R.id.passwordConfirm);
-			
-			String userid = textAccount.getText().toString();
-			String username = textName.getText().toString();
-			String userpasswd = textPasswd.getText().toString();
-			String userPasswdConfirm = textPasswdConfirm.getText().toString();
-			
-			if ( !userpasswd.equals(userPasswdConfirm) ) {
-				// Yu - 密碼不一致
-			}
-						
-			Account account = new Account(db);
-			
-			if ( account.register(userid, username, userpasswd) < 0 )  {
-				// Yu - 註冊失敗
-			} else {
-				// Yu - 註冊成功
-			}
+			handleEnroll(v);			
+
 		}
 	};
 

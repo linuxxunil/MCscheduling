@@ -1,6 +1,8 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.model.Account;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -77,7 +79,7 @@ public class RevisePasswordActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_revise_password);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Sets the focus on the layout not the edittext
@@ -121,29 +123,49 @@ public class RevisePasswordActivity extends ControllerActivity {
 			*/
 		}
 	};
+	
+	
+	private void handleRevisePassword(View v) {
+		String oldPassword = ((EditText)
+				findViewById(R.id.oldPassword)).getText().toString();
+		String newPassword = ((EditText)
+				findViewById(R.id.newPassword)).getText().toString();
+		String newPasswordConfirm = ((EditText)
+				findViewById(R.id.newPasswordConfirm)).getText().toString();
+
+		
+		if ( oldPassword == null || oldPassword.equals("")) {
+			Toast.makeText(getApplicationContext(), "舊密碼不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if ( newPassword == null || newPassword.equals("")) {
+			Toast.makeText(getApplicationContext(), "新密碼不能為空", Toast.LENGTH_LONG)
+			.show();
+		} else if (!oldPassword.equals(newPassword) ) {
+			Toast.makeText(getApplicationContext(), "密碼未修改", Toast.LENGTH_LONG)
+			.show();
+		}else if ( !newPassword.equals(newPasswordConfirm)) {
+			Toast.makeText(getApplicationContext(), "密碼確認不一致", Toast.LENGTH_LONG)
+			.show();
+		} else {
+		
+			Account account = new Account(db);
+	
+			if ( account.changePasswd(getLoginID(), oldPassword, newPassword) == StatusCode.success ) {
+				Toast.makeText(getApplicationContext(), "密碼更換成功", Toast.LENGTH_LONG)
+				.show();
+
+			} else {
+				Toast.makeText(getApplicationContext(), "密碼更換失敗: 請確認就密碼是否正確", Toast.LENGTH_LONG)
+				.show();
+			}
+		}
+	}
 
 
 	private Button.OnClickListener newPasswordConfirm = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "newPasswordConfirm", Toast.LENGTH_LONG)
-			.show();
-			
-			/**
-			 * 以下為擷取edittext的輸入資訊，尚未對輸入資訊進行任何處理
-			 */
-			EditText tmp;
-			String oldPassword;
-			tmp = (EditText)findViewById(R.id.oldPassword);
-			oldPassword=tmp.getText().toString();
-
-			String newPassword;
-			tmp = (EditText)findViewById(R.id.newPassword);
-			newPassword=tmp.getText().toString();
-
-			String newPasswordConfirm;
-			tmp = (EditText)findViewById(R.id.newPasswordConfirm);
-			newPasswordConfirm=tmp.getText().toString();
+			handleRevisePassword(v);
 			
 		}
 	};

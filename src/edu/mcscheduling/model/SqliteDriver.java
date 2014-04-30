@@ -2,6 +2,7 @@ package edu.mcscheduling.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import edu.mcscheduling.common.StatusCode;
@@ -191,5 +192,19 @@ public class SqliteDriver extends DatabaseDriver{
 		
 		if (db != null && db.isOpen())
 			db.close();
+	}
+
+
+	@Override
+	public ResultSet selectMS(String sql) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public ResultSet selectMS(String tblName, String cols, String whereExpr) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

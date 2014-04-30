@@ -1,7 +1,5 @@
 package edu.mcscheduling.controller;
 
-import edu.mcscheduling.model.TestDB;
-
 import edu.mcscheduling.R;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -40,14 +38,13 @@ public class HomeActivity extends ControllerActivity {
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		setLayout();
 
 		thisActivity = this;
 
 		// Listen for button clicks
 		setListeners();
-		
-		
 	}
 
 	/**
@@ -73,7 +70,7 @@ public class HomeActivity extends ControllerActivity {
 		// set layout
 		setContentView(R.layout.activity_home);
 
-		// let screen orientation be landscape
+		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 
@@ -83,8 +80,8 @@ public class HomeActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_Homeback);
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_enroll);
+		button_back = (ImageButton) findViewById(R.id.ImageButton_HomePage_back);
+		button_enroll = (ImageButton) findViewById(R.id.ImageButton_HomePage_enroll);
 		button_login = (ImageButton) findViewById(R.id.ImageButton_login);
 
 		button_back.setOnClickListener(back);
@@ -101,7 +98,15 @@ public class HomeActivity extends ControllerActivity {
 	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			//for test
+			Intent intent = new Intent();
+			intent.setClass(HomeActivity.this, TestActivity.class);
+			startActivity(intent);
+			finish();
+			
+			/*
 			openOptionsDialog_leaveAPP();
+			*/
 		}
 	};
 

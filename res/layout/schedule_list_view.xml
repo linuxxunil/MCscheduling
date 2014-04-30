@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#FFFFFF">
+
+	<LinearLayout
+		android:layout_width="match_parent"
+    	android:layout_height="wrap_content">
+	    <TextView
+	    	android:id="@+id/textView_SchedulePage_day"
+	        android:layout_width="40dp"
+	        android:textSize="18sp"
+	        android:layout_height="wrap_content"
+	        android:text="周一" />	
+	    <TextView
+	    	android:id="@+id/textView_SchedulePage_date"
+	    	android:layout_marginLeft="10dp"
+	        android:layout_width="30dp"
+	        android:textSize="18sp"
+	        android:layout_height="wrap_content"
+	        android:text="2/1" />		
+	    <TextView
+	    	android:id="@+id/textView_SchedulePage_monDoctor"
+	    	android:layout_marginLeft="20dp"	
+	        android:layout_width="60dp"
+	        android:textSize="18sp"
+	        android:layout_height="wrap_content"
+	        android:text="王醫師 " />	
+	    <TextView
+	    	android:id="@+id/textView_SchedulePage_noonDoctor"
+	    	android:layout_marginLeft="20dp"	
+	        android:layout_width="60dp"
+	        android:textSize="18sp"
+	        android:layout_height="wrap_content"
+	        android:text="陳醫師" />		
+	    <TextView
+	    	android:id="@+id/textView_SchedulePage_nightDoctor"
+	    	android:layout_marginLeft="20dp"	
+	        android:layout_width="60dp"
+	        android:textSize="18sp"
+	        android:layout_height="wrap_content"
+	        android:text="鍾醫師" />	                
+	</LinearLayout>
+	
+</LinearLayout>

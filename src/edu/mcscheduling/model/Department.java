@@ -70,39 +70,39 @@ public class Department {
 		
 		return StatusCode.success;
 	}
-	
+
 	public ContentValues[] getDepartment(String userid) {
 		
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Department.name,
-				DatabaseTable.Department.colUpdateID, userid);
-		
+					DatabaseTable.Department.colUpdateID, userid);
+
 		Cursor cursor = db.select(sql);
-		
-		if ( cursor == null ) 
+
+		if ( cursor == null )
 			return null;
-		
-		cursor.moveToFirst(); 
+
+		cursor.moveToFirst();
 		int rows = cursor.getCount();
 		if ( rows <= 0 ) {
 			if ( !cursor.isClosed() )
 				cursor.close();
 			return null;
 		}
-		
+
 		int columns = cursor.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
-	
+
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
 				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
 			}
-			cursor.moveToNext(); 
+			cursor.moveToNext();
 		}
-		
+
 		if ( !cursor.isClosed() )
 			cursor.close();
-		
+
 		return content;
-	}
+}
 }

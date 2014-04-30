@@ -1,6 +1,7 @@
 package edu.mcscheduling.model;
 
 import android.database.Cursor;
+import java.sql.ResultSet;
 
 public abstract class DatabaseDriver {
 	protected Cursor cursor;
@@ -40,7 +41,7 @@ public abstract class DatabaseDriver {
 	 * @return 
 	 */
 	abstract public Cursor select(String sql);
-	
+	abstract public ResultSet selectMS(String sql);
 	/**
 	 * 
 	 * @param tblName
@@ -49,7 +50,7 @@ public abstract class DatabaseDriver {
 	 * @return 
 	 */
 	abstract public Cursor select(String tblName, String cols, String whereExpr);
-	
+	abstract public ResultSet selectMS(String tblName, String cols, String whereExpr);
 	/**
 	 * 
 	 * @param table

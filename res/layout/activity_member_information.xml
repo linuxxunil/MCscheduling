@@ -200,22 +200,22 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginTop="5dp">		
-					    <TextView
+					     <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
 					        android:layout_span="1"
-					        android:text="註冊日期" 
+					        android:text="提示答案" 
 					    />	
 						<EditText  
-					    	android:id="@+id/EditText_MemberInformationPage_registrationDate"    
-					    	android:paddingLeft="10dp"
+					    	android:id="@+id/EditText_MemberInformationPage_tips"   
+					    	android:paddingLeft="10dp" 
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:layout_width="190dp"
-					   	    android:hint="請輸入註冊日期"
+					   	    android:hint="請輸入提示答案"
 					    	android:text=""
 						/>  
 					</TableRow>			
@@ -242,25 +242,26 @@
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginTop="5dp"
-						android:layout_marginBottom="5dp">		
-					    <TextView
+						android:layout_marginBottom="5dp">	
+						 <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
 					        android:layout_span="1"
-					        android:text="提示答案" 
+					        android:text="註冊日期" 
 					    />	
 						<EditText  
-					    	android:id="@+id/EditText_MemberInformationPage_tips"   
-					    	android:paddingLeft="10dp" 
+					    	android:id="@+id/EditText_MemberInformationPage_registrationDate"    
+					    	android:paddingLeft="10dp"
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:layout_width="190dp"
-					   	    android:hint="請輸入提示答案"
+					   	    android:hint="請輸入註冊日期"
 					    	android:text=""
-						/>  
+						/>  	
+					  
 					</TableRow>				       
 			     </TableLayout>
 	        
@@ -279,17 +280,19 @@
 		        android:layout_height="wrap_content"
 		        android:gravity="center_horizontal" >
     				<Button 
-			         	android:id="@+id/button_MemberInformationPage_delete"
-			         	android:layout_span="1"
-			         	android:layout_width="wrap_content"
-	            		android:layout_height="wrap_content"
-	            		android:text="刪除" />
-    				<Button 
 			         	android:id="@+id/button_MemberInformationPage_save"
 			         	android:layout_span="1"
 			         	android:layout_width="wrap_content"
 	            		android:layout_height="wrap_content"
-	            		android:text="存檔" />	   
+	            		android:text="存檔" />
+    				<!--  
+    				<Button 
+			         	android:id="@+id/button_MemberInformationPage_delete"
+			         	android:layout_span="1"
+			         	android:layout_width="wrap_content"
+	            		android:layout_height="wrap_content"
+	            		android:text="取消" />	   
+	            		-->
 		    </LinearLayout>
            	</TableRow>	
 		      						

@@ -128,4 +128,62 @@ public class Account {
 		return StatusCode.success;
 	}
 	
+	
+	public int setMemberInformation(String userid,String username, String passwdQuestion, String  passwdAnswer) {
+		
+		String columns = String.format("%s='%s',%s='%s',%s='%s'",
+				DatabaseTable.User.colUsername, username,
+				DatabaseTable.User.colUserpwdquestion, passwdQuestion,
+				DatabaseTable.User.colUserpwdans, passwdAnswer);
+
+		String whereExpr = String.format("%s='%s'", 
+				DatabaseTable.User.colUserid, userid );
+
+		if ( db.update(DatabaseTable.User.name, columns, whereExpr) < 0 )
+			return 1;
+
+		return StatusCode.success;
+	}
+	
+	public ContentValues[]  getMemberInformation(String userid) {
+		
+		String sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
+								DatabaseTable.User.colUserid,
+								DatabaseTable.User.colUsername,
+								DatabaseTable.User.colUserpwdquestion,
+								DatabaseTable.User.colUserpwdans,
+								DatabaseTable.User.colUservalid,
+								DatabaseTable.User.name,
+								DatabaseTable.User.colUserid, userid
+							);
+		
+		Cursor cursor = db.select(sql);
+		
+		if ( cursor == null ) 
+			return null;
+		
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
+		if ( rows <= 0 ) {
+			if ( !cursor.isClosed() )
+				cursor.close();
+			return null;
+		}
+		
+		int columns = cursor.getColumnCount();
+		ContentValues[] content = new ContentValues[rows];
+	
+		for ( int i=0; i<rows; i++ ) {
+			content[i] = new ContentValues();
+			for ( int j=0; j<columns; j++ ) {
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+			}
+			cursor.moveToNext(); 
+		}
+		
+		if ( !cursor.isClosed() )
+			cursor.close();
+		
+		return content;
+	}
 }

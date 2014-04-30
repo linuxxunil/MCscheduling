@@ -203,4 +203,43 @@ public class Doctor {
 		
 		return content;
 	}
+
+	public ContentValues[]  getDoctorByDepName(String userid,String depName) {
+		Hospital hospital = new Hospital(db);
+		String hospitalNo = hospital.getHospitalNo(userid);
+		String updateID = hospitalNo;
+		
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s'", DatabaseTable.Doctor.name,
+							DatabaseTable.Doctor.colUpdateID, updateID,
+							DatabaseTable.Doctor.colDepName, depName);
+		
+		Cursor cursor = db.select(sql);
+		
+		if ( cursor == null ) 
+			return null;
+		
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
+		if ( rows <= 0 ) {
+			if ( !cursor.isClosed() )
+				cursor.close();
+			return null;
+		}
+		
+		int columns = cursor.getColumnCount();
+		ContentValues[] content = new ContentValues[rows];
+	
+		for ( int i=0; i<rows; i++ ) {
+			content[i] = new ContentValues();
+			for ( int j=0; j<columns; j++ ) {
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+			}
+			cursor.moveToNext(); 
+		}
+		
+		if ( !cursor.isClosed() )
+			cursor.close();
+		
+		return content;
+	}
 }
