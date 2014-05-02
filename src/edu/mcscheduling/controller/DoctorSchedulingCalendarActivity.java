@@ -19,7 +19,6 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -36,7 +35,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 @TargetApi(3)
 public class DoctorSchedulingCalendarActivity extends ControllerActivity {
-	private static final String tag = "MyCalendarActivity";
+	//private static final String tag = "MyCalendarActivity";
 	
 	@SuppressLint({ "NewApi", "NewApi", "NewApi", "NewApi" })
 	private final DateFormat dateFormatter = new DateFormat();

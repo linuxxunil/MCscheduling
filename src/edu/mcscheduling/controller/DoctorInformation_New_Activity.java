@@ -74,16 +74,11 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 		super.onCreate(savedInstanceState);
 
 		setLayout();
-		
-		
-		
-		//deBundle(savedInstanceState);
 	
 		thisActivity = this;
 		
 		setListeners();
-		
-		
+	
 		doctor = new Doctor(db);
 		depart = new Department(db);
 		doctorContent = doctor.getDoctor(getLoginID());
@@ -146,30 +141,6 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
-	}
-
-	private void deBundle(Bundle bundle){
-		bundle =this.getIntent().getExtras();
-		
-		if(bundle!=null){
-			String doctorName = bundle.getString("doctorName");
-			String medicalDepartment = bundle.getString("medicalDepartment");
-			String jobTitle = bundle.getString("jobTitle");
-			String phoneNumber = bundle.getString("phoneNumber");	
-			String isRevised = bundle.getString("isRevised");	
-			
-			if("true".equals(isRevised)){
-				button_addNewDoctor.setText("н╫зя");
-				dorName.setText(doctorName);
-				//jobTitle.setText(jobTitle); 
-				telephone.setText(phoneNumber);				
-			}
- 
-		}else{
-			//Toast.makeText(getApplicationContext(), "bundle is null!!", Toast.LENGTH_LONG).show();	
-		}
-	
-		
 	}
 	
 	/**

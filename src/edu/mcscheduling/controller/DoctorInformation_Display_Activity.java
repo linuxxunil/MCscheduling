@@ -72,10 +72,6 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 
 		thisActivity = this;
 		
-		//initializeListView();
-		
-		//deBundle(savedInstanceState);
-		
 		// Listen for button clicks
 		setListeners();
 		
@@ -83,22 +79,6 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		doctorContent = doctor.getDoctor(getLoginID());
 		
 		setListView_DoctorInformation();
-	}
-	
-	private void deBundle(Bundle bundle){
-		bundle =this.getIntent().getExtras();
-		
-		if(bundle!=null){
-			String doctorName = bundle.getString("doctorName");
-			String medicalDepartment = bundle.getString("medicalDepartment");
-			String jobTitle = bundle.getString("jobTitle");
-			String phoneNumber = bundle.getString("phoneNumber");	
-			addListViewRow(doctorName,medicalDepartment,jobTitle ,phoneNumber );	 
-		}else{
-			//Toast.makeText(getApplicationContext(), "bundle is null!!", Toast.LENGTH_LONG).show();	
-		}
-	
-		
 	}
 	
 	private void setLayout() {
