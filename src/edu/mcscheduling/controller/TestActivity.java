@@ -186,7 +186,7 @@ public class TestActivity extends Activity {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.setClass(TestActivity.this,ScheduleActivity.class);
+			intent.setClass(TestActivity.this,ScheduleViewActivity.class);
 			startActivity(intent);
 			finish();	
 		}

@@ -1,7 +1,6 @@
 package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
@@ -143,13 +142,16 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		
 		initSimpleAdapter();
 		
-		for ( int i=0; i< doctorContent.length; i++ ) {
-			addListViewRow(
+		if ( doctorContent != null ) {
+		
+			for ( int i=0; i< doctorContent.length; i++ ) {
+				addListViewRow(
 					(String) doctorContent[i].get(DatabaseTable.Doctor.colDorName),
 					(String) doctorContent[i].get(DatabaseTable.Doctor.colDepName),
 					(String) doctorContent[i].get(DatabaseTable.Doctor.colJobTitle),
 					(String) doctorContent[i].get(DatabaseTable.Doctor.colTelephone)
 					);
+			}
 		}
 		
 		//啟用按鍵過濾功能（直接用listview物件，不需要getListView方法）
@@ -158,7 +160,7 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		myListView.setOnItemClickListener(new OnItemClickListener(){
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-				Toast.makeText(getApplicationContext(), "position is: " + position, Toast.LENGTH_LONG).show();	
+				//Toast.makeText(getApplicationContext(), "position is: " + position, Toast.LENGTH_LONG).show();	
 				
 				clickPosition = position;
 				

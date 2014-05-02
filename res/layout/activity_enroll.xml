@@ -144,6 +144,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
+					   	    android:password="true"
 					    	android:text=""
 						/>  
 					</TableRow>							
@@ -168,6 +169,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:paddingLeft="10dp"
+					   	    android:password="true"
 					    	android:text=""
 						/>  
 					</TableRow>							

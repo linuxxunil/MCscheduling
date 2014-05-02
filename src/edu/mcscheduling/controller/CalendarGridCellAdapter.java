@@ -1,18 +1,15 @@
 package edu.mcscheduling.controller;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,14 +17,27 @@ import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 import edu.mcscheduling.R;
+
+/**
+ * DoctorSchedulingCalendarActivity <-Set-> HashTable <-Get-> CalendarGridCellAdapter 
+ * 
+ * HashTable Content has
+ * <Year,"2014" >
+ * <Month,"5" >
+ * 
+ * <0,"true-true,true"> // <day,"morning-noon-night" 
+ * ...
+ * <30,"true-false-true>
+ * <31,"true-false-true">
+ * @author jesse
+ *
+ */
+
 
 public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListener {	
 	private static final int DAY_OFFSET = 1;
 	
-	private final String[] weekdays = new String[] { 
-			"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
 	
 	private final String[] months = { "01", "02", "03", "04", 
 									  "05", "06", "07", "08", 
@@ -36,97 +46,64 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 	private final int[] daysOfMonth = { 31, 28, 31, 30, 31, 30, 31, 31, 30,
 			31, 30, 31 };
 	
-
 	private Button gridcell;
 	private TextView num_events_per_day;
-	//private final HashMap<String, Integer> eventsPerMonthMap;
-	
-	private final SimpleDateFormat dateFormatter = 
-						new SimpleDateFormat("dd-MMM-yyyy");
 
-	private DoctorSchedulingCalendarActivity schedulingActivity;
+
+	private Activity schedulingActivity;
 	
 	private int daysInMonth;
 	private int currentDayOfMonth;
-	private int currentWeekDay;
 
-	
+	private int monthStartID = -1;
+	private int monthStopID = -1;
+	private final int totalGrid = 7*6;
 	private final Context context;
-	private final List<String> list;
-	//for changing cell background
-	private int idToChangeBackground=-1;
+	private final List<String> buttonInfoList;
+	private final HashMap<String, Integer> eventsPerMonthMap;
+	private HashMap<String, String> monthInfo;
 	
-	private boolean[][] selectedItem = new boolean[31][3];
-	private HashMap<String, Integer> eventsPerMonthMap;
+	private void initButtonInfoList() {
+		for (int i=0; i<totalGrid; i++) 
+				buttonInfoList.add("");
+	}
+	
 	// Days in Current Month
-	public CalendarGridCellAdapter(DoctorSchedulingCalendarActivity activity,
+	public CalendarGridCellAdapter(	Activity activity,
 									Context context, 
 									int textViewResourceId,
-									int month, int year) {
+									HashMap<String,String> monthInfo) {
 		super();
 		
 		schedulingActivity = activity;
 		this.context = context;
+		this.monthInfo = monthInfo;
 		
-		list = new ArrayList<String>();
-
-		Calendar calendar = Calendar.getInstance();
-		currentDayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-		currentWeekDay    = calendar.get(Calendar.DAY_OF_WEEK);
+		buttonInfoList = new ArrayList<String>();
+		initButtonInfoList();
 		
 		/**
 		 *  設定每個日期按鍵上的value
 		 */
-		//setMonthInfoToList (month, year);
-
+		
+		updateMonthInfoToButton (Integer.valueOf(monthInfo.get("year")),
+							  Integer.valueOf(monthInfo.get("month")));
+		
 		// Find Number of Events
-		eventsPerMonthMap = findNumberOfEventsPerMonth(year, month);
+		eventsPerMonthMap = findNumberOfEventsPerMonth();
 
 	}
 
-	private String getMonthAsString(int i) {
-		return months[i];
-	}
-
-	private String getWeekDayAsString(int i) {
-		return weekdays[i];
-	}
-
-	private int getNumberOfDaysOfMonth(int i) {
-		return daysOfMonth[i];
-	}
-
-	public String getItem(int position) {
-		return list.get(position);
-	}
-
-	@Override
-	public int getCount() {
-		return list.size();
-	}
-
-	/**
-	 * Prints Month
-	 * 
-	 * @param mm
-	 * @param yy
-	 */
-	private void setMonthInfoToList (int mm, int yy) {
+	public void updateMonthInfoToButton (int yy, int mm) {
 		int trailingSpaces = 0;
 		int daysInPrevMonth = 0;
 		int prevMonth = 0;
 		int prevYear = 0;
 		int nextMonth = 0;
 		int nextYear = 0;
-
 		int currentMonth = mm - 1;
 		
-		String currentMonthName = getMonthAsString(currentMonth);
-
-		daysInMonth = getNumberOfDaysOfMonth(currentMonth);
-
 		GregorianCalendar gregCalendar = new GregorianCalendar(yy, currentMonth, 1);
-
 		
 		if ( currentMonth == 11 ) { // 12月
 			prevMonth = currentMonth - 1;
@@ -146,10 +123,13 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 		}
 		
 		daysInPrevMonth = getNumberOfDaysOfMonth(prevMonth);
-		
+		daysInMonth = getNumberOfDaysOfMonth(currentMonth);
 		// 取得當月第一天是星期幾
 		int firstDayOfWeek = gregCalendar.get(Calendar.DAY_OF_WEEK) - 1;
-		trailingSpaces = firstDayOfWeek;
+		
+		monthStartID = trailingSpaces = firstDayOfWeek;
+
+		monthStopID = monthStartID + daysInMonth;
 
 		// 設定閏年
 		if (gregCalendar.isLeapYear(gregCalendar.get(Calendar.YEAR)))
@@ -158,61 +138,69 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 			else if (mm == 3)
 				++daysInPrevMonth;
 
-		int id=0;
-		String isMornSelected="null";
-		String isNoonSelected="null";
-		String isNightSelected="null";
-		
+		int id = 0;
 		// Trailing Month days
 		for (int i = 0; i < trailingSpaces; i++) {
-			list.add(String.valueOf((daysInPrevMonth - trailingSpaces + DAY_OFFSET)+ i)	 
+			buttonInfoList.set(id, String.valueOf((daysInPrevMonth - trailingSpaces + DAY_OFFSET)+ i)	 
 					+ "-GREY"
+					+ "-" + prevYear
 					+ "-" + getMonthAsString(prevMonth)
-					+ "-" + prevYear 
 					+ "-" + id 
-					+ "-" + "null" 
-					+ "-" + "null" 
-					+ "-" + "null");
+					+ "-" + "false" 
+					+ "-" + "false" 
+					+ "-" + "false");
 			id++;
 		}
 
 		// Current Month Days
 		for (int i = 1; i <= daysInMonth; i++) {
-			//Log.d(currentMonthName, String.valueOf(i) + " "
-			//		+ getMonthAsString(currentMonth) + " " + yy + "-" +id + "-" + isMornSelected + "-" + isNoonSelected + "-" + isNightSelected);
-			if (i == getCurrentDayOfMonth()) {
-				list.add(String.valueOf(i) 
-						+ "-BLUE"
-						+ "-" + getMonthAsString(currentMonth) 
-						+ "-" + yy 
+				String selected = monthInfo.get(String.valueOf(i-1));
+				
+				if ( selected == null ) {
+					buttonInfoList.set(id, String.valueOf(i) 
+						+ "-GREY"
+						+ "-" + yy  
+						+ "-" + getMonthAsString(currentMonth)
 						+ "-" + id 
-						+ "-" + isMornSelected 
-						+ "-" + isNoonSelected 
-						+ "-" + isNightSelected);
-			} else {
-				list.add(String.valueOf(i) 
-						+ "-WHITE" 
-						+ "-" + getMonthAsString(currentMonth) 
-						+ "-" + yy 
-						+ "-" + id 
-						+ "-" + isMornSelected 
-						+ "-" + isNoonSelected 
-						+ "-" + isNightSelected);
-			}
+						+ "-" + "false" 
+						+ "-" + "false"  
+						+ "-" + "false" );
+				} else {
+					String[] checked = selected.split("-");
+					
+					if ( checked[0].equals("null") ) {
+						buttonInfoList.set(id, String.valueOf(i) 
+								+ "-GREY"
+								+ "-" + yy  
+								+ "-" + getMonthAsString(currentMonth)
+								+ "-" + id 
+								+ "-" + "false" 
+								+ "-" + "false"
+								+ "-" + "false");
+					} else {
+						buttonInfoList.set(id, String.valueOf(i) 
+								+ "-WHITE"
+								+ "-" + yy  
+								+ "-" + getMonthAsString(currentMonth)
+								+ "-" + id 
+								+ "-" + checked[0] 
+								+ "-" + checked[1] 
+								+ "-" + checked[2]);
+					}
+				}
 			id++;
 		}
 		
 		// Leading Month days
-		for (int i = 0; i < list.size() % 7; i++) {
-			//Log.d(tag, "NEXT MONTH:= " + getMonthAsString(nextMonth));
-			list.add(String.valueOf(i + 1) 
+		for (int i = 1; id<totalGrid ; i++) {
+			buttonInfoList.set(id, String.valueOf(i) 
 					+ "-GREY" 
 					+ "-" + getMonthAsString(nextMonth) 
 					+ "-" + nextYear 
 					+ "-" + id 
-					+ "-" + isMornSelected 
-					+ "-" + isNoonSelected 
-					+ "-" + isNightSelected);
+					+ "-" + "false" 
+					+ "-" + "false" 
+					+ "-" + "false");
 			id++;
 		}
 	}
@@ -227,10 +215,8 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 	 * @param month
 	 * @return
 	 */
-	private HashMap<String, Integer> findNumberOfEventsPerMonth(int year,
-			int month) {
+	private HashMap<String, Integer> findNumberOfEventsPerMonth() {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
-
 		return map;
 	}
 
@@ -239,9 +225,7 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 		return position;
 	}
 
-	private View setConsultingInfoToButton(int position, View convertView, ViewGroup parent) {
-		System.out.println("AAAAAAAAAA");
-		
+	private View refreshMonthInfoOnButton(int position, View convertView, ViewGroup parent) {
 		View row = convertView;
 		
 		if (row == null) {
@@ -253,17 +237,17 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 		// Get a reference to the Day gridcell
 		gridcell = (Button) row.findViewById(R.id.calendar_day_gridcell);
 		gridcell.setOnClickListener(this);
-
-		// ACCOUNT FOR SPACING
-
-		//Log.d(tag, "Current Day: " + list.get(position));
 		
 		// 擷取
-		String[] buttonInfo = list.get(position).split("-");
+		String[] buttonInfo = buttonInfoList.get(position).split("-");
+		
+		if ( buttonInfo == null || buttonInfo[0].equals(""))
+			return row;
+		
 		String day 		= buttonInfo[0];
 		//Strind dayColr = day_color[1];
-		String month 	= buttonInfo[2];
-		String year 	= buttonInfo[3];
+		String year 	= buttonInfo[2];
+		String month 	= buttonInfo[3];
 		String id 		= buttonInfo[4];
 		String isMornSelected = buttonInfo[5];
 		String isNoonSelected = buttonInfo[6];
@@ -288,24 +272,16 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 		
 		// 設定 button 裡的字體顏色
 		if (buttonInfo[1].equals("GREY")) {
-			gridcell.setTextColor(context.getResources()
-					.getColor(R.color.lightgray));
-		}
-		if (buttonInfo[1].equals("WHITE")) {
-			gridcell.setTextColor(context.getResources().getColor(
-					R.color.lightgray02));
-		}
-		if (buttonInfo[1].equals("BLUE")) {  //設定當今日期的顏色
-			//gridcell.setTextColor(_context.getResources().getColor(R.color.orrange));
+			gridcell.setTextColor(context.getResources().getColor(R.color.lightgray));
+		} else if (buttonInfo[1].equals("WHITE")) {
+			gridcell.setTextColor(context.getResources().getColor(R.color.lightgray02));
+		} else  { 
 			gridcell.setTextColor(context.getResources().getColor(R.color.lightgray02));
 		}
 		
 		
 		// 設定按鈕顏色
-		
-		/*
 		if("true".equals(isMornSelected) || "false".equals(isMornSelected)){
-
 			if("true".equals(isMornSelected)){
 				if("true".equals(isNoonSelected)){
 					if("true".equals(isNightSelected)){
@@ -347,33 +323,79 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 		}else{
 			//do nothing
 		}
-	*/
 	
 		return row;
 	}
 	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		return setConsultingInfoToButton(position, convertView, parent);
+		return refreshMonthInfoOnButton(position, convertView, parent);
 	}
 
-	
-	public void openOptionsDialog_selectConsultingHour()  
+	public void openOptionsDialog_selectConsultingHour(final int gridID)  
 	{
-    	AlertDialog.Builder builder=new AlertDialog.Builder(schedulingActivity);
+    	AlertDialog.Builder builder = new AlertDialog.Builder(schedulingActivity);
     	builder.setTitle("選擇看診時間");
-    	CharSequence[] session ={"早上","下午","晚上"};
-    	boolean[]   sessionStatus = new boolean[3];
-    	for ( int i=0; i<sessionStatus.length; i++ )
-    		sessionStatus[i]=false;	
+    	final String[] workTimeDefine = {"早上","下午","晚上"};
+    	final String day = String.valueOf(gridID - monthStartID);
+    	final CharSequence[] session = new CharSequence[3];
+    	// 取得星期幾
+    	final int dayOfWeek = (gridID - 1) % 7; 
+    	final String[] workTime = monthInfo.get("week"+String.valueOf(dayOfWeek)).split("-");
+    	String consulting = monthInfo.get(day);
+    	final String[] info;
+    	final boolean[] checked = new boolean[3];
+    	AlertDialog dialog = null;
+ 
+    	if ( consulting == null ) {
+    		info = new String[3];
+    		info[0] = info[1] = info[2] = "false";
+    	} else {
+    		info = consulting.split("-");
+    	}
+    		
+    	for ( int i=0; i<3; i++ ) {
+    		if ( workTime[i].equals("true")) {
+    			session[i] = workTimeDefine[i];
+    			checked[i] = (info[i] == null || info[i].equals("false")) ? false:true;
+    		} else {
+    			session[i] = workTimeDefine[i]+"休診";
+    			checked[i] = false;
+    		}
+    	}
     	
-    		builder.setMultiChoiceItems(session, 
-    			new boolean[]{false,true,false}, 
+    	builder.setMultiChoiceItems(session, 
+    			null, 
     			new DialogInterface.OnMultiChoiceClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-				// 紀錄時段
-				//sessionStatus[which]=isChecked;	
+				if ( session[which].equals(workTimeDefine[which]+"休診") ) {
+					isChecked = false; 
+					((AlertDialog) dialog).getListView().setItemChecked(which, isChecked);
+				}
+				
+				String consulting = monthInfo.get(day);
+            	String[] info;
+            	if ( consulting == null ) {
+            		info = new String[3];
+            		info[0] = info[1] = info[2] = "false";
+            	} else {
+            		info = consulting.split("-");
+            	}
+            	
+			    boolean morningChecked = (info[0] == null || info[0].equals("false")) ? false:true;
+			    boolean moonChecked    = (info[1] == null || info[1].equals("false")) ? false:true;
+			    boolean nightChecked   = (info[2] == null || info[2].equals("false")) ? false:true;
+				 
+				String status = "";		
+				if ( which == 0 )  
+					status = isChecked + "-" + moonChecked + "-" + nightChecked;
+				else if ( which == 1 ) 
+					status = morningChecked + "-" + isChecked + "-" + nightChecked;
+				else 
+					status = morningChecked + "-" + moonChecked + "-" + isChecked;
+			
+				monthInfo.put(day, status);
 			}
 		});
     	
@@ -381,98 +403,75 @@ public class CalendarGridCellAdapter extends BaseAdapter implements OnClickListe
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+            	String consulting = monthInfo.get(day);
+            	String[] info;
+            	if ( consulting == null ) {
+            		info = new String[3];
+            		info[0] = info[1] = info[2] = "false";
+            	} else {
+            		info = consulting.split("-");
+            	}
             	
+		    	boolean morningChecked = (info[0] == null || info[0].equals("false")) ? false:true;
+		    	boolean moonChecked    = (info[1] == null || info[1].equals("false")) ? false:true;
+		    	boolean nightChecked   = (info[2] == null || info[2].equals("false")) ? false:true;
             	
-                //Toast.makeText(getApplicationContext(), "Selected date: " + selectedYear+"/"+selectedMonth+"/"+selectedDay + selecteditem, Toast.LENGTH_LONG).show();
-                //adapter.setListContentByChoice(adapter.getListCurrentPosition(),sessionStatus[0], sessionStatus[1], sessionStatus[2]);                
-                //adapter.notifyDataSetChanged();
-            }
+		    	setListContentByChoice(gridID,morningChecked,moonChecked, nightChecked);                
+                notifyDataSetChanged();
+           }
         });
     	
-
-    	builder.show();
+    	dialog = builder.show();
+    	// Initial checked value
+    	for ( int i=0; i<3; i++ )
+    		dialog.getListView().setItemChecked(i, checked[i]);
     }	
+	
 	@Override
-	public void onClick(View view) {	
-		String date_month_year = (String) view.getTag();
+	public void onClick(View view) {
+		String viewTag = (String) view.getTag();
 		
-		System.out.println(date_month_year);
-		String[] item = date_month_year.split("-");
-		Toast.makeText(context, "The id you select is: " + item[3], Toast.LENGTH_LONG).show();
-		
-		int id=Integer.parseInt(item[3]);
-		
-		idToChangeBackground=id;
-		
-		try {
-			//先行定義時間格式
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			//取得現在時間
-			Date dt = sdf.parse(date_month_year);//"20-11-2012"
-			
-			SimpleDateFormat sdf6 = new SimpleDateFormat("y");//year
-			String year=sdf6.format(dt);
-			
-			SimpleDateFormat sdf7 = new SimpleDateFormat("M");//month
-			String month=sdf7.format(dt);
-
-			SimpleDateFormat sdf8 = new SimpleDateFormat("d");//month
-			String day=sdf8.format(dt);
-
-			if( Integer.parseInt(month)== this.schedulingActivity.getCurrentMonth() ){
-				//Toast.makeText(this._context, "Selected date: " + year+"/"+month+"/"+day, Toast.LENGTH_LONG).show();
-				//this.calendarActivity.openOptionsDialog_selectConsultingHour();
-				openOptionsDialog_selectConsultingHour();
-				this.schedulingActivity.setSelectedDay(Integer.parseInt(day));
-				this.schedulingActivity.setSelectedMonth(Integer.parseInt(month));
-				this.schedulingActivity.setSelectedYear(Integer.parseInt(year));
-			}else{
-				Toast.makeText(context, "The date you select is not current month!!", Toast.LENGTH_LONG).show();
-			}
-			
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (viewTag == null) {
+			return ;
 		}
+		
+		int id  = Integer.valueOf(viewTag.split("-")[3]);
+
+		if (( id < monthStartID) || id >= monthStopID) {
+			
+		} else {
+			//String status = monthInfo.get(id - monthStartID);
+				openOptionsDialog_selectConsultingHour(id);
+		}
+	}
+	
+	public void setListContentByChoice(int position,boolean morn, boolean noon, boolean night){
+		String[] buttonInfo = buttonInfoList.get(position).split("-");
+		String tmp = buttonInfo[0]+"-"+buttonInfo[1]+"-"+buttonInfo[2]+"-"+buttonInfo[3]+"-"+buttonInfo[4];
+		tmp += "-" + morn + "-" + noon + "-" + night;
+		buttonInfoList.set(position, tmp);
 	}
 
 	public int getCurrentDayOfMonth() {
 		return currentDayOfMonth;
 	}
 	
-	public int getListCurrentPosition(){
-		return idToChangeBackground;
+	private String getMonthAsString(int i) {
+		return months[i];
 	}
-	/*
-	public void setListContentByChoice(int position,boolean morn, boolean noon, boolean night){
-		String[] day_color = list.get(position).split("-");
-		String theday = day_color[0];
-		//Strind dayColr = day_color[1];
-		String themonth = day_color[2];
-		String theyear = day_color[3];
-		String idOfList = day_color[4];
-		String tmp="";
-		tmp=day_color[0]+"-"+day_color[1]+"-"+day_color[2]+"-"+day_color[3]+"-"+day_color[4];
-		
-		
-		if(morn)
-			tmp+="-true";
-		else
-			tmp+="-false";
-		
-		if(noon)
-			tmp+="-true";
-		else
-			tmp+="-false";
 
-		if(night)
-			tmp+="-true";
-		else
-			tmp+="-false";
-		
-		list.set(position, tmp);
-		
-		//Toast.makeText(this._context, "List is: " + list.get(position), Toast.LENGTH_LONG).show();
+	public int getNumberOfDaysOfMonth(int i) {
+		return daysOfMonth[i];
 	}
-*/
+
+	@Override
+	public String getItem(int position) {
+		return buttonInfoList.get(position);
+	}
+	
+	@Override	
+	public int getCount() {
+		return buttonInfoList.size();
+	}
+	
 }

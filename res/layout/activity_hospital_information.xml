@@ -142,7 +142,7 @@
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
 					   	    android:layout_width="190dp"
-					   	    android:hint="請輸入醫院編號"
+					   	    android:enabled="false"
 					    	android:text=""
 						/>  
 					</TableRow>			

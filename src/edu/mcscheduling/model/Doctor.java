@@ -16,6 +16,8 @@ public class Doctor {
 		} 
 	}
 	
+	
+	
 	public int addDoctor(String userid, String depName, String dorName, String telephone, String jobTitle, 
 							String history,String subject, String desc, String picPath) {
 		

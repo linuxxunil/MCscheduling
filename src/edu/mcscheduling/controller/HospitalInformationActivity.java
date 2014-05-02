@@ -27,7 +27,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class HospitalInformationActivity extends ControllerActivity {
@@ -61,7 +60,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 	private ContentValues[] hospitalContent = null;
 	
 	private Department depart = null;
-	private ContentValues[] departContent = null;
+	//private ContentValues[] departContent = null;
 	
 	private EditText hospitalNo = null;
 	private Spinner areaID = null;

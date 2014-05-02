@@ -98,15 +98,7 @@ public class HomeActivity extends ControllerActivity {
 	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			//for test
-			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, TestActivity.class);
-			startActivity(intent);
-			finish();
-			
-			/*
 			openOptionsDialog_leaveAPP();
-			*/
 		}
 	};
 

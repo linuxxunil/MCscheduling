@@ -17,7 +17,7 @@ public class DoctorSchedule {
 		} 
 	}
 
-	public int addDoctorSchedule(String userid, String depName, 
+	public int addDoctorSchedule(String userid, String dorNo, String depName, 
 			String schYear, String schMonth, String schedule, String desc) {
 		
 		Cursor cursor = null;
@@ -43,14 +43,14 @@ public class DoctorSchedule {
 				return -1;
 			} 
 			
-			String dorNo = null;
+			/*String dorNo = null;
 			
 			cursor.moveToFirst(); 
 			if ( cursor.getCount() == 0 ) {
 				dorNo = String.format("%05d", Integer.parseInt("0") + 1);
 			} else {
 				dorNo = String.format("%05d", Integer.parseInt(cursor.getString(0)) + 1);
-			}	
+			}*/	
 			
 			sql = String.format("INSERT INTO %s (%s,%s,%s,%s,%s,%s,%s,%s,%s) " +
 					"VALUES ('%s','%s','%s','%s','%s','%s','%s','%s','%s')",
@@ -187,14 +187,18 @@ public class DoctorSchedule {
 		return content;
 	}
 
-	public ContentValues[] getDoctorScheduleByDorNo(String userid, String dorNo) {
+	public ContentValues[] getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(String userid, String depName, String dorNo,int year, int month) {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
 		
-		String sql = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s'", DatabaseTable.DoctorSchedule.name,
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%d'",
+							DatabaseTable.DoctorSchedule.name,
 							DatabaseTable.DoctorSchedule.colUpdateID, updateID,
-							DatabaseTable.DoctorSchedule.colDorNo, dorNo);
+							DatabaseTable.DoctorSchedule.colDepName, depName,
+							DatabaseTable.DoctorSchedule.colDorNo, dorNo,
+							DatabaseTable.DoctorSchedule.colSchYear,year,
+							DatabaseTable.DoctorSchedule.colSchMonth,month);
 		
 		Cursor cursor = db.select(sql);
 	
@@ -224,4 +228,47 @@ public class DoctorSchedule {
 		
 		return content;
 	}
+
+	public ContentValues[] getDoctorScheduleByDorNo_ShcYear_ShcMonth(String userid, String dorNo, String year, String month) {
+		Hospital hospital = new Hospital(db);
+		String hospitalNo = hospital.getHospitalNo(userid);
+		String updateID = hospitalNo;
+		
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s' AND %s='%s' AND %s='%s' AND %s='%s'",
+							DatabaseTable.DoctorSchedule.name,
+							DatabaseTable.DoctorSchedule.colUpdateID, updateID,
+							DatabaseTable.DoctorSchedule.colDorNo, dorNo,
+							DatabaseTable.DoctorSchedule.colSchYear, year,
+							DatabaseTable.DoctorSchedule.colSchMonth, month);
+		
+		Cursor cursor = db.select(sql);
+	
+		if ( cursor == null ) 
+			return null;
+		
+		ContentValues[] content = null;
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
+		int columns = cursor.getColumnCount();
+
+		if ( rows <= 0 ) 
+			return null;
+		
+		content = new ContentValues[rows];
+	
+		for ( int i=0; i<rows; i++ ) {
+			content[i] = new ContentValues();
+			for ( int j=0; j<columns; j++ ) {
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+			}
+			cursor.moveToNext(); 
+		}
+		
+		if ( !cursor.isClosed() )
+			cursor.close();
+		
+		return content;
+	}
+	
+	
 }

@@ -5,7 +5,6 @@ import java.util.List;
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.Account;
 import edu.mcscheduling.model.DatabaseTable;
-import edu.mcscheduling.model.Hospital;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -22,7 +21,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -40,7 +38,6 @@ public class MemberInformationActivity extends ControllerActivity {
 	/**
 	 * 以下為Button變數
 	 */
-	private Button button_delete;
 	private Button button_save;
 	private Button button_uploadIDphoto;
 	
@@ -107,7 +104,6 @@ public class MemberInformationActivity extends ControllerActivity {
 	
 	private void setValueOfView() {
 		String strTmp = null;
-		boolean isNull = true;
 		
 		setSpinner_PasswordTip();
         setSpinner_WorkPattern();

@@ -182,7 +182,10 @@ public class MenuActivity extends ControllerActivity {
 	private ImageButton.OnClickListener registeredinquiry = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "registeredinquiry", Toast.LENGTH_LONG).show();
+			Intent intent = new Intent();
+			intent.setClass(MenuActivity.this, ScheduleViewActivity.class);
+			startActivity(intent);
+			finish();
 		}
 	};
 	
@@ -203,19 +206,6 @@ public class MenuActivity extends ControllerActivity {
 		@Override
 		public void onClick(View v) {
 			Toast.makeText(getApplicationContext(), "healthInformation", Toast.LENGTH_LONG).show();
-		}
-	};
-
-	/**
-	 * enroll
-	 * 
-	 * 當你按下註冊按鈕，執行對應的操作
-	 */
-	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "enroll", Toast.LENGTH_LONG)
-					.show();
 		}
 	};
 
