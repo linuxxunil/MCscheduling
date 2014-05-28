@@ -40,8 +40,8 @@ public abstract class DatabaseDriver {
 	 * @param sql
 	 * @return 
 	 */
-	abstract public Cursor select(String sql);
-	abstract public ResultSet selectMS(String sql);
+	abstract public ResultSet select(String sql);
+	//abstract public ResultSet selectMS(String sql);
 	/**
 	 * 
 	 * @param tblName
@@ -49,8 +49,8 @@ public abstract class DatabaseDriver {
 	 * @param whereExpr
 	 * @return 
 	 */
-	abstract public Cursor select(String tblName, String cols, String whereExpr);
-	abstract public ResultSet selectMS(String tblName, String cols, String whereExpr);
+	abstract public ResultSet select(String tblName, String cols, String whereExpr);
+	//abstract public ResultSet selectMS(String tblName, String cols, String whereExpr);
 	/**
 	 * 
 	 * @param table

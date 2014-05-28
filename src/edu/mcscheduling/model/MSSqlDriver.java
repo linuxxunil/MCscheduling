@@ -80,25 +80,7 @@ public class MSSqlDriver extends DatabaseDriver {
 	}
 
 	@Override
-	public void beginTransaction() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void endTransaction() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setTransactionSuccessful() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public ResultSet selectMS(String sql) {
+	public ResultSet select(String sql) {
 		if (con == null) {
 			StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
 			return null;
@@ -118,25 +100,13 @@ public class MSSqlDriver extends DatabaseDriver {
 	}
 
 	@Override
-	public ResultSet selectMS(String tblName, String cols, String whereExpr) {
+	public ResultSet select(String tblName, String cols, String whereExpr) {
 		String sql = String.format("SELECT %s FROM %s", cols, tblName);
 
 		if (whereExpr != null) {
 			sql += " WHERE " + whereExpr;
 		}
-		return selectMS(sql);
-	}
-
-	@Override
-	public Cursor select(String sql) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Cursor select(String tblName, String cols, String whereExpr) {
-		// TODO Auto-generated method stub
-		return null;
+		return select(sql);
 	}
 
 	@Override
@@ -181,4 +151,23 @@ public class MSSqlDriver extends DatabaseDriver {
 		return update(sql);
 	}
 
+	@Override
+	public void beginTransaction() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void endTransaction() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setTransactionSuccessful() {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
 }

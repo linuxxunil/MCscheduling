@@ -1,5 +1,7 @@
 package edu.mcscheduling.model;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -56,20 +58,23 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 		
-		Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
 		
-		if ( cursor == null )
+		if ( result == null )
 			return false;
+		try {
+			result.first(); 
 		
-		cursor.moveToFirst(); 
-		if ( cursor.getCount() == 1 ) 
-			ret = true;
-		else
-			ret = false;
+			if ( result.getFetchSize() == 1 ) 
+				ret = true;
+			else
+				ret = false;
 			
-		if ( !cursor.isClosed() )
-			cursor.close();
-		
+			if ( !result.isClosed() )
+				result.close();
+		} catch (SQLException e) {
+			ret = false;
+		}
 		return ret;
 	}
 	
@@ -80,7 +85,7 @@ public class Hospital {
 			
 		} 
 		int ret = StatusCode.success;
-		Cursor cursor = null;
+		ResultSet result = null;
 		db.beginTransaction();
 		
 		try {
@@ -90,17 +95,17 @@ public class Hospital {
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colHospitalNo);
 		
-			cursor = db.select(sql); 
+			result = db.select(sql); 
 			
-			if ( cursor == null ) {
-				System.out.println("AAAAAA");
+			if ( result == null ) {
+				return -1;
 			} 
 			
-			cursor.moveToFirst(); 
-			if ( cursor.getCount() == 0 ) {
+			result.first(); 
+			if ( result.getFetchSize() == 0 ) {
 				hospitalNo = String.format("%05d", Integer.parseInt("0") + 1);
 			} else {
-				hospitalNo = String.format("%05d", Integer.parseInt(cursor.getString(0)) + 1);
+				hospitalNo = String.format("%05d", Integer.parseInt(result.getString(0)) + 1);
 			}
 
 			sql = String.format("INSERT INTO %s (%s,%s,%s) VALUES ('%s','%s','%s')",
@@ -114,10 +119,16 @@ public class Hospital {
 				ret = 1;
 			else 
 				db.setTransactionSuccessful();
+		} catch (SQLException e ) { 
+			ret = 1;
 		} finally {
 			db.endTransaction();
-			if ( cursor != null || !cursor.isClosed() )
-				cursor.close();
+			try {
+				if ( result != null || !result.isClosed() )
+					result.close();
+			} catch (SQLException e) {
+				// nothing
+			}
 		}
 		return ret;
 		
@@ -165,7 +176,6 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,userid
 				);
 	
-		System.out.println(sql);
 		if ( db.update(sql) < 0 ) 
 			return StatusCode.WAR_REGISTER_FAIL();
 		return StatusCode.success;
@@ -184,17 +194,22 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 
-		Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
 		
-		if ( cursor == null )
+		if ( result == null )
 			return null;
 		
-		cursor.moveToFirst(); 
-		if ( cursor.getCount() == 1 ) 
-			hospitalNo = cursor.getString(0);
+		try {
+			result.first();
+		
+			if ( result.getFetchSize() == 1 ) 
+				hospitalNo = result.getString(0);
 			
-		if ( !cursor.isClosed() )
-			cursor.close();
+			if ( !result.isClosed() )
+				result.close();
+		} catch ( SQLException e ) {
+			hospitalNo = null;
+		}
 		
 		return hospitalNo;
 		
@@ -261,20 +276,20 @@ public class Hospital {
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,userid);
 		
-		Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
 		
-		if ( cursor == null ) 
+		if ( result == null ) 
 			return null;
 		
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
+		result.first(); 
+		int rows = result.getFetchSize();
 		if ( rows <= 0 ) {
-			if ( !cursor.isClosed() )
-				cursor.close();
+			if ( !result.isClosed() )
+				result.close();
 			return null;
 		}
 		
-		int columns = cursor.getColumnCount();
+		int columns = result.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {

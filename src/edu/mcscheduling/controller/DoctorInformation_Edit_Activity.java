@@ -137,7 +137,6 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 			
 			// Job Title
 			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colJobTitle);
-			System.out.println(strTmp);
 			jobTitle.setText(strTmp == null ? "":strTmp);
 			
 			// telephone
