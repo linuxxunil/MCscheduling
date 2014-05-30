@@ -1,5 +1,9 @@
 package edu.mcscheduling.model;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Hospital;
 import android.annotation.SuppressLint;
@@ -18,9 +22,9 @@ public class DoctorSchedule {
 	}
 
 	public int addDoctorSchedule(String userid, String dorNo, String depName, 
-			String schYear, String schMonth, String schedule, String desc) {
+			String schYear, String schMonth, String schedule, String desc) throws SQLException {
 		
-		Cursor cursor = null;
+		ResultSet result = null;
 		
 		try {
 			db.beginTransaction();
@@ -37,9 +41,9 @@ public class DoctorSchedule {
 					hospitalNo,
 					DatabaseTable.DoctorSchedule.colDorNo);
 		
-			cursor = db.select(sql); 
+			result = db.select(sql); 
 		
-			if ( cursor == null ) {
+			if ( result == null ) {
 				return -1;
 			} 
 			
@@ -83,8 +87,8 @@ public class DoctorSchedule {
 		} finally {
 			db.endTransaction();
 			
-			if ( cursor != null || !cursor.isClosed() )
-				cursor.close();
+			if ( result != null || !result.isClosed() )
+				result.close();
 		}
 		
 		return StatusCode.success;
@@ -150,7 +154,7 @@ public class DoctorSchedule {
 		return StatusCode.success;
 	}
 	
-	public ContentValues[]  getDoctorSchedule(String userid) {
+	public ContentValues[]  getDoctorSchedule(String userid) throws SQLException {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
@@ -158,15 +162,16 @@ public class DoctorSchedule {
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.DoctorSchedule.name,
 							DatabaseTable.DoctorSchedule.colUpdateID, updateID);
 		
-		Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
+		ResultSetMetaData metaData = result.getMetaData();
 	
-		if ( cursor == null ) 
+		if ( result == null ) 
 			return null;
 		
 		ContentValues[] content = null;
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
-		int columns = cursor.getColumnCount();
+		result.beforeFirst(); 
+		int rows = result.getFetchSize();
+		int columns = metaData.getColumnCount();
 
 		if ( rows <= 0 ) 
 			return null;
@@ -176,18 +181,18 @@ public class DoctorSchedule {
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+				content[i].put(metaData.getColumnName(j), result.getString(j));	
 			}
-			cursor.moveToNext(); 
+			result.next(); 
 		}
 		
-		if ( !cursor.isClosed() )
-			cursor.close();
+		if ( !result.isClosed() )
+			result.close();
 		
 		return content;
 	}
 
-	public ContentValues[] getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(String userid, String depName, String dorNo,int year, int month) {
+	public ContentValues[] getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(String userid, String depName, String dorNo,int year, int month) throws SQLException {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
@@ -200,15 +205,16 @@ public class DoctorSchedule {
 							DatabaseTable.DoctorSchedule.colSchYear,year,
 							DatabaseTable.DoctorSchedule.colSchMonth,month);
 		
-		Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
+		ResultSetMetaData metaData = result.getMetaData();
 	
-		if ( cursor == null ) 
+		if ( result == null ) 
 			return null;
 		
 		ContentValues[] content = null;
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
-		int columns = cursor.getColumnCount();
+		result.beforeFirst(); 
+		int rows = result.getFetchSize();
+		int columns = metaData.getColumnCount();
 
 		if ( rows <= 0 ) 
 			return null;
@@ -218,18 +224,18 @@ public class DoctorSchedule {
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+				content[i].put(metaData.getColumnName(j), result.getString(j));	
 			}
-			cursor.moveToNext(); 
+			result.next(); 
 		}
 		
-		if ( !cursor.isClosed() )
-			cursor.close();
+		if ( !result.isClosed() )
+			result.close();
 		
 		return content;
 	}
 
-	public ContentValues[] getDoctorScheduleByDorNo_ShcYear_ShcMonth(String userid, String dorNo, String year, String month) {
+	public ContentValues[] getDoctorScheduleByDorNo_ShcYear_ShcMonth(String userid, String dorNo, String year, String month) throws SQLException {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
@@ -241,15 +247,16 @@ public class DoctorSchedule {
 							DatabaseTable.DoctorSchedule.colSchYear, year,
 							DatabaseTable.DoctorSchedule.colSchMonth, month);
 		
-		Cursor cursor = db.select(sql);
-	
-		if ( cursor == null ) 
+		ResultSet result = db.select(sql);
+		ResultSetMetaData metaData = result.getMetaData();
+		
+		if ( result == null ) 
 			return null;
 		
 		ContentValues[] content = null;
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
-		int columns = cursor.getColumnCount();
+		result.beforeFirst(); 
+		int rows = result.getFetchSize();
+		int columns = metaData.getColumnCount();
 
 		if ( rows <= 0 ) 
 			return null;
@@ -259,13 +266,13 @@ public class DoctorSchedule {
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+				content[i].put(metaData.getColumnName(j), result.getString(j));	
 			}
-			cursor.moveToNext(); 
+			result.next(); 
 		}
 		
-		if ( !cursor.isClosed() )
-			cursor.close();
+		if ( !result.isClosed() )
+			result.close();
 		
 		return content;
 	}

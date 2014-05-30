@@ -1,5 +1,7 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
@@ -125,7 +127,7 @@ public class RevisePasswordActivity extends ControllerActivity {
 	};
 	
 	
-	private void handleRevisePassword(View v) {
+	private void handleRevisePassword(View v) throws SQLException {
 		String oldPassword = ((EditText)
 				findViewById(R.id.oldPassword)).getText().toString();
 		String newPassword = ((EditText)
@@ -165,7 +167,12 @@ public class RevisePasswordActivity extends ControllerActivity {
 	private Button.OnClickListener newPasswordConfirm = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			handleRevisePassword(v);
+			try {
+				handleRevisePassword(v);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 	};

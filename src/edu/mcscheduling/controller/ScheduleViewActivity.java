@@ -1,5 +1,6 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -84,12 +85,22 @@ public class ScheduleViewActivity extends ControllerActivity {
 		
 		monthInfo = new HashMap<String, String>();
 		
-		departContent = depart.getDepartment(getLoginID());
-		hospitalContent = hospital.getHospital(getLoginID());
+		try {
+			departContent = depart.getDepartment(getLoginID());
+			hospitalContent = hospital.getHospital(getLoginID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		bindViewComponent();
 		
-		setValueOfView();
+		try {
+			setValueOfView();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		setListeners();
 	}
@@ -107,7 +118,7 @@ public class ScheduleViewActivity extends ControllerActivity {
 		comCalendarView = (GridView) this.findViewById(R.id.calendar);
 	}
 
-	private void setValueOfView() {
+	private void setValueOfView() throws SQLException {
 		
 		setSpinner_MedicalDepartment();
 		
@@ -141,7 +152,7 @@ public class ScheduleViewActivity extends ControllerActivity {
 						consultingChecked[2] );
 	}
 	
-	private void setMonthInfo(int year,int month) {
+	private void setMonthInfo(int year,int month) throws SQLException {
 		
 		if ( (year<2012) || (month<1 || month>12)) {
 			return ;
@@ -182,7 +193,7 @@ public class ScheduleViewActivity extends ControllerActivity {
 		}
 	}
 	
-	private void setCalendar_ValueOfView(int year, int month) {
+	private void setCalendar_ValueOfView(int year, int month) throws SQLException {
 		
 		setMonthInfo(year, month);
 		
@@ -252,7 +263,7 @@ public class ScheduleViewActivity extends ControllerActivity {
         
     }
     
-    private void setSpinner_DoctorName() {
+    private void setSpinner_DoctorName() throws SQLException {
      	 
         //get reference to the spinner from the XML layout
         final Spinner spinner = comDorName;
@@ -285,8 +296,14 @@ public class ScheduleViewActivity extends ControllerActivity {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
     		dorNoRowId = 0;
     		depNameRowId = pos;
-    		setSpinner_DoctorName();
-    		setMonthInfo(currentYear, currentMonth);
+    		try {
+				setSpinner_DoctorName();
+				setMonthInfo(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
     		adapter.updateMonthInfoToButton(currentYear, currentMonth);
     		adapter.notifyDataSetChanged();
     	}
@@ -302,7 +319,12 @@ public class ScheduleViewActivity extends ControllerActivity {
     	@Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
     		dorNoRowId = pos;
-    		setMonthInfo(currentYear, currentMonth);
+    		try {
+				setMonthInfo(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     		adapter.updateMonthInfoToButton(currentYear, currentMonth);
     		adapter.notifyDataSetChanged();
     	}
@@ -323,7 +345,12 @@ public class ScheduleViewActivity extends ControllerActivity {
 			} else {
 				currentMonth--;
 			}
-			setCalendar_ValueOfView(currentYear, currentMonth);
+			try {
+				setCalendar_ValueOfView(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	};
 
@@ -336,7 +363,12 @@ public class ScheduleViewActivity extends ControllerActivity {
 			} else {
 				currentMonth++;
 			}
-			setCalendar_ValueOfView(currentYear, currentMonth);
+			try {
+				setCalendar_ValueOfView(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	};
 	

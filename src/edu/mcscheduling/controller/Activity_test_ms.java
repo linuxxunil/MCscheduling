@@ -1,4 +1,4 @@
-package com.example.test;
+package edu.mcscheduling.controller;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -9,12 +9,16 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import net.sourceforge.jtds.jdbc.Driver;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class MainActivity extends Activity {
+import edu.mcscheduling.R;
+import edu.mcscheduling.model.MSSqlDriver;
+
+public class Activity_test_ms extends Activity {
 	TextView mytext;
 
 
@@ -24,7 +28,7 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		mytext = (TextView) findViewById(R.id.textView1);
+		mytext = (TextView) findViewById(R.id.textView_SchedulePage_day);
 
 		ConnectTask dt = new ConnectTask();
 		dt.execute();
@@ -41,7 +45,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected String doInBackground(Integer... params) {
 			int a = msdata.onConnect();
-			ResultSet rs = msdata.selectMS("SELECT TOP 1000 [HospitalNo] FROM [cscheduling].[dbo].[Doctor]"); 
+			ResultSet rs = msdata.select("SELECT TOP 1000 [HospitalNo] FROM [cscheduling].[dbo].[Doctor]"); 
 				try {
 					while (rs.next()) { 
 						Log.i("Jason", "HospitalNo :" + rs.getString("HospitalNo"));
@@ -62,7 +66,7 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
 	}
 

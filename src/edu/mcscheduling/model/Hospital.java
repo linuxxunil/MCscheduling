@@ -1,6 +1,7 @@
 package edu.mcscheduling.model;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -270,13 +271,15 @@ public class Hospital {
 	 * ¨ç¼Æ½d¨Ò : None </br>
 	 *
 	 * @return ContentValues[]
+	 * @throws SQLException 
 	 */
-	public ContentValues[] getHospital(String userid){
+	public ContentValues[] getHospital(String userid) throws SQLException{
 		
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,userid);
 		
 		ResultSet result = db.select(sql);
+		ResultSetMetaData metadata = result.getMetaData();
 		
 		if ( result == null ) 
 			return null;
@@ -289,15 +292,15 @@ public class Hospital {
 			return null;
 		}
 		
-		int columns = result.getColumnCount();
+		int columns = metadata.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(result.getColumnName(j), result.getString(j));	
+				content[i].put(metadata.getColumnName(j), result.getString(j));	
 			}
-			result.moveToNext(); 
+			result.next(); 
 		}
 		
 		if ( !result.isClosed() )

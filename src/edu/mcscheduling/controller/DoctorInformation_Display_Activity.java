@@ -1,7 +1,9 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.DatabaseTable;
@@ -76,7 +78,12 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		setListeners();
 		
 		doctor = new Doctor(db);
-		doctorContent = doctor.getDoctor(getLoginID());
+		try {
+			doctorContent = doctor.getDoctor(getLoginID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		setListView_DoctorInformation();
 	}

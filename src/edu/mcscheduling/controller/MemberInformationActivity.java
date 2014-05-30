@@ -1,7 +1,9 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.Account;
 import edu.mcscheduling.model.DatabaseTable;
@@ -85,7 +87,12 @@ public class MemberInformationActivity extends ControllerActivity {
 		
 		account = new Account(db);
 		
-		content = account.getMemberInformation(getLoginID());
+		try {
+			content = account.getMemberInformation(getLoginID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		bindViewComponent();
 		

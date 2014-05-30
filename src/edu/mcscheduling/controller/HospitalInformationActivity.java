@@ -1,7 +1,9 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
@@ -123,7 +125,12 @@ public class HospitalInformationActivity extends ControllerActivity {
 		hospital = new Hospital(db);
 		depart = new Department(db);
 		
-		hospitalContent = hospital.getHospital(getLoginID());
+		try {
+			hospitalContent = hospital.getHospital(getLoginID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		bindViewComponent();
 		

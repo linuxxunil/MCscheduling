@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.io.IOException;
 
-import com.mockrunner.mock.jdbc.MockResultSet;
+//import com.mockrunner.mock.jdbc.MockResultSet;
 
 import edu.mcscheduling.common.StatusCode;
 
@@ -47,9 +47,9 @@ public class Databasepointer{
 		wdb = 2;
 	}
 	
-	public ResultSet getresultset()
+	/*public ResultSet getresultset()
 	{
 		MockResultSet mockResultSet = new MockResultSet("myResultSet");
 		return rs;
-	}
+	}*/
 }

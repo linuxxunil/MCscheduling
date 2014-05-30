@@ -1,5 +1,6 @@
 package edu.mcscheduling.controller;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -90,8 +91,13 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		
 		monthInfo = new HashMap<String, String>();
 		
-		departContent = depart.getDepartment(getLoginID());
-		hospitalContent = hospital.getHospital(getLoginID());
+		try {
+			departContent = depart.getDepartment(getLoginID());
+			hospitalContent = hospital.getHospital(getLoginID());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		bindViewComponent();
 		
@@ -117,7 +123,12 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		
 		setSpinner_MedicalDepartment();
 		
-		setSpinner_DoctorName();
+		try {
+			setSpinner_DoctorName();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 				
 		setCalendar_ValueOfView(currentYear, currentMonth);
 	}
@@ -147,7 +158,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 						consultingChecked[2] );
 	}
 	
-	private void setMonthInfo(int year,int month) {
+	private void setMonthInfo(int year,int month) throws SQLException {
 		
 		if ( (year<2012) || (month<1 || month>12)) {
 			return ;
@@ -190,7 +201,12 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	
 	private void setCalendar_ValueOfView(int year, int month) {
 		
-		setMonthInfo(year, month);
+		try {
+			setMonthInfo(year, month);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if ( adapter == null ) {
 			adapter = new CalendarGridCellAdapter(
@@ -260,7 +276,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
         
     }
     
-    private void setSpinner_DoctorName() {
+    private void setSpinner_DoctorName() throws SQLException {
      	 
         //get reference to the spinner from the XML layout
         final Spinner spinner = comDorName;
@@ -293,8 +309,14 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
     		dorNoRowId = 0;
     		depNameRowId = pos;
-    		setSpinner_DoctorName();
-    		setMonthInfo(currentYear, currentMonth);
+    		try {
+				setSpinner_DoctorName();
+				setMonthInfo(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    		
     		adapter.updateMonthInfoToButton(currentYear, currentMonth);
     		adapter.notifyDataSetChanged();
     	}
@@ -308,7 +330,12 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
     	@Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
     		dorNoRowId = pos;
-    		setMonthInfo(currentYear, currentMonth);
+    		try {
+				setMonthInfo(currentYear, currentMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     		adapter.updateMonthInfoToButton(currentYear, currentMonth);
     		adapter.notifyDataSetChanged();
     	}
@@ -398,24 +425,34 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			String schYear = String.valueOf(currentYear);
 			String schMonth = String.valueOf(currentMonth);
 
-			scheduleContent = schedule.getDoctorScheduleByDorNo_ShcYear_ShcMonth(
-					getLoginID(),
-					dorNo,
-					schYear,
-					schMonth);
-			
-			if ( scheduleContent == null ) 
-				if ( schedule.addDoctorSchedule(
-						getLoginID(), 
+			try {
+				scheduleContent = schedule.getDoctorScheduleByDorNo_ShcYear_ShcMonth(
+						getLoginID(),
 						dorNo,
-						depName, 
-						schYear, 
-						schMonth,
-						getConsultingTime(), 
-						"null") == 0 ) { 
-					Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_LONG).show();
-				}else {
-					Toast.makeText(getApplicationContext(), "修改失敗", Toast.LENGTH_LONG).show();
+						schYear,
+						schMonth);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			if ( scheduleContent == null )
+				try {
+					if ( schedule.addDoctorSchedule(
+							getLoginID(), 
+							dorNo,
+							depName, 
+							schYear, 
+							schMonth,
+							getConsultingTime(), 
+							"null") == 0 ) { 
+						Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_LONG).show();
+					}else {
+						Toast.makeText(getApplicationContext(), "修改失敗", Toast.LENGTH_LONG).show();
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			else
 				if ( schedule.updateDoctorSchedule(

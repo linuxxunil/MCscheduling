@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -64,8 +66,9 @@ public class Account {
 	 * @param userid
 	 * @param userpasswd
 	 * @return
+	 * @throws SQLException 
 	 */
-	private int matchUseridPasswd(String userid, String userpasswd) {
+	private int matchUseridPasswd(String userid, String userpasswd) throws SQLException {
 		if ( userid == null || userid.isEmpty() )
 			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
 		else if ( userpasswd == null || userpasswd.isEmpty() )
@@ -81,7 +84,7 @@ public class Account {
 		//Cursor cursor = db.select(DatabaseTable.User.name, columns, whereExpr);
 		ResultSet result = db.select(DatabaseTable.User.name, columns, whereExpr);
 
-		if (result != null && result.getCount() != 1)
+		if (result != null && result.getFetchSize() != 1)
 			return StatusCode.WAR_LOGIN_FAIL();
 
 		return StatusCode.success;
@@ -94,8 +97,9 @@ public class Account {
 	 * @param userid		"使用者ID"
 	 * @param userpasswd	"使用者密碼"
 	 * @return 
+	 * @throws SQLException 
 	 */
-	public int login(String userid, String userpasswd)  {
+	public int login(String userid, String userpasswd) throws SQLException  {
 		return matchUseridPasswd(userid, userpasswd);
 	}
 	
@@ -107,8 +111,9 @@ public class Account {
 	 * @param oldPasswd
 	 * @param newPasswd
 	 * @return
+	 * @throws SQLException 
 	 */
-	public int changePasswd(String userid,String oldPasswd, String newPasswd)  {
+	public int changePasswd(String userid,String oldPasswd, String newPasswd) throws SQLException  {
 		if ( userid == null || userid.isEmpty() )
 			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
 		else if ( oldPasswd == null || oldPasswd.isEmpty() )
@@ -147,7 +152,7 @@ public class Account {
 		return StatusCode.success;
 	}
 	
-	public ContentValues[]  getMemberInformation(String userid) {
+	public ContentValues[]  getMemberInformation(String userid) throws SQLException {
 		
 		String sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
 								DatabaseTable.User.colUserid,
@@ -161,31 +166,33 @@ public class Account {
 		
 		//Cursor cursor = db.select(sql);
 		ResultSet result = db.select(sql);
+		ResultSetMetaData metadata = result.getMetaData();
 		
 		if ( result == null ) 
 			return null;
 		
-		result.moveToFirst(); 
-		int rows = result.getCount();
+		//result.moveToFirst();
+		result.beforeFirst();
+		int rows = result.getFetchSize();
 		if ( rows <= 0 ) {
-			if ( !cursor.isClosed() )
-				cursor.close();
+			if ( !result.isClosed() )
+				result.close();
 			return null;
 		}
 		
-		int columns = cursor.getColumnCount();
+		int columns = metadata.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+				content[i].put(metadata.getColumnName(j), result.getString(j));	
 			}
-			cursor.moveToNext(); 
+			result.next(); 
 		}
 		
-		if ( !cursor.isClosed() )
-			cursor.close();
+		if ( !result.isClosed() )
+			result.close();
 		
 		return content;
 	}
