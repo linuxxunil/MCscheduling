@@ -295,13 +295,13 @@ public class Hospital {
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+				content[i].put(result.getColumnName(j), result.getString(j));	
 			}
-			cursor.moveToNext(); 
+			result.moveToNext(); 
 		}
 		
-		if ( !cursor.isClosed() )
-			cursor.close();
+		if ( !result.isClosed() )
+			result.close();
 		
 		return content;
 	}

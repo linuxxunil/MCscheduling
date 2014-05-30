@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 
+import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -77,9 +78,10 @@ public class Account {
 				DatabaseTable.User.colUserid, userid, 
 				DatabaseTable.User.colUserpasswd, userpasswd);
 
-		Cursor cursor = db.select(DatabaseTable.User.name, columns, whereExpr);
+		//Cursor cursor = db.select(DatabaseTable.User.name, columns, whereExpr);
+		ResultSet result = db.select(DatabaseTable.User.name, columns, whereExpr);
 
-		if (cursor != null && cursor.getCount() != 1)
+		if (result != null && result.getCount() != 1)
 			return StatusCode.WAR_LOGIN_FAIL();
 
 		return StatusCode.success;
@@ -157,13 +159,14 @@ public class Account {
 								DatabaseTable.User.colUserid, userid
 							);
 		
-		Cursor cursor = db.select(sql);
+		//Cursor cursor = db.select(sql);
+		ResultSet result = db.select(sql);
 		
-		if ( cursor == null ) 
+		if ( result == null ) 
 			return null;
 		
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
+		result.moveToFirst(); 
+		int rows = result.getCount();
 		if ( rows <= 0 ) {
 			if ( !cursor.isClosed() )
 				cursor.close();
