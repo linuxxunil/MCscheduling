@@ -101,13 +101,7 @@ public class ControllerActivity extends Activity {
 		protected MSSqlDriver doInBackground(Integer... params) {
 			msssql = new MSSqlDriver(); 
 			if ( msssql.onConnect() == StatusCode.success ) {
-				try {
-					Databasepointer dp = new Databasepointer(msssql.select("SELECT TOP 1000 [HospitalNo] FROM [cscheduling].[dbo].[Doctor]"));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				/*ResultSet rs = msssql.selectMS("SELECT TOP 1000 [HospitalNo] FROM [cscheduling].[dbo].[Doctor]"); 
+				ResultSet rs = msssql.selectMS("SELECT TOP 1000 [HospitalNo] FROM [cscheduling].[dbo].[Doctor]"); 
 				try {
 					while (rs.next()) { 
 						Log.i("Jason", "HospitalNo :" + rs.getString("HospitalNo"));
@@ -116,7 +110,7 @@ public class ControllerActivity extends Activity {
 				} catch (java.sql.SQLException e) {
 					e.printStackTrace();
 				}
-				msssql.createTable(DatabaseTable.Hospital.create());
+				/*msssql.createTable(DatabaseTable.Hospital.create());
 				msssql.createTable(DatabaseTable.CodeFile.create());
 				msssql.createTable(DatabaseTable.Doctor.create());
 				msssql.createTable(DatabaseTable.Department.create());
