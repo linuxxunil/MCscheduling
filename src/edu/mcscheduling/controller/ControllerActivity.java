@@ -3,6 +3,7 @@ package edu.mcscheduling.controller;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutionException;
 
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.DatabaseDriver;
@@ -48,6 +49,7 @@ public class ControllerActivity extends Activity {
 		break;
 		case MSSQL:
 			db = msssql;
+		break;
 		default:
 			db = sqlite;
 		break;
@@ -74,6 +76,15 @@ public class ControllerActivity extends Activity {
 			//msssql = new MSSqlDriver(); 
 			ConnectTask dt = new ConnectTask();
 			dt.execute();
+			try {
+				msssql = dt.get();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			setAccessDriver(AccessType.MSSQL);
 		}
 	}
@@ -116,9 +127,9 @@ public class ControllerActivity extends Activity {
 				msssql = null;
 				System.out.println("test connect MSS error");
 			}
-			/*int b = msssql.inset("INSERT INTO [cscheduling].[dbo].[Department] ([HospitalNo],[DepName],[UpdateID],[UpdateDate],[Desc]) VALUES ('00007','憭��','b@b.com','2014-03-31 00:00:00.000','NULL')"); 
-			int c = msssql.delete("DELETE FROM [cscheduling].[dbo].[Department] WHERE [DepName]='憭��'"); 
-			int d = msssql.update("UPDATE [cscheduling].[dbo].[Department] SET [HospitalNo]=77777 WHERE [DepName]='蝡寧��'");
+			/*int b = msssql.inset("INSERT INTO [cscheduling].[dbo].[Department] ([HospitalNo],[DepName],[UpdateID],[UpdateDate],[Desc]) VALUES ('00007','�謘橘蕭嚙�','b@b.com','2014-03-31 00:00:00.000','NULL')"); 
+			int c = msssql.delete("DELETE FROM [cscheduling].[dbo].[Department] WHERE [DepName]='�謘橘蕭嚙�'"); 
+			int d = msssql.update("UPDATE [cscheduling].[dbo].[Department] SET [HospitalNo]=77777 WHERE [DepName]='�撖改蕭嚙�'");
 			int e = msssql.createTable("CREATE TABLE [dbo].[test]([HospitalNo] [nvarchar](10) NOT NULL,[DepName] [nvarchar](50) NULL) ON [PRIMARY]");*/
 			System.out.println("MS select ok");
 			//return "success";
