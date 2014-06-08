@@ -21,6 +21,13 @@ public class Department {
 		} 
 	}
 	
+	private String getHospitalNoSQL(String userid) {
+		return String.format("(SELECT %s FROM %s WHERE %s='%s')",
+		DatabaseTable.Hospital.colHospitalNo,
+		DatabaseTable.Hospital.name,
+		DatabaseTable.Hospital.colUpdateID, userid);
+	}
+	
 	public int setDepartment(final String updateID,final String depName, final String desc) {
 		if ( this.exist == false ) {
 			return -1;
@@ -52,13 +59,13 @@ public class Department {
 			
 				for ( int i=0; i<depart.length; i++ ) {
 					sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
-						"VALUES ('%05d','%s','%s','%s')",
+						"VALUES (%s,'%s','%s','%s')",
 						DatabaseTable.Department.name,
 						DatabaseTable.Department.colHospitalNo,
 						DatabaseTable.Department.colDepName,
 						DatabaseTable.Department.colUpdateID,
 						DatabaseTable.Department.colUpdateDate,
-						i+1,
+						getHospitalNoSQL(updateID),
 						depart[i],
 						updateID,
 						new DateTime().getDateTime()
