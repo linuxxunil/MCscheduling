@@ -1,5 +1,8 @@
 package edu.mcscheduling.model;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -20,7 +23,7 @@ public class Department {
 		} 
 	}
 	
-	public int setDepartment(String updateID, String depName, String desc) {
+	public int setDepartment(final String updateID,final String depName, final String desc) {
 		if ( this.exist == false ) {
 			return -1;
 		}else if ( updateID == null || updateID.isEmpty() )
@@ -30,79 +33,103 @@ public class Department {
 		else if ( desc == null || desc.isEmpty() ) 
 			return -4;
 		
-		db.beginTransaction();
-		try {
-			String sql = String.format("DELETE FROM %s WHERE %s='%s'", 
+		
+		Object obj =
+		
+		db.excuteTransation( new Transation() {
+				
+			@Override
+			public 	Integer execute() throws SQLException {
+			
+				String sql = String.format("DELETE FROM %s WHERE %s='%s'", 
 							DatabaseTable.Department.name,
 							DatabaseTable.Department.colUpdateID,
 							updateID);
 			
-			if ( db.delete(sql) < 0 ) {
-				return -1;
-			} 
+				if ( db.delete(sql) < 0 ) {
+					return -1;
+				} 
 				
-			String[] depart = depName.split(",");
+				String[] depart = depName.split(",");
 			
-			for ( int i=0; i<depart.length; i++ ) {
-				sql = String.format("INSERT INTO %s (%s,%s,%s,%s,%s) " +
-						"VALUES ('%05d','%s','%s','%s','%s')",
+				for ( int i=0; i<depart.length; i++ ) {
+					sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
+						"VALUES ('%05d','%s','%s','%s')",
 						DatabaseTable.Department.name,
 						DatabaseTable.Department.colHospitalNo,
 						DatabaseTable.Department.colDepName,
 						DatabaseTable.Department.colUpdateID,
 						DatabaseTable.Department.colUpdateDate,
-						DatabaseTable.Department.colDesc,
 						i+1,
 						depart[i],
 						updateID,
-						new DateTime().getDateTime(),
-						desc );
-					if ( db.inset(sql) < 0 ) { 
-						db.endTransaction();
-						return -3;
-					}
+						new DateTime().getDateTime()
+						 );
+					System.out.println(sql);
+					if ( db.insert(sql) < 0 ) 
+						throw new SQLException();
+				}
+				return 0;
 			}
-
-			db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-		}
+		});
 		
 		return StatusCode.success;
 	}
 
-	public ContentValues[] getDepartment(String userid) {
+	private int getDepartmentCount(String userid) {
+		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
+				DatabaseTable.User.name,DatabaseTable.Department.name,
+				DatabaseTable.User.colUserid, DatabaseTable.Department.colUpdateID,
+				DatabaseTable.User.colUserid, userid);
 		
-		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Department.name,
+		ResultSet rs = db.select(sql);
+		int rowCount = 0;
+		if ( rs == null ) {
+			return rowCount;
+		} else {
+			try {
+				rs.next();
+				rowCount = rs.getInt(1);
+			} catch ( SQLException e ) {
+				rowCount = 0;
+			}
+		}
+		return rowCount;
+	}
+	
+	public ContentValues[] getDepartment(String userid) {
+		int rowCount = getDepartmentCount(userid);
+		
+		if ( rowCount <= 0 )
+			return null;
+		
+		
+		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", 
+					DatabaseTable.Department.name,
 					DatabaseTable.Department.colUpdateID, userid);
 
-		Cursor cursor = db.select(sql);
-
-		if ( cursor == null )
-			return null;
-
-		cursor.moveToFirst();
-		int rows = cursor.getCount();
-		if ( rows <= 0 ) {
-			if ( !cursor.isClosed() )
-				cursor.close();
+		ResultSet rs = db.select(sql);
+		
+		if ( rs == null ) {
 			return null;
 		}
 
-		int columns = cursor.getColumnCount();
-		ContentValues[] content = new ContentValues[rows];
-
-		for ( int i=0; i<rows; i++ ) {
-			content[i] = new ContentValues();
-			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+		ContentValues[] content = new ContentValues[rowCount];
+		try {
+			int i = 0;
+			ResultSetMetaData meta = rs.getMetaData();
+			while (rs.next()) {
+				content[i] = new ContentValues();
+				for ( int j=1; j<=meta.getColumnCount(); j++ ){
+					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
+				}
+				i++;
 			}
-			cursor.moveToNext();
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		if ( !cursor.isClosed() )
-			cursor.close();
-
 		return content;
-}
+	}
 }

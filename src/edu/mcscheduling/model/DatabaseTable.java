@@ -7,7 +7,7 @@ public class DatabaseTable {
 		// columns definie
 		public static final String colHospitalNo = "HospitalNo";
 		public static final String colItemType = "ItemType";
-		public static final String colItemCode = "colItemCode";
+		public static final String colItemCode = "ItemCode";
 		public static final String colItemDescription = "ItemDescription";
 		public static final String colRemark = "Remark";
 		public static final String colCheckFlag = "CheckFlag";
@@ -56,7 +56,7 @@ public class DatabaseTable {
 	
 	static public class Doctor {
 		// table name define
-		public static String name = "Dcotor";
+		public static String name = "Doctor";
 		// columns definie
 		public static final String colHospitalNo = "HospitalNo";
 		public static final String colDepName = "DepName";
@@ -94,7 +94,7 @@ public class DatabaseTable {
 	
 	static public class DoctorSchedule {
 		// table name define
-		public static String name = "DocSchedule";
+		public static String name = "DorSchedule";
 		// columns definie
 		public static final String colHospitalNo= "HospitalNo";
 		public static final String colDepName = "DepName";
@@ -186,11 +186,11 @@ public class DatabaseTable {
 
 	static public class User {
 		// table name define
-		public static final String name = "User";
+		public static final String name = "users";
 		
 		public static final String colUserid = "userid";
 		public static final String colUsername = "username";
-		public static final String colUserpasswd = "userpassword";
+		public static final String colUserpasswd = "userpasswd";
 		public static final String colUserinvalid = "userinvalid";
 		public static final String colUservalid = "uservalid";
 		public static final String colUseremail = "useremail";

@@ -1,5 +1,8 @@
 package edu.mcscheduling.model;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -8,29 +11,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import edu.mcscheduling.common.StatusCode;
 
-/*
-class HospitalContent {
-	public String hospitalNo;
-	public String hospitalName;
-	public String areaID;
-	public String hospitalPhone;
-	public String hospitalAddress;
-	public String contactName;
-	public String contactPhone;
-	public String updateID;
-	public String depName;
-	public String opdSt1;
-	public String opdEt1; 
-	public String opdSt2;
-	public String opdEt2;
-	public String opdSt3;
-	public String opdEt3;
-	public String hispitalSchedule;
-	public String hospitalState;
-	public String picPath;
-}
-*/
 public class Hospital {
+	protected static final int Integer = 0;
 	private DatabaseDriver db;
 	private boolean exist = false;
 
@@ -49,78 +31,83 @@ public class Hospital {
 		}
 		
 		boolean ret;
-		String sql = String.format("SELECT %s,%s FROM %s WHERE %s='%s'", 
-				DatabaseTable.Hospital.colUpdateID,
-				DatabaseTable.Hospital.colHospitalNo,
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s'", 
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 		
-		Cursor cursor = db.select(sql);
 		
-		if ( cursor == null )
+		ResultSet rs = null;
+		
+		try {
+			rs = db.select(sql);
+			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
+				return false;
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
 			return false;
-		
-		cursor.moveToFirst(); 
-		if ( cursor.getCount() == 1 ) 
-			ret = true;
-		else
-			ret = false;
-			
-		if ( !cursor.isClosed() )
-			cursor.close();
-		
-		return ret;
+		} finally {
+			try {
+				rs.close();
+			} catch ( SQLException e ) {
+				// nothing
+			}
+		}
+		return true;
 	}
 	
-	private int createHospitalNo(String userid) {
+	private int calcuteHospitalNumber() {
+		String sql = String.format("SELECT %s FROM %s ORDER BY %s DESC", 
+				DatabaseTable.Hospital.colHospitalNo,
+				DatabaseTable.Hospital.name,
+				DatabaseTable.Hospital.colHospitalNo);
+
+		ResultSet rs = db.select(sql);
+		int number = 1;
+		if ( rs == null ) {
+			return number;
+		} else {
+			try {
+				rs.next();
+				 number =  rs.getInt(DatabaseTable.Hospital.colHospitalNo) + 1;
+			} catch ( Exception e ) {
+				return number;
+			}
+
+		}
+		return number;
+	}
+	
+	private int createHospitalNo(final String userid) {
 		if ( this.exist == false ) {
 			
 		} else if ( userid == null || userid.isEmpty() ) {
 			
 		} 
-		int ret = StatusCode.success;
-		Cursor cursor = null;
-		db.beginTransaction();
 		
-		try {
-			String hospitalNo;
-			String sql = String.format("SELECT %s FROM %s ORDER BY %s DESC", 
-				DatabaseTable.Hospital.colHospitalNo,
-				DatabaseTable.Hospital.name,
-				DatabaseTable.Hospital.colHospitalNo);
-		
-			cursor = db.select(sql); 
+		Object obj =
+			db.excuteTransation( new Transation() {
 			
-			if ( cursor == null ) {
-				System.out.println("AAAAAA");
-			} 
-			
-			cursor.moveToFirst(); 
-			if ( cursor.getCount() == 0 ) {
-				hospitalNo = String.format("%05d", Integer.parseInt("0") + 1);
-			} else {
-				hospitalNo = String.format("%05d", Integer.parseInt(cursor.getString(0)) + 1);
-			}
+			@Override
+			public 	Integer execute() throws SQLException {
+				int number = calcuteHospitalNumber();
+				String hospitalNo =  String.format("%05d", number);
+				
+				String sql = String.format("INSERT INTO %s (%s,%s,%s) VALUES ('%s','%s','%s')",
+						DatabaseTable.Hospital.name,
+						DatabaseTable.Hospital.colHospitalNo,
+						DatabaseTable.Hospital.colHospitalName,
+						DatabaseTable.Hospital.colUpdateID,
+						hospitalNo, "NULL", userid);
 
-			sql = String.format("INSERT INTO %s (%s,%s,%s) VALUES ('%s','%s','%s')",
-					DatabaseTable.Hospital.name,
-					DatabaseTable.Hospital.colHospitalNo,
-					DatabaseTable.Hospital.colHospitalName,
-					DatabaseTable.Hospital.colUpdateID,
-					hospitalNo, "NULL", userid);
-			
-			if ( db.inset(sql) < 0)  
-				ret = 1;
-			else 
-				db.setTransactionSuccessful();
-		} finally {
-			db.endTransaction();
-			if ( cursor != null || !cursor.isClosed() )
-				cursor.close();
-		}
-		return ret;
+				if ( db.insert(sql) < 0 )
+					throw new SQLException();
+				return StatusCode.success;
+			}
+		});
 		
+		return 0;
 	}
 	
 	private int updateHospital(String userid, String hospitalName, String areaID,
@@ -172,6 +159,7 @@ public class Hospital {
 	}
 		
 	public String getHospitalNo(String userid) {
+		
 		if ( this.exist == false ) {
 		} else if ( userid == null || userid.isEmpty() )
 			return null;
@@ -184,20 +172,21 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 
-		Cursor cursor = db.select(sql);
+		ResultSet rs = db.select(sql);
 		
-		if ( cursor == null )
+		if ( rs == null ) {
 			return null;
+		}
 		
-		cursor.moveToFirst(); 
-		if ( cursor.getCount() == 1 ) 
-			hospitalNo = cursor.getString(0);
-			
-		if ( !cursor.isClosed() )
-			cursor.close();
+		try {
+			rs.next();
+			hospitalNo = rs.getString(DatabaseTable.Hospital.colHospitalNo);
+			rs.close();
+		} catch (SQLException e) {
+			return null;
+		} 
 		
 		return hospitalNo;
-		
 	}
 	
 	/**
@@ -234,7 +223,7 @@ public class Hospital {
 					String picPath) {
 		
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERID_ERROR();
 		else if ( !existsUpdateID(userid) ) {
 			createHospitalNo(userid);
 		} 
@@ -249,6 +238,48 @@ public class Hospital {
 						picPath);
 	}
 
+	private int getHospitalCount(String sql) {
+		ResultSet rs = db.select(sql);
+		int rowCount = 0;
+		if ( rs == null ) {
+			return rowCount;
+		} else {
+			try {
+				rs.next();
+				rowCount = rs.getInt(1);
+			} catch ( SQLException e ) {
+				rowCount = 0;
+			}
+		}
+		return rowCount;
+	}
+	
+	private ContentValues[] setResultSetToContentValues(int rowCount, String sql) {
+		ResultSet rs = db.select(sql);
+		
+		if ( rs == null ) {
+			return null;
+		}
+
+		ContentValues[] content = new ContentValues[rowCount];
+		try {
+			int i = 0;
+			ResultSetMetaData meta = rs.getMetaData();
+			while (rs.next()) {
+				content[i] = new ContentValues();
+				for ( int j=1; j<=meta.getColumnCount(); j++ ){
+					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
+				}
+				i++;
+			}
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return content;
+	}
+	
 	/**
 	 * 函數名稱 : getHospital </br>
 	 * 函數說明 : 取得Hospital的所有資訊 </br>
@@ -258,37 +289,20 @@ public class Hospital {
 	 */
 	public ContentValues[] getHospital(String userid){
 		
-		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
+		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
+				DatabaseTable.User.name,DatabaseTable.Hospital.name,
+				DatabaseTable.User.colUserid, DatabaseTable.Hospital.colUpdateID,
+				DatabaseTable.User.colUserid, userid);
+		
+		int rowCount = getHospitalCount(sql);
+		
+		if ( rowCount <= 0 )
+			return null;
+		
+		sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,userid);
 		
-		Cursor cursor = db.select(sql);
-		
-		if ( cursor == null ) 
-			return null;
-		
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
-		if ( rows <= 0 ) {
-			if ( !cursor.isClosed() )
-				cursor.close();
-			return null;
-		}
-		
-		int columns = cursor.getColumnCount();
-		ContentValues[] content = new ContentValues[rows];
-	
-		for ( int i=0; i<rows; i++ ) {
-			content[i] = new ContentValues();
-			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
-			}
-			cursor.moveToNext(); 
-		}
-		
-		if ( !cursor.isClosed() )
-			cursor.close();
-		
-		return content;
+		return setResultSetToContentValues(rowCount, sql);
 	}
 
 }

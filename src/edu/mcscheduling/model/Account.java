@@ -1,9 +1,10 @@
 package edu.mcscheduling.model;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
-import android.database.Cursor;
 
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -32,29 +33,35 @@ public class Account {
 	 */
 	public int register(String userid, String username, String userpasswd){	
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERID_ERROR();
 		else if ( username == null || username.isEmpty() )
-			return StatusCode.WAR_USERNAME_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERNAME_ERROR();
 		else if ( userpasswd == null || userpasswd.isEmpty() )
-			return StatusCode.WAR_USERPASSWD_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERPASSWD_ERROR();
 		
 		Date time = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
 					Locale.getDefault());
 
-		String columns = String.format("'%s','%s','%s','%s'",
-					DatabaseTable.User.colUserid, DatabaseTable.User.colUsername,
-					DatabaseTable.User.colUserpasswd,
-					DatabaseTable.User.colUservalid);
 		
-		String values = String.format("'%s','%s','%s','%s'", userid, username,
-					userpasswd, formatter.format(time));
-
-		if ( db.inset(DatabaseTable.User.name, columns, values) < 0) 
+		String sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
+				"VALUES ('%s','%s','%s','%s')",
+				// Columns
+				DatabaseTable.User.name,
+				DatabaseTable.User.colUserid, 
+				DatabaseTable.User.colUsername,
+				DatabaseTable.User.colUserpasswd,
+				DatabaseTable.User.colUservalid,
+				// Values
+				 userid, 
+				 username,
+				userpasswd,
+				formatter.format(time));
+		
+		if ( db.insert(sql) < 0) 
 			return StatusCode.WAR_REGISTER_FAIL();
 		return StatusCode.success;
 	}
-	
 	
 	/**
 	 * ¨ç¼Æ¦WºÙ : matchUseridPasswd </br>
@@ -66,21 +73,32 @@ public class Account {
 	 */
 	private int matchUseridPasswd(String userid, String userpasswd) {
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERID_ERROR();
 		else if ( userpasswd == null || userpasswd.isEmpty() )
-			return StatusCode.WAR_USERPASSWD_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERPASSWD_ERROR();
 		
-		String columns = String.format("'%s','%s'",
-				DatabaseTable.User.colUserid, DatabaseTable.User.colUserpasswd);
-
-		String whereExpr = String.format("%s='%s' AND %s='%s'", 
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' AND %s='%s'",
+				DatabaseTable.User.name,
 				DatabaseTable.User.colUserid, userid, 
-				DatabaseTable.User.colUserpasswd, userpasswd);
-
-		Cursor cursor = db.select(DatabaseTable.User.name, columns, whereExpr);
-
-		if (cursor != null && cursor.getCount() != 1)
-			return StatusCode.WAR_LOGIN_FAIL();
+				DatabaseTable.User.colUserpasswd, userpasswd
+				);
+		
+		ResultSet rs = null;
+		
+		try {
+			rs = db.select(sql);
+			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
+				return StatusCode.WAR_LOGIN_FAIL();
+			}
+		} catch (SQLException e) {
+			System.out.println(e.getMessage());
+		} finally {
+			try {
+				rs.close();
+			} catch ( SQLException e ) {
+				// nothing
+			}
+		}
 
 		return StatusCode.success;
 	}
@@ -108,44 +126,98 @@ public class Account {
 	 */
 	public int changePasswd(String userid,String oldPasswd, String newPasswd)  {
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERID_ERROR();
 		else if ( oldPasswd == null || oldPasswd.isEmpty() )
-			return StatusCode.WAR_USERID_NULL_OR_EMPTY();
+			return StatusCode.ERR_PARM_USERNAME_ERROR();
 		else if ( newPasswd == null || newPasswd.isEmpty() )
-			return StatusCode.WAR_USERPASSWD_NULL_OR_EMPTY(); 
-		else if ( matchUseridPasswd(userid, oldPasswd) != StatusCode.success )
-			return -1;
+			return StatusCode.ERR_PARM_USERPASSWD_ERROR(); 
 		
-		String columns = String.format("%s='%s'",
-				DatabaseTable.User.colUserpasswd, newPasswd);
+		int ret = StatusCode.success; 
+		try {
+			db.setAutoCommit(false);
+			
+			String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' AND %s='%s'",
+					DatabaseTable.User.name,
+					DatabaseTable.User.colUserid, userid, 
+					DatabaseTable.User.colUserpasswd, oldPasswd
+					);
+				
+		
+			ResultSet rs = db.select(sql);
+			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
+				ret = StatusCode.WAR_PASSWD_NOT_CHANGE_FAIL();
+				throw new SQLException();
+			}		
+		
+			sql = String.format("UPDATE %s SET %s='%s' WHERE %s='%s'" ,
+			// Table
+			DatabaseTable.User.name, 
+			// Value
+			DatabaseTable.User.colUserpasswd, newPasswd,
+			// WHERE
+			DatabaseTable.User.colUserid, userid);
 
-		String whereExpr = String.format("%s='%s'", 
-				DatabaseTable.User.colUserid, userid );
-
-		if ( db.update(DatabaseTable.User.name, columns, whereExpr) < 0 )
-			return 1;
-
-		return StatusCode.success;
+			if ( db.update(sql) < 0 ) {
+				StatusCode.ERR_PASSWD_CHANGE_ERROR();
+				throw new SQLException();
+			}
+			db.commit();
+		} catch ( SQLException  e ) {
+			try {
+				db.rollback();
+			} catch ( SQLException e1 ) {
+				// nothing
+			}
+		}
+			
+		return ret;
 	}
 	
 	
 	public int setMemberInformation(String userid,String username, String passwdQuestion, String  passwdAnswer) {
 		
-		String columns = String.format("%s='%s',%s='%s',%s='%s'",
+		String sql = String.format("UPDATE %s SET %s='%s',%s='%s',%s='%s' WHERE %s='%s'" ,
+				// Table
+				DatabaseTable.User.name, 
+				// Value
 				DatabaseTable.User.colUsername, username,
 				DatabaseTable.User.colUserpwdquestion, passwdQuestion,
-				DatabaseTable.User.colUserpwdans, passwdAnswer);
-
-		String whereExpr = String.format("%s='%s'", 
-				DatabaseTable.User.colUserid, userid );
-
-		if ( db.update(DatabaseTable.User.name, columns, whereExpr) < 0 )
-			return 1;
+				DatabaseTable.User.colUserpwdans, passwdAnswer,
+				// WHERE
+				DatabaseTable.User.colUserid, userid);
+		
+		if ( db.update(sql) < 0 )
+			return StatusCode.ERR_SET_MEMBER_INFO_ERROR();
 
 		return StatusCode.success;
 	}
+
+	
+	private int getMemberCount(String userid) {
+		String sql = String.format("SELECT count(*) FROM %s WHERE %s='%s'", 
+				DatabaseTable.User.name,
+				DatabaseTable.User.colUserid, userid);
+		
+		ResultSet rs = db.select(sql);
+		int rowCount = 0;
+		if ( rs == null ) {
+			return rowCount;
+		} else {
+			try {
+				rs.next();
+				rowCount = rs.getInt(1);
+			} catch ( SQLException e ) {
+				rowCount = 0;
+			}
+		}
+		return rowCount;
+	}
 	
 	public ContentValues[]  getMemberInformation(String userid) {
+		int rowCount = getMemberCount(userid);
+		
+		if ( rowCount <= 0 )
+			return null;
 		
 		String sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
 								DatabaseTable.User.colUserid,
@@ -157,33 +229,29 @@ public class Account {
 								DatabaseTable.User.colUserid, userid
 							);
 		
-		Cursor cursor = db.select(sql);
+		ResultSet rs = db.select(sql);
 		
-		if ( cursor == null ) 
-			return null;
-		
-		cursor.moveToFirst(); 
-		int rows = cursor.getCount();
-		if ( rows <= 0 ) {
-			if ( !cursor.isClosed() )
-				cursor.close();
+		if ( rs == null ) {
 			return null;
 		}
 		
-		int columns = cursor.getColumnCount();
-		ContentValues[] content = new ContentValues[rows];
-	
-		for ( int i=0; i<rows; i++ ) {
-			content[i] = new ContentValues();
-			for ( int j=0; j<columns; j++ ) {
-				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
+		ContentValues[] content = new ContentValues[rowCount];
+		try {
+			int i = 0;
+			ResultSetMetaData meta = rs.getMetaData();
+			while (rs.next()) {
+				content[i] = new ContentValues();
+				for ( int j=1; j<=meta.getColumnCount(); j++ ){
+					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
+				}
+				i++;
 			}
-			cursor.moveToNext(); 
+			rs.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
-		if ( !cursor.isClosed() )
-			cursor.close();
-		
+
 		return content;
 	}
 }

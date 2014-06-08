@@ -1,210 +1,238 @@
 package edu.mcscheduling.model;
 
 import java.io.File;
-import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.sqldroid.SqldroidConnection;
+import org.sqldroid.SqldroidResultSet;
+import org.sqldroid.SqldroidStatement;
 
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.utilities.StringUtility;
 
-import android.annotation.SuppressLint;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 
-public class SqliteDriver extends DatabaseDriver{
-	
-	private static final int version = 1;
+public class SqliteDriver extends DatabaseDriver {
+
 	private final String dbPath;
-	private SQLiteDatabase db = null;
+	private Connection conn = null;
+	private Statement stmt = null;
+	
 	
 	public SqliteDriver(final String dbPath) {
 		this.dbPath = dbPath;
 	}
 	
-
+	@Override
 	public int onConnect() {
-		File dir;
 		try {
-			dir = new File(StringUtility.getDirectory(dbPath));
+			Class.forName("org.sqldroid.SqldroidDriver");
+			
+			File dir = new File(StringUtility.getDirectory(dbPath));
 			
 			if ( !dir.exists() && !dir.mkdirs() )
 				return StatusCode.ERR_OPEN_DIR(StringUtility.getDirectory(dbPath));
 			
-			db = SQLiteDatabase.openDatabase(dbPath, null , SQLiteDatabase.CREATE_IF_NECESSARY | SQLiteDatabase.OPEN_READWRITE  );
-		} catch ( SQLiteException  e ) {
-			return StatusCode.ERR_OPEN_SQLITE_FILE(dbPath);
-		} 
+			conn =  (SqldroidConnection)DriverManager
+					.getConnection(
+					"jdbc:sqldroid:" + this.dbPath
+						);
+		}  catch (ClassNotFoundException e) {
+			return StatusCode.ERR_JDBC_CLASS_NOT_FOUND();
+		} catch (SQLException e) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+		}
 		return StatusCode.success;
-	}
-	
-	@Override
-	public void beginTransaction() {
-		db.beginTransaction();
-	}
-	
-	@Override
-	public void setTransactionSuccessful(){
-		db.setTransactionSuccessful();
-	}
-	
-	@Override
-	public void endTransaction() {
-		db.endTransaction();
 	}
 	
 	@Override
 	public int createTable(String sql) {
-		
-		if ( db == null )
+		if (conn == null)
 			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
-		else if ( sql.isEmpty() )
-			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
-		
+		else if (sql.isEmpty())
+			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+
 		try {
-			db.execSQL(sql);
-		} catch ( SQLiteException e ) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
 		}
-	
 		return StatusCode.success;
 	}
 	
 	@Override
-	public int inset(String sql) {
-		if ( db == null )
+	public int insert(String sql) {
+		if (conn == null)
 			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
-		else if ( sql.isEmpty() )
-			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
-		
+		else if (sql.isEmpty())
+			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+
 		try {
-			db.execSQL(sql);
-		} catch ( SQLiteException e ) {
-			System.out.println(e.getMessage());
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
+		} catch (SQLException e) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
 		}
-	
+		
 		return StatusCode.success;
 	}
-
-	public int inset(String tblName, String colsName, String colsValue ) {
-		
-		String sql = String.format("INSERT INTO '%s' (%s) VALUES (%s)", 
-										tblName, colsName, colsValue);
-		return inset(sql);
-	}
-
+	
 	@Override
-	public Cursor select(String sql) {
-		if ( db == null ) {
-			StatusCode.ERR_INITIAL_DB_NOT_SUCCESS(); 
-			return null;
-		} else if ( sql.isEmpty() ) {
-			StatusCode.ERR_SQL_SYNTAX_IS_NULL(); 
-			return null;
-		}
+	public int update(String sql) {
+		if (conn == null)
+			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+		else if (sql.isEmpty())
+			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+
+		try {
+			stmt = conn.createStatement();
+			stmt.executeUpdate(sql);
 			
-		try {
-			System.out.println(sql);
-			cursor = db.rawQuery(sql, null);
-		} catch ( SQLiteException e ) {
-			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
-			return null;
+		} catch (SQLException e) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
 		}
-		return cursor;
+		
+		return StatusCode.success;
 	}
 	
-	public Cursor select(String tblName, String cols, String whereExpr)   {
-		String sql = String.format("SELECT %s FROM %s", cols, tblName);
-		
-		if ( whereExpr != null ) {
-			sql += " WHERE " + whereExpr;
+
+	
+	@Override
+	public ResultSet select(String sql) {
+		if (conn == null) {
+			StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+			return null;
+		} else if (sql.isEmpty()) {
+			StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+			return null;
 		}
-		System.out.println(sql);
-		return select( sql );
+		
+		ResultSet result = null;
+		try {
+			stmt = conn.createStatement();
+			result =stmt.executeQuery(sql);
+		} catch (SQLException e) {
+			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return null;
+		}
+		return result;
 	}
 	
 	@Override
 	public int delete(String sql) {
-		if ( db == null )
+		if ( conn == null )
 			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
 		else if ( sql.isEmpty() )
-			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
+			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
 		
 		try {
-			db.execSQL(sql);
-		} catch ( SQLiteException e ) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
-		} 
-		return StatusCode.success;
-	}
-
-	
-	/**
-	 * ㄧ计嘿 : update
-	 * ㄧ计弧 : sql update command for sqlite
-	 * ㄧ计絛ㄒ : 
-	 * 	sql = "UPDATE Table SET userid='b@b.com' where userid='a@a.com'"
-	 * 	update(sql);
-	 * 
-	 * @param sql
-	 * @return 
-	 */
-	public int update(String sql) {
-		if ( db == null )
-			return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
-		else if ( sql.isEmpty() )
-			return StatusCode.ERR_SQL_SYNTAX_IS_NULL();
-		
-		try {
-			System.out.println(sql);
-			db.execSQL(sql);
-		} catch ( Exception e ) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(sql);
+			stmt = conn.createStatement();
+			stmt.execute(sql);
+		} catch (SQLException e) {
+			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
 		}
+		
 		return StatusCode.success;
 	}
-	
-	
-	/**
-	 *
-	 * ㄧ计嘿 : update
-	 * ㄧ计弧 : sql update command for sqlite
-	 * ㄧ计絛ㄒ :  
-	 * 	String values = String.format("%s='%s'",Table.User.colUserid,"b@b.com");
-	 *	String where = String.format("%s='", Table.User.colUserid, "a@a.com");
-	 * 	update(DatabaseTable.User.name, values,where);
-	 * 
-	 * @param table
-	 * @param repValues	
-	 * @param whereExpr
-	 * @return 
-	 */
+
 	@Override
-	public int update(String table, String repValues, String whereExpr)  {
-		String sql = String.format("UPDATE '%s' SET %s WHERE %s", table, repValues, whereExpr);
-		System.out.println(sql);
-		return update(sql);
+	public void setAutoCommit(boolean autoCommit) throws SQLException {
+		conn.setAutoCommit(autoCommit);
 	}
-	
-	protected void finalize() {
+
+	@Override
+	public void commit() throws SQLException {
+		conn.commit();
+		conn.setAutoCommit(true);
+	}
+
+	@Override
+	public void rollback() throws SQLException {
+		conn.rollback();
+		conn.setAutoCommit(true);
+	}
 		
-		if (db != null && db.isOpen())
-			db.close();
+	@Override
+	public boolean getAutoCommit() throws SQLException {
+		return conn.getAutoCommit();
 	}
 
-
 	@Override
-	public ResultSet selectMS(String sql) {
-		// TODO Auto-generated method stub
-		return null;
+	public String[] getTables() {
+		String[] tables = null;
+		try {
+			stmt = conn.createStatement();
+			ResultSet rs = null;
+			String sql = "SELECT * FROM sqlite_master WHERE type='table'";
+			rs = stmt.executeQuery(sql);
+			
+			int len=0;
+			while (rs.next() ) len++;
+		
+			if ( len <= 0 ) {
+				rs.close();
+				return null;
+			}
+			
+			tables = new String[len];
+			rs = stmt.executeQuery(sql);
+		
+			int i = 0;
+			while ( rs.next() ) {
+				tables[i++] = new String(rs.getString("tbl_name"));
+			}
+			
+			rs.close();
+		} catch (SQLException e) {
+			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return null;
+		} 
+		return tables;
 	}
 
-
 	@Override
-	public ResultSet selectMS(String tblName, String cols, String whereExpr) {
-		// TODO Auto-generated method stub
-		return null;
+	public void close() {
+		if(stmt != null) {
+			try {
+				stmt.close();
+			} catch(SQLException e) {
+				// nothing
+			}
+		}
+		if(conn != null) {
+			try {
+				conn.close();
+			} catch(SQLException e) {
+				StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());          
+			}
+		}
+	}
+	
+	public Object excuteTransation(Transation tran) {
+		Object ret = null;
+		try {
+			setAutoCommit(false);
+			ret = tran.execute();
+			commit();
+		} catch (SQLException e ) {
+			try {
+				rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+	    } finally {
+	        try {
+				setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+	    }
+		return ret;
 	}
 }

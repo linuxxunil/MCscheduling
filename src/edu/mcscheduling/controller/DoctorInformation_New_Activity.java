@@ -6,6 +6,7 @@ import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Doctor;
+import edu.mcscheduling.model.Hospital;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -52,9 +53,10 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	private EditText subject = null;
 	
 
-	
+	private Hospital hospital = null;
 	private Doctor doctor = null;
 	private Department depart = null;
+	private ContentValues[] hospitalContent = null;
 	private ContentValues[] doctorContent = null;
 	private ContentValues[] departContent = null;
 	
@@ -78,9 +80,10 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 		thisActivity = this;
 		
 		setListeners();
-	
+		hospital = new Hospital(db);
 		doctor = new Doctor(db);
 		depart = new Department(db);
+		hospitalContent = hospital.getHospital(getLoginID());
 		doctorContent = doctor.getDoctor(getLoginID());
 		departContent = depart.getDepartment(getLoginID());
 		bindViewComponent();
@@ -99,7 +102,12 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	}
 
 	private void setValueOfView() {
-		
+		String strTmp = null;
+
+		if ( hospitalContent != null ) {
+			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalNo);
+			hospitalNo.setText(strTmp == null ? "":strTmp);
+		}
 		setSpinner_MedicalDepartment();
 	}
 	

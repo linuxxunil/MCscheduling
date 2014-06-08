@@ -30,64 +30,81 @@ public class StatusCode {
 	 */
 	
 	private static int log(String errCode, String errDescription) {
-		System.out.println("ErrCode: " + errCode + ", ErrDescription: " + errDescription);
-		return Integer.valueOf(errCode);
+		int value = Integer.valueOf(errCode);
+		if ( value > 0 ) System.out.println("WarnCode: " + errCode + ", WarnDescription: " + errDescription);
+		else System.out.println("ErrCode: " + errCode + ", ErrDescription: " + errDescription);
+		return value;
 	}
 	
-	
-	
-	
-	public static int model_DatabaseDriver = 0x01020000;
-	public static int model_MSSqlDriver    = 0x01030000;
-	
-	// SqliteDriver
-	public static int ERR_OPEN_DIR(String path) {
-		
-		return log("-101","Open sqlite dir error");
-	}
-		
-	public static int ERR_OPEN_SQLITE_FILE(String path) {
-		return log("-102","Open Sqlite file error");
+	// Common Error	
+	public static int ERR_JDBC_CLASS_NOT_FOUND() {
+		return log("-001","JDBC class not found");
 	}
 	
 	public static int ERR_INITIAL_DB_NOT_SUCCESS() {
-		return log("-103","Inital DB don't success");
+		return log("-002","Inital DB don't success");
 	}
 	
-	public static int ERR_SQL_SYNTAX_IS_NULL() {
-		return log("-104","SQL syntax is null");
+	public static int ERR_SQL_SYNTAX_IS_ILLEGAL(String event) {
+		return log("-003","SQL syntax is illegal("+event+")");
 	}
 	
-	public static int ERR_SQL_SYNTAX_IS_ILLEGAL(String sql) {
-		return log("-105","SQL syntax is illegal");
+	// Parameter Error
+	public static int ERR_PARM_SQL_SYNTAX_IS_NULL() {
+		return log("-101","SQL syntax is null");
 	}
 	
+	public static int ERR_PARM_USERID_ERROR() {
+		return log("-102","PARM: userid is error");
+	}
+	
+	public static int ERR_PARM_USERNAME_ERROR() {
+		return log("-103","PARM: username is error");
+	}
+	
+	public static int ERR_PARM_USERPASSWD_ERROR() {
+		return log("-104","PARM: userpasswd is error");
+	}
+	
+	
+	// Runtime
+	public static int ERR_UNKOWN_ERROR() {
+		return log("-999","unkown error");
+	}
+	
+	
+	// SqliteDriver
+	public static int ERR_OPEN_DIR(String path) {
+		return log("-1001","Open sqlite dir error");
+	}
+	
+	public static int ERR_OPEN_SQLITE_FILE(String path) {
+		return log("-1002","Open Sqlite file error");
+	}
+	
+	// MSSQL
 	public static int ERR_MSSQL_CONNECT_ERROR() {
-		return log("-106","Cannot connect to MSSQL ");
-	}
-	
-	public static int ERR_JTDS_ERROR() {
-		return log("-107","Cannot found JTDS or version error ");
+		return log("-2001","Cannot connect to MSSQL ");
 	}
 	
 	// Account
-	public static int WAR_USERID_NULL_OR_EMPTY() {
-		return log("101","userid is null or empty");
-	}
-	
-	public static int WAR_USERNAME_NULL_OR_EMPTY() {
-		return log("101","username is null or empty");
-	}
-	
-	public static int WAR_USERPASSWD_NULL_OR_EMPTY() {
-		return log("-101","userpasswd is null or empty");
-	}
-	
 	public static int WAR_REGISTER_FAIL() {
-		return log("101","Register error");
+		return log("3001","Register Fail");
 	}
 	
 	public static int WAR_LOGIN_FAIL() {
-		return log("101","Login error");
+		return log("3002","Login Fail");
 	}
+	public static int WAR_PASSWD_NOT_CHANGE_FAIL() {
+		return log("3003","Password not change");
+	}
+	
+	public static int ERR_PASSWD_CHANGE_ERROR() {
+		return log("-3001","Password change error");
+	}
+	
+	public static int ERR_SET_MEMBER_INFO_ERROR() {
+		return log("-3002","Set member information error");
+	}
+	
 }

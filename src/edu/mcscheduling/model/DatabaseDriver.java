@@ -1,62 +1,29 @@
 package edu.mcscheduling.model;
 
-import android.database.Cursor;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public abstract class DatabaseDriver {
-	protected Cursor cursor;
 	
 	/**
 	 * 
 	 * @param sql
 	 * @return
 	 */
-	abstract public int createTable(String sql);
+	abstract public int createTable(String sql) ;
 	
 	
-	abstract public void beginTransaction();
+	abstract public void setAutoCommit(boolean value) throws SQLException ;
 	
-	abstract public void endTransaction();
+	abstract public void commit() throws SQLException ;
 
-	abstract public void setTransactionSuccessful();
-	/**
-	 * 
-	 * @param sql
-	 * @return 
-	 */
-	abstract public int inset(String sql) ;
+	abstract public void rollback() throws SQLException ;
 	
-	/**
-	 * 
-	 * @param tblName
-	 * @param colsName
-	 * @param colsValue
-	 * @return 
-	 */
-	abstract public int inset(String tblName, String colsName, String colsValue);
+	abstract public boolean getAutoCommit() throws SQLException ;
 	
-	/**
-	 * 
-	 * @param sql
-	 * @return 
-	 */
-	abstract public Cursor select(String sql);
-	abstract public ResultSet selectMS(String sql);
-	/**
-	 * 
-	 * @param tblName
-	 * @param cols
-	 * @param whereExpr
-	 * @return 
-	 */
-	abstract public Cursor select(String tblName, String cols, String whereExpr);
-	abstract public ResultSet selectMS(String tblName, String cols, String whereExpr);
-	/**
-	 * 
-	 * @param table
-	 * @return 
-	 */
-	abstract public int delete(String sql);
+	abstract public Object excuteTransation(Transation tran);
+
 	
 	/**
 	 * 
@@ -64,6 +31,28 @@ public abstract class DatabaseDriver {
 	 * @return 
 	 */
 	abstract public int onConnect();
+	
+	/**
+	 * 
+	 * @return
+	 */
+	abstract public void close();
+	
+	
+	/**
+	 * 
+	 * @param sql
+	 * @return 
+	 */
+	abstract public int insert(String sql) ;
+	
+	/**
+	 * 
+	 * @param sql
+	 * @return 
+	 */
+	abstract public ResultSet select(String sql) ;
+
 	
 	/**
 	 * 
@@ -75,14 +64,13 @@ public abstract class DatabaseDriver {
 	/**
 	 * 
 	 * @param table
-	 * @param repValues
-	 * @param whereExpr
 	 * @return 
 	 */
-	abstract public int update(String table, String repValues, String whereExpr);
-		
-	protected void finalize() {
-		if (cursor != null && !cursor.isClosed())
-			cursor.close();
+	abstract public int delete(String sql);
+
+	abstract public String[] getTables();	
+	protected void finalize()  {
+		close();
 	}
+		
 }
