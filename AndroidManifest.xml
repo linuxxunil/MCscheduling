@@ -23,7 +23,10 @@
         <activity
             android:name="edu.mcscheduling.controller.HomeActivity"
             android:label="@string/app_name" >
-
+		    <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
   
         <activity
@@ -74,16 +77,7 @@
  
          <activity
             android:name="edu.mcscheduling.controller.DoctorSchedulingCalendarActivity"
-            android:label="@string/app_name" />
-         
-          <activity
-            android:name="edu.mcscheduling.controller.MainActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-          </activity>   
+            android:label="@string/app_name" />             
                                
     </application>
 

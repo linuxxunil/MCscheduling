@@ -1,9 +1,7 @@
 package edu.mcscheduling.controller;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
@@ -83,14 +81,8 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	
 		doctor = new Doctor(db);
 		depart = new Department(db);
-		try {
-			doctorContent = doctor.getDoctor(getLoginID());
-			departContent = depart.getDepartment(getLoginID());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		doctorContent = doctor.getDoctor(getLoginID());
+		departContent = depart.getDepartment(getLoginID());
 		bindViewComponent();
 		setValueOfView();
 	}
@@ -229,25 +221,17 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 			
 			int status = 0;
 			
-			try {
-				status = doctor.addDoctor(
-							getLoginID(),							//userid, 
-							depName.getSelectedItem().toString(), 	//depName, 
-							dorName.getText().toString(),			//dorName, 
-							telephone.getText().toString(),			//telephone, 
-							jobTitle.getText().toString(),			//jobTitle, 
-							history.getText().toString(),			//history, 
-							subject.getText().toString(),			//subject, 
-							"NULL",									//desc, 
-							"UploadImg\\BillPic.jpg"				//picPath
-						);
-			} catch (NumberFormatException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			status = doctor.addDoctor(
+						getLoginID(),							//userid, 
+						depName.getSelectedItem().toString(), 	//depName, 
+						dorName.getText().toString(),			//dorName, 
+						telephone.getText().toString(),			//telephone, 
+						jobTitle.getText().toString(),			//jobTitle, 
+						history.getText().toString(),			//history, 
+						subject.getText().toString(),			//subject, 
+						"NULL",									//desc, 
+						"UploadImg\\BillPic.jpg"				//picPath
+					);
 			
 			if ( status < 0 ) {
 				Toast.makeText(getApplicationContext(),"·s¼W¥¢±Ñ", Toast.LENGTH_LONG).show();

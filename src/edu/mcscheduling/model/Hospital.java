@@ -1,8 +1,5 @@
 package edu.mcscheduling.model;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -59,23 +56,20 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 		
-		ResultSet result = db.select(sql);
+		Cursor cursor = db.select(sql);
 		
-		if ( result == null )
+		if ( cursor == null )
 			return false;
-		try {
-			result.first(); 
 		
-			if ( result.getFetchSize() == 1 ) 
-				ret = true;
-			else
-				ret = false;
-			
-			if ( !result.isClosed() )
-				result.close();
-		} catch (SQLException e) {
+		cursor.moveToFirst(); 
+		if ( cursor.getCount() == 1 ) 
+			ret = true;
+		else
 			ret = false;
-		}
+			
+		if ( !cursor.isClosed() )
+			cursor.close();
+		
 		return ret;
 	}
 	
@@ -86,7 +80,7 @@ public class Hospital {
 			
 		} 
 		int ret = StatusCode.success;
-		ResultSet result = null;
+		Cursor cursor = null;
 		db.beginTransaction();
 		
 		try {
@@ -96,17 +90,17 @@ public class Hospital {
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colHospitalNo);
 		
-			result = db.select(sql); 
+			cursor = db.select(sql); 
 			
-			if ( result == null ) {
-				return -1;
+			if ( cursor == null ) {
+				System.out.println("AAAAAA");
 			} 
 			
-			result.first(); 
-			if ( result.getFetchSize() == 0 ) {
+			cursor.moveToFirst(); 
+			if ( cursor.getCount() == 0 ) {
 				hospitalNo = String.format("%05d", Integer.parseInt("0") + 1);
 			} else {
-				hospitalNo = String.format("%05d", Integer.parseInt(result.getString(0)) + 1);
+				hospitalNo = String.format("%05d", Integer.parseInt(cursor.getString(0)) + 1);
 			}
 
 			sql = String.format("INSERT INTO %s (%s,%s,%s) VALUES ('%s','%s','%s')",
@@ -120,16 +114,10 @@ public class Hospital {
 				ret = 1;
 			else 
 				db.setTransactionSuccessful();
-		} catch (SQLException e ) { 
-			ret = 1;
 		} finally {
 			db.endTransaction();
-			try {
-				if ( result != null || !result.isClosed() )
-					result.close();
-			} catch (SQLException e) {
-				// nothing
-			}
+			if ( cursor != null || !cursor.isClosed() )
+				cursor.close();
 		}
 		return ret;
 		
@@ -177,6 +165,7 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,userid
 				);
 	
+		System.out.println(sql);
 		if ( db.update(sql) < 0 ) 
 			return StatusCode.WAR_REGISTER_FAIL();
 		return StatusCode.success;
@@ -195,22 +184,17 @@ public class Hospital {
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 
-		ResultSet result = db.select(sql);
+		Cursor cursor = db.select(sql);
 		
-		if ( result == null )
+		if ( cursor == null )
 			return null;
 		
-		try {
-			result.first();
-		
-			if ( result.getFetchSize() == 1 ) 
-				hospitalNo = result.getString(0);
+		cursor.moveToFirst(); 
+		if ( cursor.getCount() == 1 ) 
+			hospitalNo = cursor.getString(0);
 			
-			if ( !result.isClosed() )
-				result.close();
-		} catch ( SQLException e ) {
-			hospitalNo = null;
-		}
+		if ( !cursor.isClosed() )
+			cursor.close();
 		
 		return hospitalNo;
 		
@@ -271,40 +255,38 @@ public class Hospital {
 	 * ¨ç¼Æ½d¨Ò : None </br>
 	 *
 	 * @return ContentValues[]
-	 * @throws SQLException 
 	 */
-	public ContentValues[] getHospital(String userid) throws SQLException{
+	public ContentValues[] getHospital(String userid){
 		
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,userid);
 		
-		ResultSet result = db.select(sql);
-		ResultSetMetaData metadata = result.getMetaData();
+		Cursor cursor = db.select(sql);
 		
-		if ( result == null ) 
+		if ( cursor == null ) 
 			return null;
 		
-		result.first(); 
-		int rows = result.getFetchSize();
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
 		if ( rows <= 0 ) {
-			if ( !result.isClosed() )
-				result.close();
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
 		}
 		
-		int columns = metadata.getColumnCount();
+		int columns = cursor.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(metadata.getColumnName(j), result.getString(j));	
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
 			}
-			result.next(); 
+			cursor.moveToNext(); 
 		}
 		
-		if ( !result.isClosed() )
-			result.close();
+		if ( !cursor.isClosed() )
+			cursor.close();
 		
 		return content;
 	}

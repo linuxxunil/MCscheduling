@@ -1,9 +1,7 @@
 package edu.mcscheduling.controller;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
@@ -87,13 +85,9 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 		
 		depart = new Department(db);
 		
-		try {
-			doctorContent = doctor.getDoctor(getLoginID());
-			departContent = depart.getDepartment(getLoginID());
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		doctorContent = doctor.getDoctor(getLoginID());
+		
+		departContent = depart.getDepartment(getLoginID());
 		
 		bindViewComponent();
 		
@@ -143,6 +137,7 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 			
 			// Job Title
 			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colJobTitle);
+			System.out.println(strTmp);
 			jobTitle.setText(strTmp == null ? "":strTmp);
 			
 			// telephone

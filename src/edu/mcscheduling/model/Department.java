@@ -1,13 +1,11 @@
 package edu.mcscheduling.model;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import edu.mcscheduling.common.StatusCode;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 
@@ -73,38 +71,37 @@ public class Department {
 		return StatusCode.success;
 	}
 
-	public ContentValues[] getDepartment(String userid) throws SQLException {
+	public ContentValues[] getDepartment(String userid) {
 		
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Department.name,
 					DatabaseTable.Department.colUpdateID, userid);
 
-		ResultSet result = db.select(sql);
-		ResultSetMetaData metadata = result.getMetaData();
-		
-		if ( result == null )
+		Cursor cursor = db.select(sql);
+
+		if ( cursor == null )
 			return null;
 
-		result.beforeFirst();
-		int rows = result.getFetchSize();
+		cursor.moveToFirst();
+		int rows = cursor.getCount();
 		if ( rows <= 0 ) {
-			if ( !result.isClosed() )
-				result.close();
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
 		}
 
-		int columns = metadata.getColumnCount();
+		int columns = cursor.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(metadata.getColumnName(j), result.getString(j));	
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
 			}
-			result.next();
+			cursor.moveToNext();
 		}
 
-		if ( !result.isClosed() )
-			result.close();
+		if ( !cursor.isClosed() )
+			cursor.close();
 
 		return content;
 }

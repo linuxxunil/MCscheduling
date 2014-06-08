@@ -1,9 +1,5 @@
 package edu.mcscheduling.model;
 
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-
 import android.content.ContentValues;
 import android.database.Cursor;
 import edu.mcscheduling.common.StatusCode;
@@ -20,10 +16,12 @@ public class Doctor {
 		} 
 	}
 	
+	
+	
 	public int addDoctor(String userid, String depName, String dorName, String telephone, String jobTitle, 
-							String history,String subject, String desc, String picPath) throws NumberFormatException, SQLException {
+							String history,String subject, String desc, String picPath) {
 		
-		ResultSet result = null;
+		Cursor cursor = null;
 		int ret = 0;
 		
 		try {
@@ -33,8 +31,8 @@ public class Doctor {
 			String updateID = hospitalNo;
 			
 			if ( hospitalNo == null ) {
-				if ( result != null || !result.isClosed() )
-					result.close();
+				if ( cursor != null || !cursor.isClosed() )
+					cursor.close();
 				return -1;
 			}
 			
@@ -46,18 +44,18 @@ public class Doctor {
 					hospitalNo,
 					DatabaseTable.Doctor.colDorNo);
 		
-			result = db.select(sql); 
+			cursor = db.select(sql); 
 		
-			if ( result == null ) {
+			if ( cursor == null ) {
 				return -1;
 			} 
 			
 			String dorNo = null;
-			result.beforeFirst(); 
-			if ( result.getFetchSize() == 0 ) {
+			cursor.moveToFirst(); 
+			if ( cursor.getCount() == 0 ) {
 				dorNo = String.format("%05d", Integer.parseInt("0") + 1);
 			} else {
-				dorNo = String.format("%05d", Integer.parseInt(result.getString(0)) + 1);
+				dorNo = String.format("%05d", Integer.parseInt(cursor.getString(0)) + 1);
 			}
 		
 			
@@ -100,8 +98,8 @@ public class Doctor {
 		} finally {
 			db.endTransaction();
 			
-			if ( result != null || !result.isClosed() )
-				result.close();
+			if ( cursor != null || !cursor.isClosed() )
+				cursor.close();
 		}
 		
 		return StatusCode.success;
@@ -170,7 +168,7 @@ public class Doctor {
 		return StatusCode.success;
 	}
 	
-	public ContentValues[]  getDoctor(String userid) throws SQLException {
+	public ContentValues[]  getDoctor(String userid) {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
@@ -178,38 +176,37 @@ public class Doctor {
 		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Doctor.name,
 							DatabaseTable.Doctor.colUpdateID, updateID);
 		
-		ResultSet result = db.select(sql);
-		ResultSetMetaData metadata = result.getMetaData();
+		Cursor cursor = db.select(sql);
 		
-		if ( result == null ) 
+		if ( cursor == null ) 
 			return null;
 		
-		result.beforeFirst();; 
-		int rows = result.getFetchSize();
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
 		if ( rows <= 0 ) {
-			if ( !result.isClosed() )
-				result.close();
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
 		}
 		
-		int columns = metadata.getColumnCount();
+		int columns = cursor.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(metadata.getColumnName(j), result.getString(j));	
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
 			}
-			result.next(); 
+			cursor.moveToNext(); 
 		}
 		
-		if ( !result.isClosed() )
-			result.close();
+		if ( !cursor.isClosed() )
+			cursor.close();
 		
 		return content;
 	}
 
-	public ContentValues[]  getDoctorByDepName(String userid,String depName) throws SQLException {
+	public ContentValues[]  getDoctorByDepName(String userid,String depName) {
 		Hospital hospital = new Hospital(db);
 		String hospitalNo = hospital.getHospitalNo(userid);
 		String updateID = hospitalNo;
@@ -218,33 +215,32 @@ public class Doctor {
 							DatabaseTable.Doctor.colUpdateID, updateID,
 							DatabaseTable.Doctor.colDepName, depName);
 		
-		ResultSet result = db.select(sql);
-		ResultSetMetaData metadata = result.getMetaData();
+		Cursor cursor = db.select(sql);
 		
-		if ( result == null ) 
+		if ( cursor == null ) 
 			return null;
 		
-		result.beforeFirst();; 
-		int rows = result.getFetchSize();
+		cursor.moveToFirst(); 
+		int rows = cursor.getCount();
 		if ( rows <= 0 ) {
-			if ( !result.isClosed() )
-				result.close();
+			if ( !cursor.isClosed() )
+				cursor.close();
 			return null;
 		}
 		
-		int columns = metadata.getColumnCount();
+		int columns = cursor.getColumnCount();
 		ContentValues[] content = new ContentValues[rows];
 	
 		for ( int i=0; i<rows; i++ ) {
 			content[i] = new ContentValues();
 			for ( int j=0; j<columns; j++ ) {
-				content[i].put(metadata.getColumnName(j), result.getString(j));	
+				content[i].put(cursor.getColumnName(j), cursor.getString(j));	
 			}
-			result.next(); 
+			cursor.moveToNext(); 
 		}
 		
-		if ( !result.isClosed() )
-			result.close();
+		if ( !cursor.isClosed() )
+			cursor.close();
 		
 		return content;
 	}

@@ -1,7 +1,5 @@
 package edu.mcscheduling.controller;
 
-import java.sql.SQLException;
-
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
@@ -112,12 +110,11 @@ public class LoginActivity extends ControllerActivity {
 	
 	/**
 	 * Controller : Login
-	 * @throws SQLException 
 	 * 
 	 * 
 	 */
 	
-	private void handleLogin(View v) throws SQLException {
+	private void handleLogin(View v) {
 		String userid = ((EditText)
 				findViewById(R.id.userAccount)).getText().toString();
 		String userpasswd = ((EditText)
@@ -160,12 +157,7 @@ public class LoginActivity extends ControllerActivity {
 	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			try {
-				handleLogin(v);
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			handleLogin(v);
 		}
 	};
 
