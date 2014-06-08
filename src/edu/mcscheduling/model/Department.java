@@ -3,14 +3,12 @@ package edu.mcscheduling.model;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.Transation;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 
 public class Department {
 	private DatabaseDriver db;

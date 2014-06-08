@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.database.DatabaseDriver;
 
 public class Account {
 	private DatabaseDriver db;

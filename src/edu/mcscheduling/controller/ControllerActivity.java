@@ -1,11 +1,11 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.common.StatusCode;
-import edu.mcscheduling.model.DatabaseDriver;
+import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.MSSqlDriver;
+import edu.mcscheduling.database.SqliteDriver;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Hospital;
-import edu.mcscheduling.model.MSSqlDriver;
-import edu.mcscheduling.model.SqliteDriver;
 import android.app.Activity;
 import android.os.Bundle;
 

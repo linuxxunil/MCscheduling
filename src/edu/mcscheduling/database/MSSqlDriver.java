@@ -1,4 +1,4 @@
-package edu.mcscheduling.model;
+package edu.mcscheduling.database;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;

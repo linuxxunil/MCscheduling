@@ -2,6 +2,8 @@ package edu.mcscheduling.model;
 
 import java.sql.SQLException;
 
+import edu.mcscheduling.database.SqliteDriver;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 

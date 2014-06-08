@@ -5,10 +5,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import edu.mcscheduling.common.StatusCode;
-import edu.mcscheduling.model.Hospital;
-import android.annotation.SuppressLint;
+import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.Transation;
 import android.content.ContentValues;
-import android.database.Cursor;
 
 public class DoctorSchedule {
 	private DatabaseDriver db;

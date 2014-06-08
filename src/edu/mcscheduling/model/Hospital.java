@@ -10,6 +10,8 @@ import java.util.Locale;
 import android.content.ContentValues;
 import android.database.Cursor;
 import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.Transation;
 
 public class Hospital {
 	protected static final int Integer = 0;
@@ -30,7 +32,6 @@ public class Hospital {
 			return false;
 		}
 		
-		boolean ret;
 		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s'", 
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,
