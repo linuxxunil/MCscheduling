@@ -92,11 +92,11 @@ public class Account {
 				return StatusCode.WAR_LOGIN_FAIL();
 			}
 		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+			System.out.println("AAAA" + e.getMessage());
 		} finally {
 			try {
 				rs.close();
-			} catch ( SQLException e ) {
+			} catch ( Exception e ) {
 				// nothing
 			}
 		}

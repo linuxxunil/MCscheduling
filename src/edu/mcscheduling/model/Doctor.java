@@ -194,9 +194,10 @@ public class Doctor {
 				i++;
 			}
 			rs.close();
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		}  catch (SQLException e) {
+			content = null;
+		} catch (Exception e ) {
+			content = null;
 		}
 		return content;
 	}

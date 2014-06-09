@@ -39,9 +39,11 @@ public class ControllerActivity extends Activity {
 		
 		switch ( type ) {
 		case SQLITE:
+			initSqlite();
 			db = sqlite;
 		break;
 		case MSSQL:
+			initMSSql();
 			db = mssql;
 		break;
 		default:
@@ -63,6 +65,7 @@ public class ControllerActivity extends Activity {
 		} else {
 			sqlite = null;
 		}
+		//sqlite.close();
 	}
 	
 	private void initMSSql() {
@@ -73,10 +76,12 @@ public class ControllerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		if ( isInit == false || db == null) {
-			//initSqlite();
-			initMSSql();
+			
+			
 			isInit = true;
 		}
-		setAccessDriver(AccessType.MSSQL);
+		
 	}
+	
+	
 }

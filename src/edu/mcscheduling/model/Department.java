@@ -95,7 +95,7 @@ public class Department {
 			try {
 				rs.next();
 				rowCount = rs.getInt(1);
-			} catch ( SQLException e ) {
+			} catch ( Exception e ) {
 				rowCount = 0;
 			}
 		}
@@ -132,8 +132,9 @@ public class Department {
 			}
 			rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			content = null;
+		} catch (Exception e ) {
+			content = null;
 		}
 		return content;
 	}

@@ -1,6 +1,9 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.controller.ControllerActivity.AccessType;
+import edu.mcscheduling.model.Account;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -14,17 +17,18 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
-public class HomeActivity extends ControllerActivity {
+public class Authorize extends ControllerActivity {
 
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_enroll;
-	private ImageButton button_login;
-	private ImageButton button_back;
+	private Button button_online;
+	private Button button_offline;
 
 	/**
 	 * 目前這個Activity
@@ -68,10 +72,13 @@ public class HomeActivity extends ControllerActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
 		// set layout
-		setContentView(R.layout.activity_home);
+		setContentView(R.layout.activity_authorize);
 
 		// let screen orientation be vertical
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+		// Sets the focus on the layout not the edittext
+		//findViewById(R.id.layout_login).requestFocus();
 	}
 
 	/**
@@ -80,57 +87,36 @@ public class HomeActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_HomePage_back);
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_HomePage_enroll);
-		button_login = (ImageButton) findViewById(R.id.ImageButton_login);
+		button_online = (Button) findViewById(R.id.button_Online);
+		button_offline = (Button) findViewById(R.id.button_Offline);
 
-		button_back.setOnClickListener(back);
-		button_enroll.setOnClickListener(enroll);
-		button_login.setOnClickListener(login);
-
+		button_online.setOnClickListener(online);
+		button_offline.setOnClickListener(offline);
 	}
 
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
+	private ImageButton.OnClickListener online = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			openOptionsDialog_leaveAPP();
-		}
-	};
-
-	/**
-	 * enroll
-	 * 
-	 * 當你按下註冊按鈕，執行對應的操作
-	 */
-	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
+			setAccessDriver(AccessType.MSSQL);
 			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, EnrollActivity.class);
+			intent.setClass(Authorize.this, LoginActivity.class);
 			startActivity(intent);
 			finish();
 		}
 	};
-
-	/**
-	 * login
-	 * 
-	 * 當你按下登入按鈕，執行對應的操作
-	 */
-	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
+	
+	private ImageButton.OnClickListener offline = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			setAccessDriver(AccessType.SQLITE);
 			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, LoginActivity.class);
+			intent.setClass(Authorize.this, LoginActivity.class);
 			startActivity(intent);
 			finish();
 		}
 	};
+	
+
 
 	/**
 	 * openOptionsDialog_leaveAPP()
@@ -138,7 +124,8 @@ public class HomeActivity extends ControllerActivity {
 	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
 	 */
 	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(
+				Authorize.this);
 		builder.setTitle("APP訊息");
 		builder.setMessage("真的要離開此APP");
 		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
@@ -180,7 +167,7 @@ public class HomeActivity extends ControllerActivity {
 	 * @return true indicates the network is available. false indicates the
 	 *         network is not available.
 	 */
-	protected boolean isNetworkAvailable() {
+	private boolean isNetworkAvailable() {
 		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo activeNetworkInfo = connectivityManager
 				.getActiveNetworkInfo();
