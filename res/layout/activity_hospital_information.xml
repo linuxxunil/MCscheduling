@@ -1,137 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:id="@+id/layout_hospitalInformation"
-    android:descendantFocusability="beforeDescendants"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_hospitalInformation"
+     android:descendantFocusability="beforeDescendants"
     android:focusableInTouchMode="true"
-	android:theme="@style/AppTheme"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="#2EFEF7"
-    android:layout_marginLeft="0dp"
-    >
-	    <TableLayout
-	    	android:layout_gravity="top" 
-	    	android:layout_marginTop="0dp"
-	    	android:layout_marginLeft="0dp"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content">
-
-			<TableRow
-				android:gravity="left"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="-5dp"
-				android:layout_marginTop="0dp">
-			    <ImageView
-			        android:layout_width="328dp"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="0dp"
-			        android:layout_marginLeft="0dp"
-			        android:layout_marginRight="0dp"
-			        android:layout_marginTop="0dp"
-			        android:adjustViewBounds="true"
-			        android:src="@drawable/image_theme" />
-				<ImageButton
-			        android:id="@+id/ImageButton_HospitalInformationPage_back"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginTop="4dp"
-			        android:layout_marginLeft="-80dp"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
-			        android:scaleType="fitCenter"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/ic_action_back" />  			        
-			</TableRow>	 
-				  
-			<TableRow
-				android:gravity="center"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"			
-				android:layout_marginTop="20dp">
-
-			    <TableLayout
-			    	android:background="#FFFFFF"
-			    	android:layout_gravity="top" 
-			    	android:layout_marginTop="0dp"
-			    	android:layout_marginLeft="70dp"
-			    	android:layout_marginRight="70dp"
-				    android:layout_width="100dp"
-				    android:layout_height="match_parent"
-				    android:paddingLeft="5dp"
-				    android:paddingRight="5dp"
-				    android:stretchColumns="0,1">
-			        
-					<TableRow
-						android:gravity="center"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="0dp">		
-					    <ImageView
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:layout_marginBottom="0dp"
-					        android:layout_marginLeft="0dp"
-					        android:layout_marginRight="0dp"
-					        android:layout_marginTop="0dp"
-					        android:adjustViewBounds="true"
-					        android:layout_span="2"
-					        android:src="@drawable/hospital_manager_photo" />									
-					</TableRow>
- 					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="0dp">		
-					    <Button 
-					    	android:id="@+id/button_HospitalInformationPage_uploadHospitalManagerPhoto"
-					        android:layout_width="20dp"
-					        android:layout_height="wrap_content"
-					        android:layout_span="1"
-					        android:text="選擇檔案" />
-					</TableRow>       
-			     </TableLayout>
-	        
-			</TableRow>	 
-
-			<TableRow
-				android:gravity="center"
-				android:layout_width="wrap_content"	
-				android:layout_height="wrap_content"	
-							
-				android:layout_marginTop="20dp">
-
-			    <TableLayout
-			    	android:background="#FFFFFF"
-			    	android:layout_gravity="top" 
-			    	android:layout_marginLeft="10dp"	
-			    	android:layout_marginTop="0dp"
-				    android:layout_height="fill_parent"
-				    android:shrinkColumns="*"
-    				android:stretchColumns="*">
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme" >
+    
+    <RelativeLayout
+	    android:id="@+id/menubar"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="10dp"
+	    android:background="#3f48cc">
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:textSize="25sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/app_name"/>
+	<ImageButton
+		 android:id="@+id/ImageButton_HospitalInformationPage_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#00000000"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/StringButton"
+		android:src="@drawable/ic_action_back" />
+	</RelativeLayout>
 	
- 					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="0dp">		
-					    <TextView
+     <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	
+	<TableLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="10dp"
+	        android:gravity="center">
+	   
+			  <ImageView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:src="@drawable/hospital_manager_photo" />	
+			 <TableRow
+ 			    android:layout_width="wrap_content"
+ 			    android:layout_height="wrap_content"
+ 			    android:gravity="center" >
+ 			 	
+			     <Button 
+					    	android:id="@+id/button_HospitalInformationPage_uploadHospitalManagerPhoto"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:text="選擇檔案" />
+			 </TableRow>
+			        
+			<TableRow
+			    android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+						<TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="6"
-					        android:text="" 
-					    />	
-					</TableRow>	
-							        
- 					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="-10dp">		
-					    <TextView
-					        android:layout_width="wrap_content"
-					        android:layout_height="wrap_content"
-					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="醫院編號" 
 					    />	
 						<EditText  
@@ -141,39 +78,41 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:enabled="false"
 					    	android:text=""
-						/>  
-					</TableRow>			
- 
- 					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
-					    <TextView
+						/>
+			    
+			</TableRow>	
+			
+			<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">	
+					<TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="醫療群" 
 					    />	
 						<Spinner
 						    android:id="@+id/Spinner_HospitalInformationPage_medicalGroup"
-						    android:layout_width="190dp"
+						    android:layout_width="65dp"
 						    android:layout_height="wrap_content"
-						    android:background="@drawable/spinner_style2"/>			    
-					</TableRow>		
-					
+						    android:background="@drawable/spinner_style2"/>	
+			    	
+			</TableRow>
+		
  					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">	
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="醫院名稱" 
 					    />	
 						<EditText  
@@ -183,21 +122,21 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="請輸入醫院名稱"
 					    	android:text=""
 						/>  
 					</TableRow>			
 
  					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="醫院地址" 
 					    />	
 						<EditText  
@@ -206,23 +145,22 @@
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="請輸入醫院地址"
-					    	android:text=""
-						/>  
+					    	android:text=""/>  
 					</TableRow>		
 					
  					<TableRow
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+							
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
-					        android:text="醫院負責人" 
-					    />	
+					        android:text="醫院負責人" />	
 						<EditText  
 					    	android:id="@+id/EditText_HospitalInformationPage_hospitalManagerName"    
 					    	android:paddingLeft="10dp"
@@ -230,7 +168,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="請輸入負責人名稱"
 					    	android:text=""
 						/>  
@@ -240,12 +178,12 @@
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="醫院電話" 
 					    />	
 						<EditText  
@@ -255,21 +193,20 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="請輸入醫院電話"
-					    	android:text=""
-						/>  
+					    	android:text=""/>  
 					</TableRow>		 					
  					
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="負責人電話" 
 					    />	
 						<EditText  
@@ -279,7 +216,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="請輸入負責人電話"
 					    	android:text=""
 						/>  
@@ -288,12 +225,12 @@
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="科別" 
 					    />	
 						<EditText  
@@ -301,25 +238,22 @@
 					    	android:paddingLeft="10dp"
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
-					   	    
 					   	    android:textSize="20sp"
-					   	    android:layout_width="190dp"
+					   	    android:layout_width="wrap_content"
 					   	    android:hint="多筆資料使用 ,分開"
-					    	android:text=""
-						/>  
+					    	android:text=""/>  
 					</TableRow>	 
 					
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
-					        android:text="門診時間" 
-					    />	
+					        android:text="門診時間" />	
 
 					    <LinearLayout
 					        android:layout_width="match_parent"
@@ -355,14 +289,13 @@
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
-					        android:text="" 
-					    />	
+					        android:text="" />	
 
 					    <LinearLayout
 					        android:layout_width="match_parent"
@@ -398,14 +331,14 @@
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
-					    <TextView
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					   
+ 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
-					        android:text="" 
-					    />	
+					        android:text="" />	
 
 					    <LinearLayout
 					        android:layout_width="match_parent"
@@ -441,44 +374,32 @@
  					<TableRow
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
-						android:layout_marginTop="5dp">		
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
 					    <TextView
 					        android:layout_width="wrap_content"
 					        android:layout_height="wrap_content"
 					        android:textSize="20sp"
-					        android:layout_span="1"
 					        android:text="看診時間" 
 					    />	
     				<Button 
 			         	android:id="@+id/button_HospitalInformationPage_selectConsultingHour"
-			         	android:layout_span="1"
 			         	android:layout_width="wrap_content"
 	            		android:layout_height="wrap_content"
 	            		android:text="選擇看診時間" />   
 					</TableRow>	 								
-			     </TableLayout>
-	        
-			</TableRow>	 
 			
-			
-
-		     <!-- 
-		      -->
-	
 			<TableRow
+			    android:gravity="center"
 				android:layout_marginTop="10dp">	     
-
-		    <LinearLayout
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:gravity="center_horizontal" >
-    				<Button 
+			<Button 
 			         	android:id="@+id/button_HospitalInformationPage_revise"
 			         	android:layout_width="wrap_content"
 	            		android:layout_height="wrap_content"
 	            		android:text="修改" />   
-		    </LinearLayout>
+
            	</TableRow>	
 		      						
         </TableLayout>
 </ScrollView>
+</LinearLayout>

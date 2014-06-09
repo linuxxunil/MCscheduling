@@ -1,68 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:theme="@style/AppTheme"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
      android:background="@drawable/background_menu">
-	<LinearLayout 
+
+    <RelativeLayout
+	    android:id="@+id/menubar"
 	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical">
-
+	    android:layout_height="wrap_content"
+	    android:background="#3f48cc">
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:textSize="25sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/app_name"/>
+	<ImageButton
+		android:id="@+id/ImageButton_MenuPage_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#00000000"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/StringButton"
+		android:src="@drawable/ic_action_back" />
+	</RelativeLayout>
+	
 	    <TableLayout
-	        android:layout_width="wrap_content"
-	        android:layout_height="fill_parent"
-	        android:layout_gravity="top"
-	        android:layout_marginTop="0dp"
-
-	        android:stretchColumns="0,1" >
-			
-			<TableRow
-				android:gravity="left"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:layout_marginLeft="0dp"
-				android:layout_marginTop="0dp">
-			    <ImageView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginBottom="0dp"
-			        android:layout_marginLeft="0dp"
-			        android:layout_marginRight="0dp"
-			        android:layout_marginTop="0dp"
-			        android:adjustViewBounds="true"
-			        android:layout_span="2"
-			        android:src="@drawable/image_theme" />
-				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_back"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_marginTop="1dp"
-			        android:layout_marginBottom="1dp"
-			        android:layout_marginLeft="-80dp"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
-			        android:scaleType="fitCenter"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/ic_action_back" />  			        
-			</TableRow>	 
+	        android:gravity="center"
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent">
 			
 		    <TableRow
-		    	android:gravity="center"
+		        android:layout_marginBottom="50dp"
 		        android:layout_height="wrap_content"
-		        android:layout_width="wrap_content"
-		        android:layout_marginTop="50dp">
+		        android:layout_width="fill_parent">
+		        
 				<ImageButton
 			        android:id="@+id/ImageButton_MenuPage_hospitalProfile"
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/hospital_profile" />  	
 				<ImageButton
@@ -70,26 +55,24 @@
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/doctor_profile" />  	
 		    </TableRow>
 
 		    <TableRow
-		    	android:gravity="center"
+		        android:layout_marginBottom="50dp"
 		        android:layout_height="wrap_content"
-		        android:layout_width="wrap_content"
-		        android:layout_marginTop="20dp">
+		        android:layout_width="fill_parent">
+				
 				<ImageButton
 			        android:id="@+id/ImageButton_MenuPage_schedule"
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/schedule" />  	
 				<ImageButton
@@ -97,27 +80,24 @@
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/registeredinquiry" />  	
 		    </TableRow>
     
 
-		    <TableRow
-		    	android:gravity="center"
+		   <TableRow
 		        android:layout_height="wrap_content"
-		        android:layout_width="wrap_content"
-		        android:layout_marginTop="20dp">
+		        android:layout_width="fill_parent">
+				
 				<ImageButton
 			        android:id="@+id/ImageButton_MenuPage_membershipInformation"
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/membership_information" />  	
 				<ImageButton
@@ -125,12 +105,10 @@
 			        android:background="#00000000"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
-			        android:layout_weight="1"
-			        android:adjustViewBounds="true"
 			        android:scaleType="fitCenter"
+			        android:layout_weight="1"
 			        android:contentDescription="@string/StringButton"
 			        android:src="@drawable/health_information" />  	
 		    </TableRow>
 		</TableLayout>
-	</LinearLayout>
-</ScrollView>
+</LinearLayout>
