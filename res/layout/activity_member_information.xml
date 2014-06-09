@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/layout_memberInformation"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+	android:theme="@style/AppTheme"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    
+    <RelativeLayout
+	    android:id="@+id/menubar"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="10dp"
+	    android:background="#3f48cc">
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:textSize="25sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/app_name"/>
+	<ImageButton
+		android:id="@+id/ImageButton_MemberInformationPage_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#00000000"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/StringButton"
+		android:src="@drawable/ic_action_back" />
+	</RelativeLayout>
+	
+     <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	
+	<TableLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="10dp"
+	        android:gravity="center">	 
+		
+		<ImageView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:src="@drawable/id_photo" />			  
+			
+ 					<TableRow
+ 			    android:layout_width="wrap_content"
+ 			    android:layout_height="wrap_content"
+ 			    android:gravity="center" >		
+					    <Button 
+					    	android:id="@+id/button_MemberInformationPage_uploadIDphoto"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:text="選擇檔案" />
+					</TableRow>       
+
+			<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+							        	
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="電子郵件" />	
+						<EditText  
+					    	android:id="@+id/EditText_MemberInformationPage_email"   
+					    	android:paddingLeft="10dp" 
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入電子郵件"
+					    	android:text=""/>  
+					</TableRow>			
+ 
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="姓名" />	
+						
+						<EditText  
+					    	android:id="@+id/EditText_MemberInformationPage_username"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入您的姓名"
+					    	android:text=""/>  
+					</TableRow>		
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="密碼提問" />	
+					        
+						<Spinner
+						    android:id="@+id/Spinner_MemberInformationPage_passwordTip"
+						    android:layout_width="65dp"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/spinner_style2"/>
+					</TableRow>		
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					     <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="提示答案" />	
+						<EditText  
+					    	android:id="@+id/EditText_MemberInformationPage_tips"   
+					    	android:paddingLeft="10dp" 
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入提示答案"
+					    	android:text=""/>  
+					</TableRow>			
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="工作型態" />	
+						<Spinner
+						    android:id="@+id/Spinner_MemberInformationPage_workPattern"
+						    android:layout_width="65dp"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/spinner_style2"/>
+					</TableRow>			
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">	
+						 <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="註冊日期" />	
+						<EditText  
+					    	android:id="@+id/EditText_MemberInformationPage_registrationDate"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入註冊日期"
+					    	android:text=""/>  	
+					  
+					</TableRow>		
+					
+ 					<TableRow
+			    android:gravity="center"
+				android:layout_marginTop="10dp">
+						<Button 
+			         	android:id="@+id/button_MemberInformationPage_save"
+			         	android:layout_width="wrap_content"
+	            		android:layout_height="wrap_content"
+	            		android:text="存檔" />
+    				
+ 					    </TableRow>		       
+			     </TableLayout>
+			</ScrollView>
+	</LinearLayout>

@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_hospitalInformation"
+     android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:theme="@style/AppTheme" >
+    
+    <RelativeLayout
+	    android:id="@+id/menubar"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="10dp"
+	    android:background="#3f48cc">
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:textSize="25sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/app_name"/>
+	<ImageButton
+		 android:id="@+id/ImageButton_HospitalInformationPage_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#00000000"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/StringButton"
+		android:src="@drawable/ic_action_back" />
+	</RelativeLayout>
+	
+     <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	
+	<TableLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="10dp"
+	        android:gravity="center">
+	   
+			  <ImageView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:src="@drawable/hospital_manager_photo" />	
+			 <TableRow
+ 			    android:layout_width="wrap_content"
+ 			    android:layout_height="wrap_content"
+ 			    android:gravity="center" >
+ 			 	
+			     <Button 
+					    	android:id="@+id/button_HospitalInformationPage_uploadHospitalManagerPhoto"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:text="選擇檔案" />
+			 </TableRow>
+			        
+			<TableRow
+			    android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+						<TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院編號" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalNumber"   
+					    	android:paddingLeft="10dp" 
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:enabled="false"
+					    	android:text=""
+						/>
+			    
+			</TableRow>	
+			
+			<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">	
+					<TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫療群" 
+					    />	
+						<Spinner
+						    android:id="@+id/Spinner_HospitalInformationPage_medicalGroup"
+						    android:layout_width="65dp"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/spinner_style2"/>	
+			    	
+			</TableRow>
+		
+ 					<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">	
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院名稱" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalName"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入醫院名稱"
+					    	android:text=""
+						/>  
+					</TableRow>			
+
+ 					<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院地址" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalAddress"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入醫院地址"
+					    	android:text=""/>  
+					</TableRow>		
+					
+ 					<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+							
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院負責人" />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalManagerName"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入負責人名稱"
+					    	android:text=""
+						/>  
+					</TableRow>				
+					
+ 					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院電話" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalPhoneNumber"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入醫院電話"
+					    	android:text=""/>  
+					</TableRow>		 					
+ 					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="負責人電話" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_hospitalManagerPhoneNumber"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入負責人電話"
+					    	android:text=""
+						/>  
+					</TableRow>	 
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="科別" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_HospitalInformationPage_medicalDepartment"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="多筆資料使用 ,分開"
+					    	android:text=""/>  
+					</TableRow>	 
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="門診時間" />	
+
+					    <LinearLayout
+					        android:layout_width="match_parent"
+					        android:layout_height="wrap_content"
+					        android:gravity="fill_horizontal" >	
+						    <TextView
+						    	android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="早" 
+						    />	
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_mornStartTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+						    <TextView
+						    	android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="~" 
+						    />							    
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_mornEndTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+					     </LinearLayout>			    				
+					</TableRow>	 	
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="" />	
+
+					    <LinearLayout
+					        android:layout_width="match_parent"
+					        android:layout_height="wrap_content"
+					        android:gravity="fill_horizontal" >	
+						    <TextView
+						        android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="中" 
+						    />	
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_noonStartTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+						    <TextView
+						    	android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="~" 
+						    />							    
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_noonEndTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+					     </LinearLayout>			    				
+					</TableRow>						
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					   
+ 					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="" />	
+
+					    <LinearLayout
+					        android:layout_width="match_parent"
+					        android:layout_height="wrap_content"
+					        android:gravity="fill_horizontal" >	
+						    <TextView
+						        android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="晚" 
+						    />	
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_nightStartTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+						    <TextView
+						    	android:paddingTop="-5dp"
+						        android:layout_width="wrap_content"
+						        android:layout_height="wrap_content"
+						        android:textSize="20sp"
+						        android:text="~" 
+						    />							    
+							<Spinner
+							    android:id="@+id/Spinner_HospitalInformationPage_nightEndTime"
+							    android:layout_width="80dp"
+							    android:layout_height="wrap_content"
+							    android:background="@drawable/spinner_style2_half"/>	
+					     </LinearLayout>			    				
+					</TableRow>			
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="看診時間" 
+					    />	
+    				<Button 
+			         	android:id="@+id/button_HospitalInformationPage_selectConsultingHour"
+			         	android:layout_width="wrap_content"
+	            		android:layout_height="wrap_content"
+	            		android:text="選擇看診時間" />   
+					</TableRow>	 								
+			
+			<TableRow
+			    android:gravity="center"
+				android:layout_marginTop="10dp">	     
+			<Button 
+			         	android:id="@+id/button_HospitalInformationPage_revise"
+			         	android:layout_width="wrap_content"
+	            		android:layout_height="wrap_content"
+	            		android:text="修改" />   
+
+           	</TableRow>	
+		      						
+        </TableLayout>
+</ScrollView>
+</LinearLayout>

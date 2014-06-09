@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/layout_newDoctorInformation"
+    android:descendantFocusability="beforeDescendants"
+    android:focusableInTouchMode="true"
+	android:theme="@style/AppTheme"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+    <RelativeLayout
+	    android:id="@+id/menubar"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginBottom="10dp"
+	    android:background="#3f48cc">
+	<TextView 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:textColor="#ffffff"
+	    android:textSize="25sp"
+	    android:layout_marginLeft="10dp"
+	    android:layout_alignParentLeft="true"
+	    android:layout_centerVertical="true"
+	    android:text="@string/app_name"/>
+	<ImageButton
+		android:id="@+id/ImageButton_NewDoctorInformationPage_back"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:background="#00000000"
+		android:layout_alignParentRight="true"
+		android:layout_centerVertical="true"
+		android:contentDescription="@string/StringButton"
+		android:src="@drawable/ic_action_back" />
+	</RelativeLayout>
+
+     <ScrollView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+	
+	<TableLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="10dp"
+	        android:gravity="center">
+				  
+			 <ImageView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:src="@drawable/doctor_photo" />	
+			        
+					 <TableRow
+ 			    android:layout_width="wrap_content"
+ 			    android:layout_height="wrap_content"
+ 			    android:gravity="center" >
+ 			    
+ 						
+					    <Button 
+					    	android:id="@+id/button_NewDoctorInformationPage_uploadDoctorPhoto"
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:text="選擇檔案" />
+					</TableRow>       
+
+			<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">
+	
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫師編號" />	
+					    
+					    <TextView
+					        android:id="@+id/TextView_NewDoctorInformationPage_doctorNumber"  
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="" />		
+					</TableRow>			
+ 
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+						
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫院代碼" />	
+					        
+					    <TextView
+					        android:id="@+id/TextView_NewDoctorInformationPage_hospitalNumber"   
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="0038" />		
+					        	    
+					</TableRow>		
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">	
+							
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="科別" />	
+					        
+						<Spinner
+						    android:id="@+id/Spinner_newDoctorInformationPage_medicalDepartment"
+						    android:layout_width="65dp"
+						    android:layout_height="wrap_content"
+						    android:background="@drawable/spinner_style2"/>	
+					</TableRow>			
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫師姓名" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_NewDoctorInformationPage_doctorName"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入醫師姓名"
+					    	android:text=""/>  
+					</TableRow>		
+					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="工作職稱" 
+					    />	
+						<EditText  
+					    	android:id="@+id/EditText_NewDoctorInformationPage_jobTitle"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入工作職稱"
+					    	android:text=""/>  
+					</TableRow>				
+ 					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">	
+							
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="醫師電話" />
+					    	
+						<EditText  
+					    	android:id="@+id/EditText_NewDoctorInformationPage_doctorPhoneNumber"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入醫師電話"
+					    	android:text=""/>  
+					    	
+					</TableRow>		 					
+ 					
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="經歷" />	
+					        
+						<EditText  
+					    	android:id="@+id/EditText_NewDoctorInformationPage_experience"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入經歷"
+					    	android:text=""/>  
+					</TableRow>	 
+
+ 					<TableRow
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:gravity="center"
+						android:layout_marginBottom="10dp">		
+					    <TextView
+					        android:layout_width="wrap_content"
+					        android:layout_height="wrap_content"
+					        android:textSize="20sp"
+					        android:text="專長" />	
+					        
+						<EditText  
+					    	android:id="@+id/EditText_NewDoctorInformationPage_skill"    
+					    	android:paddingLeft="10dp"
+					    	android:background="@drawable/rounded_edittext"
+					   	    android:layout_height="wrap_content"   
+					   	    android:singleLine="true"
+					   	    android:textSize="20sp"
+					   	    android:layout_width="wrap_content"
+					   	    android:hint="請輸入專長"
+					    	android:text=""/>  
+					</TableRow>	 
+			
+			<TableRow
+				android:gravity="center"
+				android:layout_marginBottom="10dp"
+				android:layout_width="wrap_content"	
+				android:layout_height="wrap_content">		     
+
+			    <LinearLayout
+			        android:layout_width="match_parent"
+			        android:layout_height="wrap_content"
+			        android:gravity="center_horizontal" >
+ 						<Button 
+				         	android:id="@+id/button_NewDoctorInformationPage_new"
+				         	android:layout_width="wrap_content"
+		            		android:layout_height="wrap_content"
+		            		android:text="新增" /> 
+	    				<Button 
+				         	android:id="@+id/button_NewDoctorInformationPage_clearAll"
+				         	android:layout_width="wrap_content"
+		            		android:layout_height="wrap_content"
+		            		android:text="清空" />   
+	      
+			    </LinearLayout>
+           	</TableRow>	
+		      						
+        </TableLayout>
+</ScrollView>
+</LinearLayout>
