@@ -194,17 +194,18 @@ public class AuthorizeActivity extends ControllerActivity {
 				AuthorizeActivity.this);
 		builder.setTitle("APP訊息");
 		builder.setMessage("真的要離開此APP");
-		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int i) {
-				finish();
+				
 			}
 		});
 
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+		builder.setNegativeButton("確認", new DialogInterface.OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int i) {
+				finish();
 			}
 		});
 		builder.show();
