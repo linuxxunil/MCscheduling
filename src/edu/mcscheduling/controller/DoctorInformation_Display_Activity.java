@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -198,10 +199,7 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		@Override
 		public void onClick(View v) {
 			//for test
-			Intent intent = new Intent();
-			intent.setClass(DoctorInformation_Display_Activity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
+
 		}
 	};
 	
@@ -262,4 +260,14 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		}
 	};	
 	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			Intent intent = new Intent();
+			intent.setClass(DoctorInformation_Display_Activity.this, MenuActivity.class);
+			startActivity(intent);
+			finish();
+			return true;
+		}
+		return false;
+	}
 }

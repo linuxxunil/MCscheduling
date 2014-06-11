@@ -92,7 +92,7 @@ public class Account {
 				return StatusCode.WAR_LOGIN_FAIL();
 			}
 		} catch (SQLException e) {
-			System.out.println("AAAA" + e.getMessage());
+			System.out.println(e.getMessage());
 		} finally {
 			try {
 				rs.close();
@@ -163,10 +163,10 @@ public class Account {
 				throw new SQLException();
 			}
 			db.commit();
-		} catch ( SQLException  e ) {
+		} catch ( Exception  e ) {
 			try {
 				db.rollback();
-			} catch ( SQLException e1 ) {
+			} catch ( Exception e1 ) {
 				// nothing
 			}
 		}

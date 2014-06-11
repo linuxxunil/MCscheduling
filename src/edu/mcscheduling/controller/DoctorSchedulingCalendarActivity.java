@@ -19,6 +19,7 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -348,10 +349,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
+
 		}
 	};
 	
@@ -433,6 +431,16 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		}
 	};
 	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			Intent intent = new Intent();
+			intent.setClass(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
+			startActivity(intent);
+			finish();
+			return true;
+		}
+		return false;
+	}
 	
     /**
 	 * 

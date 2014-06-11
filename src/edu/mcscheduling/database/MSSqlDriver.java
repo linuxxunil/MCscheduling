@@ -8,7 +8,11 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import edu.mcscheduling.common.Network;
 import edu.mcscheduling.common.StatusCode;
 
 
@@ -33,6 +37,8 @@ public class MSSqlDriver extends DatabaseDriver {
 		try {
 			if ( mode == MODE.TRANSACATION ) 
 				return StatusCode.success;
+			else if ( !Network.isNetworkAvailable() ) 
+				return StatusCode.ERR_NETWORK_ISNOT_AVAILABLE();
 			
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
 			conn = DriverManager
@@ -237,6 +243,7 @@ public class MSSqlDriver extends DatabaseDriver {
 			return -1;
 		}
 	}
+	
 	private int tranDelete(String sql) {
 		try {
 			stmt = conn.createStatement();

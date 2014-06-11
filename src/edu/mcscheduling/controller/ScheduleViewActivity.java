@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.text.format.DateFormat;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -349,6 +350,22 @@ public class ScheduleViewActivity extends ControllerActivity {
 			finish();
 		}
 	};
+	
+	/**
+	 * onKeyDown(int keyCode, KeyEvent event)
+	 * 
+	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
+	 * 
+	 */
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			Intent intent = new Intent();
+			intent.setClass(ScheduleViewActivity.this, MenuActivity.class);
+			startActivity(intent);
+			finish();
+		}
+		return false;
+	}
 	
 	@Override
 	public void onDestroy() {

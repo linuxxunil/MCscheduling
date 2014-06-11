@@ -5,13 +5,10 @@ import java.util.List;
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.Account;
 import edu.mcscheduling.model.DatabaseTable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -270,14 +267,6 @@ public class MemberInformationActivity extends ControllerActivity {
 		}
 	};
 
-	/*
-	private Button.OnClickListener delete = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"delete", Toast.LENGTH_LONG).show();
-		}
-	};
-	*/
 
 	private Button.OnClickListener save = new Button.OnClickListener() {
 		@Override
@@ -298,31 +287,6 @@ public class MemberInformationActivity extends ControllerActivity {
 			}	
 		}
 	};
-	
-	/**
-	 * openOptionsDialog_leaveAPP()
-	 * 
-	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
-	 */
-	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(MemberInformationActivity.this);
-		builder.setTitle("APP訊息");
-		builder.setMessage("真的要離開此APP");
-		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-				thisActivity.finish();
-			}
-		});
-
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-			}
-		});
-		builder.show();
-	}
 
 	/**
 	 * onKeyDown(int keyCode, KeyEvent event)
@@ -332,39 +296,11 @@ public class MemberInformationActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			// do nothing...
+			Intent intent = new Intent();
+			intent.setClass(MemberInformationActivity.this, MenuActivity.class);
+			startActivity(intent);
+			finish();
 		}
 		return false;
-	}
-
-	// 以下為目前尚未使用，但未來會用到的function----------------------------------------------
-
-	/**
-	 * isNetworkAvailable()
-	 * 
-	 * 檢查目前的網路狀況
-	 * 
-	 * @return true indicates the network is available. false indicates the
-	 *         network is not available.
-	 */
-	private boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-	}
-
-	/**
-	 * responseToNetworkStatus()
-	 * 
-	 * 顯示目前的網路狀況，讓使用者知道
-	 */
-	public void responseToNetworkStatus() {
-		if (isNetworkAvailable() == false) {
-			Toast.makeText(getApplicationContext(),
-					"Network connection error!!", Toast.LENGTH_LONG).show();
-		} else {
-			// do nothing...
-		}
 	}
 }

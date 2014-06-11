@@ -4,17 +4,6 @@ package edu.mcscheduling.common;
  * StatusCode Definition 
  *  Status Code 是從 00000000~99999999 and -00000001~-99999999
  *  的一組數值，0:表示成功 / 正: Information / 負: Error 
- *  
- *  第 1 digital(MSB) = Log Type ( Developer Log (0) / User Log(1) )
- *  第 2 digital(MSB) = Package Number
- *  第 3~4 digital(MSB) = Class Number
- *  第 5~6 digital(MSB) = Function Number
- *  第 7~8 digital(MSB) = Status Code
- *  
- *  0x0 0 0 00 00 00
- *  1 2  3  4  5
- *  
- *  
  * @author jesse
  *
  */
@@ -48,6 +37,17 @@ public class StatusCode {
 	public static int ERR_SQL_SYNTAX_IS_ILLEGAL(String event) {
 		return log("-003","SQL syntax is illegal("+event+")");
 	}
+	
+
+	
+	public static int ERR_NETWORK_DONT_SET_CONTEXT() {
+		return log("-010","Network Context variable is null");
+	}
+	
+	public static int ERR_NETWORK_ISNOT_AVAILABLE() {
+		return log("-011","Network isn't avaiable");
+	}
+	
 	
 	// Parameter Error
 	public static int ERR_PARM_SQL_SYNTAX_IS_NULL() {
@@ -100,11 +100,16 @@ public class StatusCode {
 	}
 	
 	public static int ERR_PASSWD_CHANGE_ERROR() {
-		return log("-3001","Password change error");
+		return log("-3004","Password change error");
 	}
 	
 	public static int ERR_SET_MEMBER_INFO_ERROR() {
-		return log("-3002","Set member information error");
+		return log("-3005","Set member information error");
+	}
+	
+	// Authorize Activty
+	public static int WAR_MACT_UNINSTALLED() {
+		return log("10001","Mact uninstalled ");
 	}
 	
 }

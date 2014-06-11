@@ -3,12 +3,9 @@ package edu.mcscheduling.controller;
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -212,39 +209,8 @@ public class RevisePasswordActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			// do nothing...
+			openOptionsDialog_leaveAPP();
 		}
 		return false;
-	}
-
-	// 以下為目前尚未使用，但未來會用到的function----------------------------------------------
-
-	/**
-	 * isNetworkAvailable()
-	 * 
-	 * 檢查目前的網路狀況
-	 * 
-	 * @return true indicates the network is available. false indicates the
-	 *         network is not available.
-	 */
-	private boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-	}
-
-	/**
-	 * responseToNetworkStatus()
-	 * 
-	 * 顯示目前的網路狀況，讓使用者知道
-	 */
-	public void responseToNetworkStatus() {
-		if (isNetworkAvailable() == false) {
-			Toast.makeText(getApplicationContext(),
-					"Network connection error!!", Toast.LENGTH_LONG).show();
-		} else {
-			// do nothing...
-		}
 	}
 }
