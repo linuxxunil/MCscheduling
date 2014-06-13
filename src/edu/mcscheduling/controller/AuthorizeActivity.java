@@ -1,10 +1,20 @@
 package edu.mcscheduling.controller;
 
+import java.io.BufferedOutputStream;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.http.CsmpWebService;
+import edu.mcscheduling.utilities.StringUtility;
 import android.os.Bundle;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -64,6 +74,38 @@ public class AuthorizeActivity extends ControllerActivity {
 	private Button button_online;
 	private Button button_offline;
 	
+	// for test
+	private int getOfflineDatabase(String smeId,String appId) {
+	
+		smeId="sme79";
+		appId="aaa";
+		
+		CsmpWebService web = new CsmpWebService();
+		String result = web.getAllTableOfApp(smeId, appId);
+		
+		JSONObject obj;
+		String syncDbId = null;
+		try {
+			obj = new JSONObject(result);
+			if ( obj.getInt("STATUS") != 0 )
+				return -1;
+			
+			syncDbId = (String)obj.get("APP_DB_ID");
+			
+			result = web.slowSyncDatabase(syncDbId, smeId);
+			obj = new JSONObject(result);
+			
+			if ( obj.getInt("STATUS") != 0 )
+				return -2;
+			
+			web.downloadDatabase(syncDbId, dbPath);
+				
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} 
+		return StatusCode.success;
+	}
+	
 	
 	
 	private boolean isLicenseOK (String license) {
@@ -77,7 +119,8 @@ public class AuthorizeActivity extends ControllerActivity {
 		}
 		return false;
 	}
-
+	
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
@@ -98,6 +141,7 @@ public class AuthorizeActivity extends ControllerActivity {
 	    			 break;
 	    			 default:
 						 setAccessDriver(AccessDriver.SQLITE);
+						 //getOfflineDatabase("sme79","aaa");
 						break;
 	    			 }
 	    			 
@@ -130,6 +174,7 @@ public class AuthorizeActivity extends ControllerActivity {
 		setListeners();
 	}
 	
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.home, menu);
@@ -182,38 +227,31 @@ public class AuthorizeActivity extends ControllerActivity {
 			getCsmpAuthorize();
 			setDatabaseMode( AccessMode.OFFLINE );
 		}
+		
 	};
-
-	/**
-	 * openOptionsDialog_leaveAPP()
-	 * 
-	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
-	 */
-	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(
-				AuthorizeActivity.this);
-		builder.setTitle("APP訊息");
-		builder.setMessage("真的要離開此APP");
-		builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-				
-			}
-		});
-
-		builder.setNegativeButton("確認", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-				finish();
-			}
-		});
-		builder.show();
-	}
 	
+	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			openOptionsDialog_leaveAPP();
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					AuthorizeActivity.this);
+			builder.setTitle("APP訊息");
+			builder.setMessage("真的要離開此APP");
+			builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					
+				}
+			});
+
+			builder.setNegativeButton("確認", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					finish();
+				}
+			});
+			builder.show();
 		}
 		return false;
 	}

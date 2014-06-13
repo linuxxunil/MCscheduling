@@ -1,10 +1,14 @@
 package edu.mcscheduling.controller;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import edu.mcscheduling.common.Network;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.database.DatabaseDriver;
 import edu.mcscheduling.database.MSSqlDriver;
 import edu.mcscheduling.database.SqliteDriver;
+import edu.mcscheduling.http.CsmpWebService;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Hospital;
 import android.app.Activity;
@@ -24,7 +28,7 @@ public class ControllerActivity extends Activity {
 	static protected enum AccessDriver { SQLITE,MSSQL,CACHE}
 	static private AccessMode accessMode = AccessMode.NONE;
 	
-	private static final String dbPath = "/sdcard/data/cscheduling/cscheduling.db";
+	protected static final String dbPath = "/sdcard/data/cscheduling/cscheduling.db2";
 	
 	protected void setLoginID(String userid) {
 		loginID = userid;
@@ -86,6 +90,7 @@ public class ControllerActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		if ( accessMode == AccessMode.ONLINE )
 			Network.setContext(getBaseContext());
+		
 	}
 	
 

@@ -49,6 +49,8 @@ public class StatusCode {
 	}
 	
 	
+	
+	
 	// Parameter Error
 	public static int ERR_PARM_SQL_SYNTAX_IS_NULL() {
 		return log("-101","SQL syntax is null");
@@ -105,6 +107,27 @@ public class StatusCode {
 	
 	public static int ERR_SET_MEMBER_INFO_ERROR() {
 		return log("-3005","Set member information error");
+	}
+	
+	// http
+	public static int ERR_HTTP_PROTOCOL_ERR(String evt) {
+		return log("-4001","HTTP Protocol error("+evt+")");
+	}
+	
+	public static int ERR_HTTP_CONNECT_ERR() {
+		return log("-4002","HTTP connect error");
+	}
+	
+	public static int ERR_HTTP_RESPONSE_CODE_ERR(int code) {
+		return log("-4003","HTTP response error("+code+")");
+	}
+	
+	public static int ERR_HTTP_URL_ILLEGAL(String evt) {
+		return log("-4004","HTTP URL is illegal("+evt+")");
+	}
+	
+	public static int ERR_HTTP_IO_ERR(String evt) {
+		return log("-4005","HTTP IO error("+evt+")");
 	}
 	
 	// Authorize Activty

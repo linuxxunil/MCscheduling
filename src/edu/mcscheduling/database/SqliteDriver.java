@@ -91,6 +91,7 @@ public class SqliteDriver extends DatabaseDriver {
 			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
 
 		try {
+			System.out.println(sql);
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 			
@@ -115,6 +116,7 @@ public class SqliteDriver extends DatabaseDriver {
 		
 		ResultSet result = null;
 		try {
+			System.out.println(sql);
 			stmt = conn.createStatement();
 			result =stmt.executeQuery(sql);
 		} catch (SQLException e) {
@@ -132,6 +134,7 @@ public class SqliteDriver extends DatabaseDriver {
 			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
 		
 		try {
+			System.out.println(sql);
 			stmt = conn.createStatement();
 			stmt.execute(sql);
 		} catch (SQLException e) {

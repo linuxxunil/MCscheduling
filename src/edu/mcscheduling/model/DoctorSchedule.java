@@ -72,7 +72,7 @@ public class DoctorSchedule {
 	public int updateDoctorSchedule(String userid, String dorNo, String depName,
 		String schYear, String schMonth, String schedule, String desc) {
 		
-		String sql = String.format("UPDATE %s SET %s=%s,%s='%s',%s='%s',%s='%s'," +
+		String sql = String.format("UPDATE %s SET %s=%s,%s='%s',%s='%s',%s='%02d'," +
 										"%s='%s',%s='%s',%s='%s'" +
 										"WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%s'" ,
 			// Table
@@ -82,7 +82,7 @@ public class DoctorSchedule {
 			DatabaseTable.DoctorSchedule.colDepName, depName,
 
 			DatabaseTable.DoctorSchedule.colSchYear, schYear,
-			DatabaseTable.DoctorSchedule.colSchMonth, schMonth,
+			DatabaseTable.DoctorSchedule.colSchMonth, Integer.valueOf(schMonth),
 			DatabaseTable.DoctorSchedule.colSchedule, schedule,
 			DatabaseTable.DoctorSchedule.colUpdateID, userid,
 			DatabaseTable.DoctorSchedule.colUpdateDate, new DateTime().getDateTime(),
@@ -119,7 +119,7 @@ public class DoctorSchedule {
 		return StatusCode.success;
 	}
 	
-	private int getDoctorCount(String sql) {
+	private int getDoctorScheduleCount(String sql) {
 		ResultSet rs = db.select(sql);
 		int rowCount = 0;
 		if ( rs == null ) {
@@ -170,7 +170,7 @@ public class DoctorSchedule {
 				DatabaseTable.DoctorSchedule.name,
 				DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid));
 		
-		int rowCount = getDoctorCount(sql);
+		int rowCount = getDoctorScheduleCount(sql);
 		
 		if ( rowCount <= 0 )
 			return null;
@@ -183,49 +183,49 @@ public class DoctorSchedule {
 	}
 
 	public ContentValues[] getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(String userid, String depName, String dorNo,int year, int month) {
-		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%d'",
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,
 				DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid),
 				DatabaseTable.DoctorSchedule.colDepName, depName,
 				DatabaseTable.DoctorSchedule.colDorNo, dorNo,
 				DatabaseTable.DoctorSchedule.colSchYear,year,
-				DatabaseTable.DoctorSchedule.colSchMonth,month);
+				DatabaseTable.DoctorSchedule.colSchMonth,Integer.valueOf(month));
 		
-		int rowCount = getDoctorCount(sql);
+		int rowCount = getDoctorScheduleCount(sql);
 		
 		if ( rowCount <= 0 )
 			return null;
 		
-		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%d'",
+		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,
 				DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid),
 				DatabaseTable.DoctorSchedule.colDepName, depName,
 				DatabaseTable.DoctorSchedule.colDorNo, dorNo,
 				DatabaseTable.DoctorSchedule.colSchYear,year,
-				DatabaseTable.DoctorSchedule.colSchMonth,month);
+				DatabaseTable.DoctorSchedule.colSchMonth,Integer.valueOf(month));
 	
 		return setResultSetToContentValues(rowCount, sql);
 	}
 
 	public ContentValues[] getDoctorScheduleByDorNo_ShcYear_ShcMonth(String userid, String dorNo, String year, String month) {
-		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%s'",
+		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,
 				DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid),
 				DatabaseTable.DoctorSchedule.colDorNo, dorNo,
 				DatabaseTable.DoctorSchedule.colSchYear, year,
-				DatabaseTable.DoctorSchedule.colSchMonth, month);
+				DatabaseTable.DoctorSchedule.colSchMonth, Integer.valueOf(month));
 		
-		int rowCount = getDoctorCount(sql);
+		int rowCount = getDoctorScheduleCount(sql);
 		
 		if ( rowCount <= 0 )
 			return null;
 		
-		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%s'",
+		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,
 				DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid),
 				DatabaseTable.DoctorSchedule.colDorNo, dorNo,
 				DatabaseTable.DoctorSchedule.colSchYear, year,
-				DatabaseTable.DoctorSchedule.colSchMonth, month);
+				DatabaseTable.DoctorSchedule.colSchMonth, Integer.valueOf(month));
 	
 		return setResultSetToContentValues(rowCount, sql);
 	}
