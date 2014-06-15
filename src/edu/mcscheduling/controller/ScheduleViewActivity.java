@@ -41,7 +41,6 @@ public class ScheduleViewActivity extends ControllerActivity {
 	 * 以下為imageButton變數
 	 */
 	// View Componet
-	private ImageButton button_back	= null;
 	private ImageView 	button_prevMonth = null;
 	private ImageView 	button_nextMonth = null;
 	
@@ -217,11 +216,9 @@ public class ScheduleViewActivity extends ControllerActivity {
 	
 	public void setListeners() {
 		
-		button_back = (ImageButton) findViewById(R.id.ImageButton_ScheduleViewPage_back);
 		button_prevMonth = (ImageView) this.findViewById(R.id.prevMonth);
 		button_nextMonth = (ImageView) this.findViewById(R.id.nextMonth);
 
-		button_back.setOnClickListener(back);
 		button_prevMonth.setOnClickListener(prevMonth);
 		button_nextMonth.setOnClickListener(nextMonth);
 		comDepName.setOnItemSelectedListener(spinner_depName);

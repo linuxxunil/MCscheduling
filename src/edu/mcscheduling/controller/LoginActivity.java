@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,8 +23,7 @@ public class LoginActivity extends ControllerActivity {
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_login;
-	private ImageButton button_back;
+	private Button button_login;
 
 	/**
 	 * 目前這個Activity
@@ -73,7 +73,7 @@ public class LoginActivity extends ControllerActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
 		// Sets the focus on the layout not the edittext
-		findViewById(R.id.layout_login).requestFocus();
+		//findViewById(R.id.layout_login).requestFocus();
 	}
 
 	/**
@@ -82,27 +82,10 @@ public class LoginActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_LoginPage_back);
-		button_login = (ImageButton) findViewById(R.id.ImageButton_LoginPage_login);
+		button_login = (Button) findViewById(R.id.ImageButton_LoginPage_login);
 
-		button_back.setOnClickListener(back);
 		button_login.setOnClickListener(login);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(LoginActivity.this, HomeActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
 	
 	
 	/**

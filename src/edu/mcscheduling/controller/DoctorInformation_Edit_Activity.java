@@ -26,11 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class DoctorInformation_Edit_Activity extends ControllerActivity {
-
-	/**
-	 * 以下為imageButton變數
-	 */
-	private ImageButton button_back;
 	
 	/**
 	 * 以下為Button變數
@@ -238,27 +233,13 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_EditDoctorInformationPage_back);
 		button_selectUploadDoctorPhoto = (Button)  findViewById(R.id.button_EditDoctorInformationPage_uploadDoctorPhoto);
 		button_reviseDoctor  = (Button)  findViewById(R.id.button_EditDoctorInformationPage_revise);
 
-		button_back.setOnClickListener(back);
 		button_selectUploadDoctorPhoto.setOnClickListener(selectUploadDoctorPhoto);
 		button_reviseDoctor.setOnClickListener(reviseDoctor);
 		
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-
-		}
-	};
 
 	private Button.OnClickListener selectUploadDoctorPhoto = new Button.OnClickListener() {
 		@Override

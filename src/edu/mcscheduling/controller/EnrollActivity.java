@@ -23,8 +23,6 @@ public class EnrollActivity extends ControllerActivity {
 	 * 以下為imageButton變數
 	 */
 	private ImageButton button_enroll;
-	private ImageButton button_back;
-
 	/**
 	 * 目前這個Activity
 	 */
@@ -82,28 +80,10 @@ public class EnrollActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_back);
 		button_enroll = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_enroll);
 
-		button_back.setOnClickListener(back);
 		button_enroll.setOnClickListener(enroll);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(EnrollActivity.this, HomeActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
-
 	
 	/**
 	 * Controller : Enroll

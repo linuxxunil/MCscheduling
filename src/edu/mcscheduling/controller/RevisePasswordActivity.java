@@ -89,38 +89,12 @@ public class RevisePasswordActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_RevisePasswordback = (ImageButton) findViewById(R.id.ImageButton_RevisePasswordPage_back);
 		button_newPasswordConfirm = (Button) findViewById(R.id.button_RevisePasswordPage_newPasswordConfirm);
 		button_newPasswordCancel = (Button) findViewById(R.id.button_RevisePasswordPage_newPasswordCancel);
 
-		button_RevisePasswordback.setOnClickListener(back);
 		button_newPasswordConfirm.setOnClickListener(newPasswordConfirm);
 		button_newPasswordCancel.setOnClickListener(newPasswordCancel);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			//for test
-			Intent intent = new Intent();
-			intent.setClass(RevisePasswordActivity.this, TestActivity.class);
-			startActivity(intent);
-			finish();			
-			
-			/*
-			Intent intent = new Intent();
-			intent.setClass(RevisePasswordActivity.this, HomeActivity.class);
-			startActivity(intent);
-			finish();
-			*/
-		}
-	};
-	
 	
 	private void handleRevisePassword(View v) {
 		String oldPassword = ((EditText)

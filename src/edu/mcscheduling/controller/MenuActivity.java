@@ -20,7 +20,6 @@ public class MenuActivity extends ControllerActivity {
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_back;
 	private ImageButton button_hospital_profile;
 	private ImageButton button_doctor_profile;
 	private ImageButton button_schedule;
@@ -84,7 +83,6 @@ public class MenuActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back 				 = (ImageButton) findViewById(R.id.ImageButton_MenuPage_back);
 		button_hospital_profile      = (ImageButton) findViewById(R.id.ImageButton_MenuPage_hospitalProfile);
 		button_doctor_profile	     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_doctorProfile);
 		button_schedule			     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_schedule);
@@ -92,7 +90,6 @@ public class MenuActivity extends ControllerActivity {
 		button_membershipInformation = (ImageButton) findViewById(R.id.ImageButton_MenuPage_membershipInformation);
 		button_healthInformation     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_healthInformation);
 
-		button_back.setOnClickListener(back);
 		button_hospital_profile.setOnClickListener(hospital_profile);      
 		button_doctor_profile.setOnClickListener(doctor_profile);	    
 		button_schedule.setOnClickListener(schedule);			 
@@ -100,19 +97,6 @@ public class MenuActivity extends ControllerActivity {
 		button_membershipInformation.setOnClickListener(membershipInformation); 
 		button_healthInformation.setOnClickListener(healthInformation);  
 	}
-
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-		}
-	};
-	
 	
 	/**
 	 * Hospital Information

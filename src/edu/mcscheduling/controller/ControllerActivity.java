@@ -3,6 +3,7 @@ package edu.mcscheduling.controller;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import edu.mcscheduling.R;
 import edu.mcscheduling.common.Network;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.database.DatabaseDriver;
@@ -12,10 +13,14 @@ import edu.mcscheduling.http.CsmpWebService;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Hospital;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Toast;
 
 public class ControllerActivity extends Activity {
@@ -92,6 +97,5 @@ public class ControllerActivity extends Activity {
 			Network.setContext(getBaseContext());
 		
 	}
-	
 
 }

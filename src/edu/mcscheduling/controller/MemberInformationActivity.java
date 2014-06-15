@@ -27,10 +27,6 @@ public class MemberInformationActivity extends ControllerActivity {
 	
 	private final String[] passQuestionList = {"就讀的國小學校","目前的居住地","喜歡的球類運動","最愛的歌星","最喜歡的車子"};
 	private final String[] workTypeList = {"無"};
-	/**
-	 * 以下為imageButton變數
-	 */
-	private ImageButton button_back;
 	
 	/**
 	 * 以下為Button變數
@@ -233,31 +229,14 @@ public class MemberInformationActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_MemberInformationPage_back);
 		//button_delete = (Button)  findViewById(R.id.button_MemberInformationPage_delete);
 		button_save = (Button)  findViewById(R.id.button_MemberInformationPage_save);
 		button_uploadIDphoto = (Button)  findViewById(R.id.button_MemberInformationPage_uploadIDphoto);
 
-		button_back.setOnClickListener(back);
 		//button_delete.setOnClickListener(delete);
 		button_save.setOnClickListener(save);
 		button_uploadIDphoto.setOnClickListener(uploadIDphoto);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(MemberInformationActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
 
 	private Button.OnClickListener uploadIDphoto = new Button.OnClickListener() {
 		@Override

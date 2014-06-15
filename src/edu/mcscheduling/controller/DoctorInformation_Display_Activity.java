@@ -32,12 +32,6 @@ import android.widget.AdapterView.OnItemClickListener;
  *
  */
 public class DoctorInformation_Display_Activity extends ControllerActivity {
-
-	/**
-	 * 以下為imageButton變數
-	 */
-	private ImageButton button_back;
-	
 	/**
 	 * 以下為button變數
 	 */
@@ -179,29 +173,14 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_DisplayDoctorInformationPage_back);
 		button_new = (Button) findViewById(R.id.button_DisplayDoctorInformationPage_new);
 		button_delete = (Button) findViewById(R.id.button_DisplayDoctorInformationPage_delete);
 		button_revise = (Button) findViewById(R.id.button_DisplayDoctorInformationPage_revise);
-		
-		button_back.setOnClickListener(back);
+	
 		button_new.setOnClickListener(newListViewRow);
 		button_delete.setOnClickListener(deleteListViewRow);
 		button_revise.setOnClickListener(revise);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			//for test
-
-		}
-	};
 	
 	private Button.OnClickListener newListViewRow = new Button.OnClickListener() {
 		@Override

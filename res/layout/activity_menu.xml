@@ -4,13 +4,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
-     android:background="@drawable/background_menu">
+     android:background="@drawable/repeat">
 
     <RelativeLayout
 	    android:id="@+id/menubar"
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
-	    android:background="#3f48cc">
+	    android:background="@drawable/menubar_color">
 	<TextView 
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -20,15 +20,7 @@
 	    android:layout_alignParentLeft="true"
 	    android:layout_centerVertical="true"
 	    android:text="@string/app_name"/>
-	<ImageButton
-		android:id="@+id/ImageButton_MenuPage_back"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:background="#00000000"
-		android:layout_alignParentRight="true"
-		android:layout_centerVertical="true"
-		android:contentDescription="@string/StringButton"
-		android:src="@drawable/ic_action_back" />
+
 	</RelativeLayout>
 	
 	    <TableLayout
@@ -37,78 +29,99 @@
 	        android:layout_height="fill_parent">
 			
 		    <TableRow
-		        android:layout_marginBottom="50dp"
-		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent">
+		        android:layout_width="fill_parent"
+		        android:layout_height="0dp"
+		        android:layout_margin="@dimen/activity_vertical_margin"
+		        android:layout_weight="1" >
 		        
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_hospitalProfile"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/hospital_profile" />  	
+				    android:id="@+id/ImageButton_MenuPage_hospitalProfile"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/hospital_profile" />
+  	
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_doctorProfile"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/doctor_profile" />  	
+				    android:id="@+id/ImageButton_MenuPage_doctorProfile"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/doctor_profile" />
+  	
 		    </TableRow>
 
 		    <TableRow
-		        android:layout_marginBottom="50dp"
-		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent">
+		        android:layout_width="fill_parent"
+		        android:layout_height="0dp"
+		        android:layout_margin="@dimen/activity_vertical_margin"
+		        android:layout_weight="1" >
 				
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_schedule"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/schedule" />  	
+				    android:id="@+id/ImageButton_MenuPage_schedule"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/schedule" />
+  	
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_registeredinquiry"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/registeredinquiry" />  	
+				    android:id="@+id/ImageButton_MenuPage_registeredinquiry"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/registeredinquiry" />
+  	
 		    </TableRow>
     
-
 		   <TableRow
-		        android:layout_height="wrap_content"
-		        android:layout_width="fill_parent">
+		       android:layout_width="fill_parent"
+		       android:layout_height="0dp"
+		       android:layout_margin="@dimen/activity_vertical_margin"
+		       android:layout_weight="1" >
 				
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_membershipInformation"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/membership_information" />  	
+				    android:id="@+id/ImageButton_MenuPage_membershipInformation"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/membership_information" />
+  	
 				<ImageButton
-			        android:id="@+id/ImageButton_MenuPage_healthInformation"
-			        android:background="#00000000"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:scaleType="fitCenter"
-			        android:layout_weight="1"
-			        android:contentDescription="@string/StringButton"
-			        android:src="@drawable/health_information" />  	
+				    android:id="@+id/ImageButton_MenuPage_healthInformation"
+				    android:layout_width="0dp"
+				    android:layout_height="wrap_content"
+				    android:layout_gravity="center_vertical"
+				    android:layout_margin="@dimen/activity_vertical_margin"
+				    android:layout_weight="1"
+				    android:background="#00000000"
+				    android:contentDescription="@string/StringButton"
+				    android:scaleType="fitCenter"
+				    android:src="@drawable/health_information" />
+  	
 		    </TableRow>
 		</TableLayout>
 </LinearLayout>

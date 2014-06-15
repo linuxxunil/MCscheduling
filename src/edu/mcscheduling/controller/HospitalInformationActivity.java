@@ -29,11 +29,7 @@ import android.widget.Toast;
 public class HospitalInformationActivity extends ControllerActivity {
 
 	private final String[] medicalGroup = {"無","萬年溪醫療群","台大醫療群","長庚醫療群","榮總醫療群"};
-	/**
-	 * 以下為imageButton變數
-	 */
-	private ImageButton button_back;
-	
+
 	/**
 	 * 以下為Button變數
 	 */
@@ -650,33 +646,14 @@ public class HospitalInformationActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_back = (ImageButton) findViewById(R.id.ImageButton_HospitalInformationPage_back);
 		button_selectUploadManagerPhoto = (Button)  findViewById(R.id.button_HospitalInformationPage_uploadHospitalManagerPhoto);
 		button_revise = (Button)  findViewById(R.id.button_HospitalInformationPage_revise);
 		button_selectConsultingHour  = (Button)  findViewById(R.id.button_HospitalInformationPage_selectConsultingHour);
 
-		button_back.setOnClickListener(back);
 		button_selectUploadManagerPhoto.setOnClickListener(selectUploadManagerPhoto);
 		button_revise.setOnClickListener(revise);
 		button_selectConsultingHour.setOnClickListener(selectConsultingHour);
 	}
-
-	/**
-	 * back
-	 * 
-	 * 當你按下back按鈕，返回首頁(Home)
-	 */
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			
-			Intent intent = new Intent();
-			intent.setClass(HospitalInformationActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
-
 
 	private Button.OnClickListener selectUploadManagerPhoto = new Button.OnClickListener() {
 		@Override

@@ -46,7 +46,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	 * 以下為imageButton變數
 	 */
 	// View Componet
-	private ImageButton button_back	= null;
 	private Button button_save	= null;
 	private ImageView 	button_prevMonth = null;
 	private ImageView 	button_nextMonth = null;
@@ -223,12 +222,10 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	
 	public void setListeners() {
 		
-		button_back = (ImageButton) findViewById(R.id.ImageButton_DoctorSchedulingCalendarPage_back);
 		button_save = (Button) findViewById(R.id.Button__DoctorSchedulingCalendarPage_save);
 		button_prevMonth = (ImageView) this.findViewById(R.id.prevMonth);
 		button_nextMonth = (ImageView) this.findViewById(R.id.nextMonth);
 
-		button_back.setOnClickListener(back);
 		button_save.setOnClickListener(save);
 		button_prevMonth.setOnClickListener(prevMonth);
 		button_nextMonth.setOnClickListener(nextMonth);
@@ -342,14 +339,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 				currentMonth++;
 			}
 			setCalendar_ValueOfView(currentYear, currentMonth);
-		}
-	};
-	
-	
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-
 		}
 	};
 	

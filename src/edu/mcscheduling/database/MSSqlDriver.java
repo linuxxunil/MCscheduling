@@ -95,6 +95,7 @@ public class MSSqlDriver extends DatabaseDriver {
 		if (sql.isEmpty())
 			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
 		int retValue = 0;
+		System.out.println(sql);
 		if ( mode == MODE.NORMAL ) {
 			System.out.println("normal insert");
 			retValue = normalInsert(sql);
@@ -206,7 +207,7 @@ public class MSSqlDriver extends DatabaseDriver {
 		}
 		
 		ResultSet rs = null;
-		
+		System.out.println(sql);
 		if ( mode == MODE.NORMAL ) {
 			System.out.println("normal select");
 			rs = normalSelect(sql);
@@ -258,7 +259,7 @@ public class MSSqlDriver extends DatabaseDriver {
 	public int delete(String sql) {
 		if (sql.isEmpty())
 			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
-
+		System.out.println(sql);
 		int retValue = 0;
 		if ( mode == MODE.NORMAL ) {
 			retValue = normalDelete(sql);
@@ -309,7 +310,7 @@ public class MSSqlDriver extends DatabaseDriver {
 	public int update(String sql) {
 		if (sql.isEmpty())
 			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
-
+		System.out.println(sql);
 		int retValue = 0;
 		if ( mode == MODE.NORMAL ) {
 			System.out.println("normal update");

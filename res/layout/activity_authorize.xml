@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="match_parent" >
 
     <RelativeLayout
         android:id="@+id/menubar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#3f48cc" >
+        android:background="@drawable/menubar_color" >
 
         <TextView
             android:layout_width="wrap_content"
@@ -20,27 +19,43 @@
             android:textColor="#ffffff"
             android:textSize="25sp" />
 
-        <ImageButton
-            android:id="@+id/ImageButton_HomePage_back"
+    </RelativeLayout>
+	<ImageView 
+	    android:layout_centerVertical="true"
+	    android:src="@drawable/home_image"
+	    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scaleType="fitCenter"/>
+
+	<TableLayout
+	    android:layout_alignParentBottom="true"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginBottom="20dp"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content">
+	<TableRow
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" >
+	<Button 
+            android:id="@+id/button_Online"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="#00000000"
-            android:contentDescription="@string/StringButton"
-            android:src="@drawable/ic_action_back" />
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/button_Online"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Online" />
-
+            android:background="@drawable/button_bk"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            android:layout_marginRight="50dp"
+            android:text="Online"/>
+	
     <Button
         android:id="@+id/button_Offline"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_bk"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
         android:text="Offline" />
+	    </TableRow>
+	</TableLayout>
+   
 
-</LinearLayout>
+</RelativeLayout>
