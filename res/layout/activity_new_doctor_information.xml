@@ -138,7 +138,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入醫師姓名"
 					    	android:text=""/>  
 					</TableRow>		
@@ -161,7 +161,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入工作職稱"
 					    	android:text=""/>  
 					</TableRow>				
@@ -185,7 +185,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入醫師電話"
 					    	android:text=""/>  
 					    	
@@ -209,7 +209,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入經歷"
 					    	android:text=""/>  
 					</TableRow>	 
@@ -232,7 +232,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入專長"
 					    	android:text=""/>  
 					</TableRow>	 

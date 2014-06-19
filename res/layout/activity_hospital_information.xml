@@ -76,7 +76,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:enabled="false"
 					    	android:text=""
 						/>
@@ -120,7 +120,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入醫院名稱"
 					    	android:text=""
 						/>  
@@ -143,7 +143,7 @@
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入醫院地址"
 					    	android:text=""/>  
 					</TableRow>		
@@ -166,7 +166,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入負責人名稱"
 					    	android:text=""
 						/>  
@@ -191,7 +191,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入醫院電話"
 					    	android:text=""/>  
 					</TableRow>		 					
@@ -214,7 +214,7 @@
 					   	    android:layout_height="wrap_content"   
 					   	    android:singleLine="true"
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="請輸入負責人電話"
 					    	android:text=""
 						/>  
@@ -237,7 +237,7 @@
 					    	android:background="@drawable/rounded_edittext"
 					   	    android:layout_height="wrap_content"   
 					   	    android:textSize="20sp"
-					   	    android:layout_width="wrap_content"
+					   	    android:layout_width="160dp"
 					   	    android:hint="多筆資料使用 ,分開"
 					    	android:text=""/>  
 					</TableRow>	 
