@@ -49,6 +49,9 @@ public class MSSqlDriver extends DatabaseDriver {
 			return Logger.e(this, StatusCode.ERR_JDBC_CLASS_NOT_FOUND);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
+		} catch (Exception e ) {
+			System.out.println(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 		}
 		return StatusCode.success;
 	}
@@ -64,11 +67,12 @@ public class MSSqlDriver extends DatabaseDriver {
 				}
 				try {
 					stmt = conn.createStatement();
-					stmt.executeUpdate(sql[0]);
+					return stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
 					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
+				} catch (Exception e ) {
+					return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 				}
-				return StatusCode.success;
 			}	
 		}.execute(sql);
 			
@@ -84,11 +88,12 @@ public class MSSqlDriver extends DatabaseDriver {
 	private int tranInsert(String sql) {
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			return stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
-		}
-		return StatusCode.success;	
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 	}
 	
 	@Override
@@ -119,11 +124,12 @@ public class MSSqlDriver extends DatabaseDriver {
 				}
 				try {
 					stmt = conn.createStatement();
-					stmt.executeUpdate(sql[0]);
+					return stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
 					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
+				} catch (Exception e ) {
+					return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 				}
-				return StatusCode.success;
 			}	
 		}.execute(sql);
 		
@@ -139,11 +145,10 @@ public class MSSqlDriver extends DatabaseDriver {
 	private int tranCreateTable(String sql) {
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			return stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
-		return StatusCode.success;
 	}
 	
 	@Override
@@ -178,6 +183,9 @@ public class MSSqlDriver extends DatabaseDriver {
 				} catch (SQLException e) {
 					return new MsResultSet(
 							Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage()));
+				} catch (Exception e ) {
+					return new MsResultSet(
+							Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage()));
 				}				
 			}	
 		}.execute(sql);
@@ -199,7 +207,10 @@ public class MSSqlDriver extends DatabaseDriver {
 		} catch (SQLException e) {
 			return new MsResultSet(Logger.e(
 					this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage()));
-		}
+		} catch (Exception e ) {
+			return new MsResultSet(
+					Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage()));
+		}	
 	}
 	
 	@Override
@@ -229,11 +240,12 @@ public class MSSqlDriver extends DatabaseDriver {
 				}
 				try {
 					stmt = conn.createStatement();
-					stmt.executeUpdate(sql[0]);
+					return stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
 					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
-				}
-				return StatusCode.success;
+				} catch (Exception e ) {
+					return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+				}	
 			}	
 		}.execute(sql);
 		
@@ -249,11 +261,12 @@ public class MSSqlDriver extends DatabaseDriver {
 	private int tranDelete(String sql) {
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			return stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
-		}
-		return StatusCode.success;
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 	}
 	
 	@Override
@@ -282,11 +295,12 @@ public class MSSqlDriver extends DatabaseDriver {
 				}
 				try {
 					stmt = conn.createStatement();
-					stmt.executeUpdate(sql[0]);
+					return stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
 					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
-				}
-				return StatusCode.success;
+				} catch (Exception e ) {
+					return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+				}	
 			}	
 		}.execute(sql);
 		
@@ -302,11 +316,10 @@ public class MSSqlDriver extends DatabaseDriver {
 	private int tranUpdate(String sql) {
 		try {
 			stmt = conn.createStatement();
-			stmt.executeUpdate(sql);
+			return stmt.executeUpdate(sql);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
-		return StatusCode.success;
 	}
 	
 	@Override
@@ -337,7 +350,9 @@ public class MSSqlDriver extends DatabaseDriver {
 			conn.setAutoCommit(autoCommit);
 		} catch ( SQLException e ) {
 			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
-		}
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 		return StatusCode.success;
 	}
 
@@ -347,7 +362,9 @@ public class MSSqlDriver extends DatabaseDriver {
 			conn.commit();
 		} catch ( SQLException e ) {
 			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
-		}
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 		return StatusCode.success;
 	}
 	
@@ -357,7 +374,9 @@ public class MSSqlDriver extends DatabaseDriver {
 			conn.rollback();
 		} catch ( SQLException e ) {
 			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
-		}
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 		return StatusCode.success;
 		
 	}
@@ -370,7 +389,9 @@ public class MSSqlDriver extends DatabaseDriver {
 				status = Logger.e(this, StatusCode.ERR_GET_AUTOCOMMIT_FAIL);
 		} catch ( SQLException e ) {
 			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
-		}
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 		return status;
 	}
 
@@ -425,7 +446,9 @@ public class MSSqlDriver extends DatabaseDriver {
 			rs.close();
 		} catch (SQLException e) {
 			Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
-		}
+		} catch (Exception e ) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}	
 		return StatusCode.success;
 	}
 

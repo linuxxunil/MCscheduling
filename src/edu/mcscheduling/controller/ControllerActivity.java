@@ -106,11 +106,10 @@ public class ControllerActivity extends Activity {
 	
 	protected Handler handler = null;
 	
-	protected void sendMessage(int what, int statusCode, String message ) {
+	protected void sendMessage(int what, int statusCode ) {
 		if ( handler != null ) {
 			Message msg = handler.obtainMessage();
 			Bundle bundle = new Bundle();
-			bundle.putString("message", message);
 			bundle.putInt("status", statusCode);
 			msg.what = what;
 			msg.setData(bundle);

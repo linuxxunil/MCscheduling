@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -22,11 +23,7 @@ public class EnrollActivity extends ControllerActivity {
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_enroll;
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
+	private Button button_enroll;
 
 	/**
 	 * onCreate(Bundle savedInstanceState)
@@ -37,8 +34,6 @@ public class EnrollActivity extends ControllerActivity {
 		super.onCreate(savedInstanceState);
 
 		setLayout();
-
-		thisActivity = this;
 
 		// Listen for button clicks
 		setListeners();
@@ -80,7 +75,7 @@ public class EnrollActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_EnrollPage_enroll);
+		button_enroll = (Button) findViewById(R.id.Button_EnrollPage_enroll);
 
 		button_enroll.setOnClickListener(enroll);
 	}
@@ -146,32 +141,6 @@ public class EnrollActivity extends ControllerActivity {
 	};
 
 	/**
-	 * openOptionsDialog_leaveAPP()
-	 * 
-	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
-	 */
-	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(
-				EnrollActivity.this);
-		builder.setTitle("APP訊息");
-		builder.setMessage("真的要離開此APP");
-		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-				thisActivity.finish();
-			}
-		});
-
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-			}
-		});
-		builder.show();
-	}
-
-	/**
 	 * onKeyDown(int keyCode, KeyEvent event)
 	 * 
 	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
@@ -179,7 +148,7 @@ public class EnrollActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			openOptionsDialog_leaveAPP();
+			changeActivity(EnrollActivity.this, HomeActivity.class);
 		}
 		return false;
 	}

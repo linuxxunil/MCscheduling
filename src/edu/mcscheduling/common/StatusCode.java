@@ -26,11 +26,16 @@ public class StatusCode {
 	final static public int success = 0;
 		
 	final static public String[] ClassInfo = {
-		"edu.mcscheduling.common.Logger"			,"00011000",
-		"edu.mcscheduling.common.Network"			,"00012000",
-		"edu.mcscheduling.database.MSSqlDriver"		,"00013000",
-		"edu.mcscheduling.database.SqliteDriver"	,"00014000",
-		"edu.mcscheduling.model.Account"			,"00021000"
+		"edu.mcscheduling.common.Logger"				,"00011000",
+		"edu.mcscheduling.common.Network"				,"00012000",
+		"edu.mcscheduling.database.MSSqlDriver"			,"00023000",
+		"edu.mcscheduling.database.SqliteDriver"		,"00024000",
+		"edu.mcscheduling.model.Account"				,"00031000",
+		"edu.mcscheduling.model.Hospital"				,"00032000",
+		"edu.mcscheduling.model.Department"				,"00033000",
+		"edu.mcscheduling.model.Doctor"					,"00034000",
+		"edu.mcscheduling.model.DoctorSchedule"			,"00035000",
+		"edu.mcscheduling.controller.AuthorizeActivty"	,"00041000"
 	};
 	
 	/* Common Define */
@@ -74,18 +79,23 @@ public class StatusCode {
 	// database_MSSqlDriver
 	final static public String ERR_MSSQL_CONNECT_ERROR		= "-001,Cannot connect to MSSQL";
 	
-	// model.Account
+	// model
+	// Account
 	final static public String ERR_LOGIN_FAIL				= "-001,Login fail (userid or password is error)";
 	final static public String ERR_MEMBER_NOT_EXIST			= "-002,Member info is not found";
 	final static public String ERR_GET_MEMBER_INFO_FAIL		= "-003,Get Member information fail";
-	// model.Hospital
+	// Hospital
 	final static public String WAR_HOSPITAL_NOT_SETTING		= "001,Hospital is not setting";
-	// model.Depatment
+	// Depatment
 	final static public String WAR_DEPARTMENT_NOT_SETTING	= "001,Department is not setting";
-	// model.Doctor
+	// Doctor
 	final static public String WAR_DOCTOR_NOT_SETTING		= "001,Doctor is not setting";
-	// model.DoctorSchedule
+	// DoctorSchedule
 	final static public String WAR_DOCTORSCHEDULE_NOT_SETTING= "001,Doctor is not setting";
+	
+	// controller
+	// AuthorizeActivty
+	final static public String WAR_MACT_UNINSTALLED			= "001,Mact uninstalled";
 	
 	//final static public String ERR_DEPART_NOT_EXIST			= "-002,Depart is not found";
 	//final static public String ERR_GET_MEMBER_INFO_FAIL		= "-003,Get Member information fail";

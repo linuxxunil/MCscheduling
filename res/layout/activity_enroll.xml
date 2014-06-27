@@ -151,7 +151,7 @@
 	    android:gravity="center_vertical|center_horizontal"
 	    android:layout_weight="1">    
 	<Button
-		android:id="@+id/ImageButton_EnrollPage_enroll"
+		android:id="@+id/Button_EnrollPage_enroll"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:background="@drawable/button_bk"

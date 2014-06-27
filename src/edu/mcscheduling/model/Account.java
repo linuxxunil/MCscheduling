@@ -117,6 +117,11 @@ public class Account {
 	 * @return 
 	 */
 	public int login(String userid, String userpasswd)  {
+		if ( userid == null || userid.isEmpty() )
+			return  Logger.e(this, StatusCode.PARM_USERID_ERROR);
+		else if ( userpasswd == null || userpasswd.isEmpty() )
+			return Logger.e(this, StatusCode.PARM_USERPASSWD_ERROR);
+		
 		return matchUseridPasswd(userid, userpasswd);
 	}
 	

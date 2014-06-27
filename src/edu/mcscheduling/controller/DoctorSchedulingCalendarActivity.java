@@ -12,6 +12,7 @@ import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Doctor;
 import edu.mcscheduling.model.DoctorSchedule;
 import edu.mcscheduling.model.Hospital;
+import edu.mcscheduling.model.MsContentValues;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ContentValues;
@@ -64,10 +65,10 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private DoctorSchedule schedule = null;
 	private int depNameRowId = 0;
 	private int dorNoRowId = 0;
-	private ContentValues[] departContent = null;
-	private ContentValues[] doctorContent = null;
-	private ContentValues[] scheduleContent = null;
-	private ContentValues[] hospitalContent = null;
+	private MsContentValues departContent = null;
+	private MsContentValues doctorContent = null;
+	private MsContentValues scheduleContent = null;
+	private MsContentValues hospitalContent = null;
 	
 	private HashMap<String, String> monthInfo = null;
 	
@@ -157,11 +158,11 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		monthInfo.put("month", String.valueOf(month));
 		
 		String hospitalschedule = null;
-		if ( hospitalContent == null ) {
+		if ( hospitalContent.cv == null ) {
 			hospitalschedule = "0000000";
 		} else {
 			hospitalschedule = 
-				(String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalschedule);
+				(String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalschedule);
 		}
 		
 		for (int i=0; i<7; i++ ) 
@@ -172,15 +173,15 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		} else {
 			scheduleContent = schedule.getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(
 					getLoginID(), 
-					(String)departContent[depNameRowId].get(DatabaseTable.Doctor.colDepName), 
-					(String)doctorContent[dorNoRowId].get(DatabaseTable.Doctor.colDorNo),
+					(String)departContent.cv[depNameRowId].get(DatabaseTable.Doctor.colDepName), 
+					(String)doctorContent.cv[dorNoRowId].get(DatabaseTable.Doctor.colDorNo),
 					year, month) ;
 		
-			if ( scheduleContent == null ) {
+			if ( scheduleContent.cv == null ) {
 				for ( int i=0; i<31; i++ ) 
 					monthInfo.put(String.valueOf(i), "false-false-false");
 			} else {
-				String tmp = (String) scheduleContent[0].get(DatabaseTable.DoctorSchedule.colSchedule);				
+				String tmp = (String) scheduleContent.cv[0].get(DatabaseTable.DoctorSchedule.colSchedule);				
 				System.out.println(tmp.length());
 				for ( int i=0; i<31; i++ ) 
 					setConsultingTime(String.valueOf(i), tmp.substring(i,i+1) );
@@ -241,9 +242,9 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
         //Array list of animals to display in the spinner
         List<String> list = new ArrayList<String>();
         
-        if ( departContent != null ) {
-        	for ( int i=0; i<departContent.length; i++ ) {
-        		list.add((String)departContent[i].get(DatabaseTable.Department.colDepName));
+        if ( departContent.cv != null ) {
+        	for ( int i=0; i<departContent.cv.length; i++ ) {
+        		list.add((String)departContent.cv[i].get(DatabaseTable.Department.colDepName));
         	}
         }
         
@@ -266,13 +267,13 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
         //Array list of animals to display in the spinner
         List<String> list = new ArrayList<String>();
 
-		if ( departContent != null ) {
+		if ( departContent.cv != null ) {
 			doctorContent = doctor.getDoctorByDepName(getLoginID(),
-					(String)departContent[depNameRowId].get(DatabaseTable.Department.colDepName));
+					(String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName));
 			
 			if ( doctorContent != null ) {
-				for ( int i=0; i<doctorContent.length; i++ ) {
-					list.add((String)doctorContent[i].get(DatabaseTable.Doctor.colDorName));
+				for ( int i=0; i<doctorContent.cv.length; i++ ) {
+					list.add((String)doctorContent.cv[i].get(DatabaseTable.Doctor.colDorName));
 				}
 			} 
 		}
@@ -380,8 +381,8 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		public void onClick(View v) {
 			
 			
-			String dorNo = (String)doctorContent[dorNoRowId].get(DatabaseTable.Doctor.colDorNo);
-			String depName = (String)departContent[depNameRowId].get(DatabaseTable.Department.colDepName);
+			String dorNo = (String)doctorContent.cv[dorNoRowId].get(DatabaseTable.Doctor.colDorNo);
+			String depName = (String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName);
 			String schYear = String.valueOf(currentYear);
 			String schMonth = String.valueOf(currentMonth);
 

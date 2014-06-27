@@ -11,7 +11,9 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.http.CsmpWebService;
 import edu.mcscheduling.utilities.StringUtility;
@@ -74,7 +76,7 @@ public class AuthorizeActivity extends ControllerActivity {
 	private Button button_online;
 	private Button button_offline;
 	
-	// for test
+	 /***************** Test ****************************/
 	private int getOfflineDatabase(String smeId,String appId) {
 	
 		smeId="sme79";
@@ -105,7 +107,7 @@ public class AuthorizeActivity extends ControllerActivity {
 		} 
 		return StatusCode.success;
 	}
-	
+	/***************** Test ****************************/
 	
 	
 	private boolean isLicenseOK (String license) {
@@ -144,11 +146,7 @@ public class AuthorizeActivity extends ControllerActivity {
 						 //getOfflineDatabase("sme79","aaa");
 						break;
 	    			 }
-	    			 
-	    			 Intent intent = new Intent();
-	    			 intent.setClass(AuthorizeActivity.this, LoginActivity.class);
-	    			 startActivity(intent);
-    				 finish();
+	    			 changeActivity(AuthorizeActivity.this, AuthorizeActivity.class);
 	    		 } else {
 	    			 setDatabaseMode( AccessMode.NONE );
 	    			 AlertDialog.Builder builder = new AlertDialog.Builder(
@@ -205,10 +203,10 @@ public class AuthorizeActivity extends ControllerActivity {
         	if(checkMactInstalled()){
         		getLicense();
         	}else{
-        		return StatusCode.WAR_MACT_UNINSTALLED();
+        		return Logger.e(this, StatusCode.WAR_MACT_UNINSTALLED);
         	}
     	} catch (Exception e){
-	    	
+    		return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR);
 	    }
 		return StatusCode.success;
 	}
@@ -253,6 +251,6 @@ public class AuthorizeActivity extends ControllerActivity {
 			});
 			builder.show();
 		}
-		return false;
+		return true;
 	}
 }

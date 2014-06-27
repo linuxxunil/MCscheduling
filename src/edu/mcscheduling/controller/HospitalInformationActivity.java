@@ -2,10 +2,13 @@ package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Hospital;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -41,20 +44,10 @@ public class HospitalInformationActivity extends ControllerActivity {
 	 * 以下為dialog變數
 	 */
 	private Dialog dialog_selectConsultingHour;
-	/**
-	 * Below are CheckBoxes...
-	 */
-
-	/**
-	 * 
-	 */
-	
 	private Hospital hospital = null;
-	private ContentValues[] hospitalContent = null;
+	private MsContentValues hospitalContent = null;
 	
 	private Department depart = null;
-	//private ContentValues[] departContent = null;
-	
 	private EditText hospitalNo = null;
 	private Spinner areaID = null;
 	private EditText hospitalName = null;
@@ -115,8 +108,10 @@ public class HospitalInformationActivity extends ControllerActivity {
 		
 		hospital = new Hospital(db);
 		depart = new Department(db);
-		
 		hospitalContent = hospital.getHospital(getLoginID());
+		if ( hospitalContent.status != StatusCode.success ) {
+			// show message
+		}
 		
 		bindViewComponent();
 		
@@ -186,11 +181,11 @@ public class HospitalInformationActivity extends ControllerActivity {
 		if ( hospitalContent != null ) {
 			
 			// Hospital No
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalNo);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalNo);
 			hospitalNo.setText(strTmp == null ? "":strTmp);
 			
 			// Area ID
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colAreaID);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colAreaID);
 			if ( strTmp != null ) {
 				for ( int i=0; i<medicalGroup.length; i++ ) {
 					if ( medicalGroup[i].equals(strTmp) ) {
@@ -203,55 +198,55 @@ public class HospitalInformationActivity extends ControllerActivity {
 			}
 			
 			// Hospital Name 
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalName);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalName);
 			hospitalName.setText(strTmp == null ? "":strTmp);
 			
 			// Hospital Address 
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalAddress);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalAddress);
 			hospitalAddress.setText(strTmp == null ? "":strTmp);
 			
 			// Contact Name 
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colContactName);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactName);
 			contactName.setText(strTmp == null ? "":strTmp);
 			
 			// Hospital Phone 
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalPhone);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalPhone);
 			hospitalPhone.setText(strTmp == null ? "":strTmp);
 			
 			// Contact Phone 
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colContactPhone);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactPhone);
 			contactPhone.setText(strTmp == null ? "":strTmp);
 			
 			// Dep Name
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colDepName);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colDepName);
 			depName.setText(strTmp == null ? "":strTmp);
 					
 			// Morning Start Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ST1);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST1);
 			setSpinner_MorningStartTime(strTmp == null ? "":strTmp);
 
 			// Morning End Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ET1);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET1);
 			setSpinner_MorningEndTime(strTmp == null ? "":strTmp);
 	
 			// Moon Start Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ST2);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST2);
 			setSpinner_NoonStartTime(strTmp == null ? "":strTmp);
 			
 			// Moon End Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ET2);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET2);
 			setSpinner_NoonEndTime(strTmp == null ? "":strTmp);
 			
 			// Night Start Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ST3);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST3);
 			showSpinner_NightStartTime(strTmp == null ? "":strTmp);
 			
 			// Night End Time
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colOPD_ET3);
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET3);
 			setSpinner_NightEndTime(strTmp == null ? "":strTmp);
 			
 			// Consulting Hour
-			strTmp =  (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalschedule);
+			strTmp =  (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalschedule);
 			if ( strTmp != null && ! strTmp.equals("")) {
 				isNull = false;
 			}
@@ -353,8 +348,6 @@ public class HospitalInformationActivity extends ControllerActivity {
 		
 	}
 	
-	
-	
     private void setSpinner_MedicalGroup() {
     	 
         //get reference to the spinner from the XML layout
@@ -378,7 +371,6 @@ public class HospitalInformationActivity extends ControllerActivity {
         spinner.setOnItemSelectedListener(new UtilitySpinnerOnItemSelectedListener());
     }
 
-   
     /**
      * Set Morning start time and end time....
      */
@@ -420,7 +412,6 @@ public class HospitalInformationActivity extends ControllerActivity {
         spinner.setOnItemSelectedListener(new UtilitySpinnerOnItemSelectedListener());
     }    
   
-    
     private void setSpinner_MorningEndTime(String opd) {
         //get reference to the spinner from the XML layout
         Spinner spinner = opdEt1;
@@ -534,8 +525,6 @@ public class HospitalInformationActivity extends ControllerActivity {
         spinner.setOnItemSelectedListener(new UtilitySpinnerOnItemSelectedListener());
     }    
     
-    
-
 	/**
 	 * Sets night start time and end time...
 	 */
@@ -661,9 +650,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 			Toast.makeText(getApplicationContext(),"selectUploadManagerPhoto", Toast.LENGTH_LONG).show();
 		}
 	};
-	
-	
-	
+		
 	private Button.OnClickListener revise = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -768,7 +755,6 @@ public class HospitalInformationActivity extends ControllerActivity {
 		}
 	};
 	
-
 	/**
 	 * onKeyDown(int keyCode, KeyEvent event)
 	 * 
@@ -777,12 +763,8 @@ public class HospitalInformationActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(HospitalInformationActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-			return true;
+			changeActivity(HospitalInformationActivity.this, MenuActivity.class);
 		}
-		return false;
+		return true;
 	}
 }

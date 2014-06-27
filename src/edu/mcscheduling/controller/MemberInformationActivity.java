@@ -2,9 +2,11 @@ package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.Account;
 import edu.mcscheduling.model.DatabaseTable;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -28,26 +30,11 @@ public class MemberInformationActivity extends ControllerActivity {
 	private final String[] passQuestionList = {"就讀的國小學校","目前的居住地","喜歡的球類運動","最愛的歌星","最喜歡的車子"};
 	private final String[] workTypeList = {"無"};
 	
-	/**
-	 * 以下為Button變數
-	 */
+
 	private Button button_save;
 	private Button button_uploadIDphoto;
-	
-
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
-
-	
-
-	/**
-	 * 
-	 */
 	private Account account = null;
-	private ContentValues[] content = null;
-
+	private MsContentValues content = null;
 	private EditText userid = null;
 	private EditText username = null;
 	private Spinner userpwdquestion = null;
@@ -66,13 +53,6 @@ public class MemberInformationActivity extends ControllerActivity {
 
 		setLayout();
 
-		thisActivity = this;
-
-        /**
-         *  Dynamically spinner
-         */
-
-        
 		// Listen for button clicks
 		setListeners();
 		
@@ -101,17 +81,17 @@ public class MemberInformationActivity extends ControllerActivity {
 		setSpinner_PasswordTip();
         setSpinner_WorkPattern();
         
-        if ( content != null ) {
+        if ( content.cv != null ) {
         	// User ID
-        	strTmp = (String)content[0].get(DatabaseTable.User.colUserid);
+        	strTmp = (String)content.cv[0].get(DatabaseTable.User.colUserid);
         	userid.setText(strTmp == null ? "":strTmp);
 
         	// Username
-        	strTmp = (String)content[0].get(DatabaseTable.User.colUsername);
+        	strTmp = (String)content.cv[0].get(DatabaseTable.User.colUsername);
         	username.setText(strTmp == null ? "":strTmp);
         	
         	// User Password Question
-        	strTmp = (String)content[0].get(DatabaseTable.User.colUserpwdquestion);
+        	strTmp = (String)content.cv[0].get(DatabaseTable.User.colUserpwdquestion);
         	
 			if ( strTmp != null ) {
 				for ( int i=0; i<passQuestionList.length; i++ ) {
@@ -125,7 +105,7 @@ public class MemberInformationActivity extends ControllerActivity {
 			}
         	
         	// User Password Answer
-        	strTmp = (String)content[0].get(DatabaseTable.User.colUserpwdans);
+        	strTmp = (String)content.cv[0].get(DatabaseTable.User.colUserpwdans);
         	userpwdans.setText(strTmp == null ? "":strTmp);
         	
         	// Work Type
@@ -133,7 +113,7 @@ public class MemberInformationActivity extends ControllerActivity {
         	workType.setSelection(0);
         	
         	// User valid
-        	strTmp = (String)content[0].get(DatabaseTable.User.colUservalid);
+        	strTmp = (String)content.cv[0].get(DatabaseTable.User.colUservalid);
         	uservaild.setText(strTmp == null ? "":strTmp);
         	
         } else {
@@ -275,11 +255,8 @@ public class MemberInformationActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(MemberInformationActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
+			changeActivity(MemberInformationActivity.this, MenuActivity.class);
 		}
-		return false;
+		return true;
 	}
 }

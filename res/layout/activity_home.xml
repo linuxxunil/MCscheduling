@@ -41,7 +41,7 @@
 	    android:layout_height="wrap_content" >
 
 	<Button
-		android:id="@+id/ImageButton_HomePage_enroll"
+		android:id="@+id/Button_HomePage_enroll"
 		android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_bk"
@@ -52,7 +52,7 @@
 	    android:text="註冊"/>  
 	 
 	<Button
-		android:id="@+id/ImageButton_login"
+		android:id="@+id/Button_login"
 		android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/button_bk"

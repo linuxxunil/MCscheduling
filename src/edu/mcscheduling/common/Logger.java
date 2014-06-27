@@ -13,7 +13,7 @@ public class Logger {
 		return e(Logger.class,StatusCode.ERR_CLASS_NUMBER_NOT_FOUND);
 	}
 	
-	public static Integer e(Class cls, String errMsg, String extMsg) {
+	public static synchronized Integer e(Class cls, String errMsg, String extMsg) {
 		String[] split = errMsg.split(",", 2);
 		int code = Integer.valueOf(split[0]);
 		String msg = split[1];
@@ -24,13 +24,13 @@ public class Logger {
 			rtValue = classNumber - code;
 			Log.e(className,String.valueOf(String.format("ErrCode: -%08d, ErrMsg: %s(%s)",
 														rtValue,msg,extMsg )));
+			return -rtValue;
 		} else {
 			rtValue = classNumber + code;
 			Log.e(className,String.valueOf(String.format("ErrCode: %08d, ErrMsg: %s(%s)",
 														rtValue,msg,extMsg )));
+			return rtValue;
 		}
-		
-		return rtValue;
 	}
 	public static Integer e(Object obj, String errMsg, String extMsg) {
 		return e(obj.getClass(), errMsg, "");

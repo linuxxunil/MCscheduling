@@ -2,10 +2,12 @@ package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Doctor;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -46,16 +48,11 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 	
 	private Doctor doctor = null;
 	private Department depart = null;
-	private ContentValues[] doctorContent = null;
-	private ContentValues[] departContent = null;
+	private MsContentValues doctorContent = null;
+	private MsContentValues departContent = null;
 	private int target = 0;	// 外部輸入
 	private UtilitySpinnerOnItemSelectedListener itemSelectedListener;
 	
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
-
 	/**
 	 * onCreate(Bundle savedInstanceState)
 	 * 
@@ -67,9 +64,6 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 		handleBundle(savedInstanceState);
 		
 		setLayout();
-	
-	
-		thisActivity = this;
 		
 		setListeners();
 		
@@ -113,35 +107,35 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 		
 		setSpinner_MedicalDepartment();
 		
-		if ( doctorContent != null ) {
+		if ( doctorContent.cv != null ) {
 			
 			// Doctor No
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colDorNo);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colDorNo);
 			doctorNo.setText(strTmp == null ? "":strTmp);
 			
 			// Hospital No
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colHospitalNo);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colHospitalNo);
 			hospitalNo.setText(strTmp == null ? "":strTmp);
 			
 			// Dortoc Name
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colDorName);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colDorName);
 			dorName.setText(strTmp == null ? "":strTmp);
 			
 			// Job Title
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colJobTitle);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colJobTitle);
 			System.out.println(strTmp);
 			jobTitle.setText(strTmp == null ? "":strTmp);
 			
 			// telephone
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colTelephone);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colTelephone);
 			telephone.setText(strTmp == null ? "":strTmp);
 			
 			// history
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colHistory);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colHistory);
 			history.setText(strTmp == null ? "":strTmp);
 			
 			// subject
-			strTmp = (String)doctorContent[target].get(DatabaseTable.Doctor.colSubject);
+			strTmp = (String)doctorContent.cv[target].get(DatabaseTable.Doctor.colSubject);
 			subject.setText(strTmp == null ? "":strTmp);
 		} else {
 			// Doctor No
@@ -174,11 +168,11 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
         //Array list of animals to display in the spinner
         List<String> list = new ArrayList<String>();
         
-        if ( departContent == null ) 
+        if ( departContent.cv == null ) 
         	return ;
         
-        for ( int i=0; i<departContent.length; i++ ) {
-        	list.add((String)departContent[i].get(DatabaseTable.Department.colDepName) );
+        for ( int i=0; i<departContent.cv.length; i++ ) {
+        	list.add((String)departContent.cv[i].get(DatabaseTable.Department.colDepName) );
         }
         
 
@@ -288,12 +282,8 @@ public class DoctorInformation_Edit_Activity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(DoctorInformation_Edit_Activity.this, DoctorInformation_Display_Activity.class);            
-			startActivity(intent);
-			finish();	
-			return true;
+			changeActivity(DoctorInformation_Edit_Activity.this, DoctorInformation_Display_Activity.class);
 		}
-		return false;
+		return true;
 	}
 }

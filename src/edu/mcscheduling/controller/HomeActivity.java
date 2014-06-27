@@ -1,29 +1,24 @@
 package edu.mcscheduling.controller;
 
 import edu.mcscheduling.R;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
-import android.widget.ImageButton;
-import android.widget.Toast;
+import android.widget.Button;
 
 public class HomeActivity extends ControllerActivity {
 
 	/**
 	 * 以下為imageButton變數
 	 */
-	private ImageButton button_enroll;
-	private ImageButton button_login;
+	private Button button_enroll;
+	private Button button_login;
 
 	/**
 	 * 目前這個Activity
@@ -79,12 +74,11 @@ public class HomeActivity extends ControllerActivity {
 	 * 設置每個button被click的時候，要執行的function
 	 */
 	public void setListeners() {
-		button_enroll = (ImageButton) findViewById(R.id.ImageButton_HomePage_enroll);
-		button_login = (ImageButton) findViewById(R.id.ImageButton_login);
+		button_enroll = (Button) findViewById(R.id.Button_HomePage_enroll);
+		button_login = (Button) findViewById(R.id.Button_login);
 
 		button_enroll.setOnClickListener(enroll);
 		button_login.setOnClickListener(login);
-
 	}
 
 	/**
@@ -92,13 +86,10 @@ public class HomeActivity extends ControllerActivity {
 	 * 
 	 * 當你按下註冊按鈕，執行對應的操作
 	 */
-	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
+	private Button.OnClickListener enroll = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, EnrollActivity.class);
-			startActivity(intent);
-			finish();
+			changeActivity(HomeActivity.this, EnrollActivity.class);
 		}
 	};
 
@@ -107,13 +98,10 @@ public class HomeActivity extends ControllerActivity {
 	 * 
 	 * 當你按下登入按鈕，執行對應的操作
 	 */
-	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
+	private Button.OnClickListener login = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(HomeActivity.this, LoginActivity.class);
-			startActivity(intent);
-			finish();
+			changeActivity(HomeActivity.this, LoginActivity.class);
 		}
 	};
 
@@ -150,39 +138,26 @@ public class HomeActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			// do nothing...
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+									HomeActivity.this);
+			builder.setTitle("APP訊息");
+			builder.setMessage("真的要離開此APP");
+			builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					
+				}
+			});
+
+			builder.setNegativeButton("確認", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					finish();
+				}
+			});
+			builder.show();
 		}
-		return false;
-	}
-
-	// 以下為目前尚未使用，但未來會用到的function----------------------------------------------
-
-	/**
-	 * isNetworkAvailable()
-	 * 
-	 * 檢查目前的網路狀況
-	 * 
-	 * @return true indicates the network is available. false indicates the
-	 *         network is not available.
-	 */
-	protected boolean isNetworkAvailable() {
-		ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-		NetworkInfo activeNetworkInfo = connectivityManager
-				.getActiveNetworkInfo();
-		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-	}
-
-	/**
-	 * responseToNetworkStatus()
-	 * 
-	 * 顯示目前的網路狀況，讓使用者知道
-	 */
-	public void responseToNetworkStatus() {
-		if (isNetworkAvailable() == false) {
-			Toast.makeText(getApplicationContext(),
-					"Network connection error!!", Toast.LENGTH_LONG).show();
-		} else {
-			// do nothing...
-		}
+		return true;
 	}
 }

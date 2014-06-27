@@ -2,10 +2,12 @@ package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Doctor;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.ContentValues;
@@ -44,16 +46,11 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 	
 	
 	private Doctor doctor = null;
-	private ContentValues[] doctorContent = null;
+	private MsContentValues doctorContent = null;
 	private ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 	private int clickPosition=-1;
 	private View previousListView=null;
 	
-
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
 
 	/**
 	 * onCreate(Bundle savedInstanceState)
@@ -64,8 +61,6 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		super.onCreate(savedInstanceState);
 		
 		setLayout();
-
-		thisActivity = this;
 		
 		// Listen for button clicks
 		setListeners();
@@ -117,14 +112,14 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 		
 		initSimpleAdapter();
 		
-		if ( doctorContent != null ) {
+		if ( doctorContent.cv != null ) {
 		
-			for ( int i=0; i< doctorContent.length; i++ ) {
+			for ( int i=0; i< doctorContent.cv.length; i++ ) {
 				addListViewRow(
-					(String) doctorContent[i].get(DatabaseTable.Doctor.colDorName),
-					(String) doctorContent[i].get(DatabaseTable.Doctor.colDepName),
-					(String) doctorContent[i].get(DatabaseTable.Doctor.colJobTitle),
-					(String) doctorContent[i].get(DatabaseTable.Doctor.colTelephone)
+					(String) doctorContent.cv[i].get(DatabaseTable.Doctor.colDorName),
+					(String) doctorContent.cv[i].get(DatabaseTable.Doctor.colDepName),
+					(String) doctorContent.cv[i].get(DatabaseTable.Doctor.colJobTitle),
+					(String) doctorContent.cv[i].get(DatabaseTable.Doctor.colTelephone)
 					);
 			}
 		}
@@ -199,7 +194,7 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 			
 			if(clickPosition != -1){
 				
-				String dorNo = (String)doctorContent[clickPosition].get((DatabaseTable.Doctor.colDorNo));
+				String dorNo = (String)doctorContent.cv[clickPosition].get((DatabaseTable.Doctor.colDorNo));
 				
 				if ( doctor.deleteDoctor(getLoginID(), dorNo) == StatusCode.success ) {			
 					Toast.makeText(getApplicationContext(), "刪除成功", Toast.LENGTH_LONG);
@@ -241,12 +236,8 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(DoctorInformation_Display_Activity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-			return true;
+			changeActivity(DoctorInformation_Display_Activity.this, MenuActivity.class);
 		}
-		return false;
+		return true;
 	}
 }

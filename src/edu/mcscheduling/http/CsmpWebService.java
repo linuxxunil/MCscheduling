@@ -45,7 +45,7 @@ public class CsmpWebService {
 			httpConn.setDoInput(true); 
 			//httpConn.connect();
 		} catch (ProtocolException e) {
-			StatusCode.ERR_HTTP_PROTOCOL_ERR(e.getMessage());
+			//StatusCode.ERR_HTTP_PROTOCOL_ERR(e.getMessage());
 			return null;
 		}
 		return httpConn;
@@ -181,32 +181,32 @@ public class CsmpWebService {
 				System.out.println(parm[0]);
 				
 				File dir = new File(StringUtility.getDirectory(dbPath));
-				if ( !dir.exists() && !dir.mkdirs() )
-					return StatusCode.ERR_OPEN_DIR(StringUtility.getDirectory(dbPath));
+				if ( !dir.exists() && !dir.mkdirs() );
+					//return StatusCode.ERR_OPEN_DIR(StringUtility.getDirectory(dbPath));
 				
 				BufferedOutputStream buff;
-				DataOutputStream dbOut;
+				DataOutputStream dbOut = null;
 				try {
 					buff = new BufferedOutputStream(new FileOutputStream(dbPath));
 					dbOut = new DataOutputStream( buff );
 				} catch (FileNotFoundException e1) {
-					return StatusCode.ERR_OPEN_SQLITE_FILE(dbPath);
+					//return StatusCode.ERR_OPEN_SQLITE_FILE(dbPath);
 				}
 				 
 				
 				try {
 					HttpURLConnection httpConn = onConnect("DownloadDatabase.php");	
 					
-					if ( httpConn == null ) 
-						return StatusCode.ERR_HTTP_CONNECT_ERR();
+					if ( httpConn == null ) ;
+						//return StatusCode.ERR_HTTP_CONNECT_ERR();
 					
 					OutputStream om = httpConn.getOutputStream();
 					om.write(parm[0].getBytes());
 				
 					int statusCode = httpConn.getResponseCode();
 
-					if ( statusCode != 200 )
-						return StatusCode.ERR_HTTP_RESPONSE_CODE_ERR(statusCode);
+					if ( statusCode != 200 );
+						//return StatusCode.ERR_HTTP_RESPONSE_CODE_ERR(statusCode);
 										
 					InputStream im = httpConn.getInputStream();
 					
@@ -223,9 +223,9 @@ public class CsmpWebService {
 					om.close();
 				
 				} catch (MalformedURLException e ){
-					return StatusCode.ERR_HTTP_URL_ILLEGAL(e.getMessage());
+					//return StatusCode.ERR_HTTP_URL_ILLEGAL(e.getMessage());
 				} catch (IOException e ) {
-					return StatusCode.ERR_HTTP_IO_ERR(e.getMessage());
+					//return StatusCode.ERR_HTTP_IO_ERR(e.getMessage());
 				} 
 				return StatusCode.success;
 			}

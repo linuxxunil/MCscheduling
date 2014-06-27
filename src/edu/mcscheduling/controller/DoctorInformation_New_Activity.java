@@ -2,11 +2,13 @@ package edu.mcscheduling.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import edu.mcscheduling.R;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Doctor;
 import edu.mcscheduling.model.Hospital;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -48,16 +50,11 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	private Hospital hospital = null;
 	private Doctor doctor = null;
 	private Department depart = null;
-	private ContentValues[] hospitalContent = null;
-	private ContentValues[] doctorContent = null;
-	private ContentValues[] departContent = null;
+	private MsContentValues hospitalContent = null;
+	private MsContentValues doctorContent = null;
+	private MsContentValues departContent = null;
 	
 	private UtilitySpinnerOnItemSelectedListener itemSelectedListener;
-	
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
 
 	/**
 	 * onCreate(Bundle savedInstanceState)
@@ -66,10 +63,7 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setLayout();
-	
-		thisActivity = this;
 		
 		setListeners();
 		hospital = new Hospital(db);
@@ -96,8 +90,8 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	private void setValueOfView() {
 		String strTmp = null;
 
-		if ( hospitalContent != null ) {
-			strTmp = (String)hospitalContent[0].get(DatabaseTable.Hospital.colHospitalNo);
+		if ( hospitalContent.cv != null ) {
+			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalNo);
 			hospitalNo.setText(strTmp == null ? "":strTmp);
 		}
 		setSpinner_MedicalDepartment();
@@ -114,8 +108,8 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
         if ( departContent == null ) 
         	return ;
         
-        for ( int i=0; i<departContent.length; i++ ) {
-        	list.add((String)departContent[i].get(DatabaseTable.Department.colDepName) );
+        for ( int i=0; i<departContent.cv.length; i++ ) {
+        	list.add((String)departContent.cv[i].get(DatabaseTable.Department.colDepName) );
         }
         
 
@@ -241,7 +235,7 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int i) {
-				thisActivity.finish();
+				finish();
 			}
 		});
 
@@ -262,11 +256,8 @@ public class DoctorInformation_New_Activity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(DoctorInformation_New_Activity.this, DoctorInformation_Display_Activity.class);            
-			startActivity(intent);
-			finish();	
+			changeActivity(DoctorInformation_New_Activity.this, DoctorInformation_Display_Activity.class);
 		}
-		return false;
+		return true;
 	}
 }
