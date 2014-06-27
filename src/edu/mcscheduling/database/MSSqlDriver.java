@@ -8,15 +8,14 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+
+
+
+
 import android.os.AsyncTask;
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.Network;
 import edu.mcscheduling.common.StatusCode;
-
-
-
 
 public class MSSqlDriver extends DatabaseDriver {
 
@@ -24,7 +23,6 @@ public class MSSqlDriver extends DatabaseDriver {
 	private String Password = "ptch@RS";
 	private Connection conn = null;
 	private Statement stmt = null;
-	private ResultSet rs = null;
 	
 	static private enum MODE {
 		TRANSACATION,NORMAL
@@ -37,8 +35,10 @@ public class MSSqlDriver extends DatabaseDriver {
 		try {
 			if ( mode == MODE.TRANSACATION ) 
 				return StatusCode.success;
-			else if ( !Network.isNetworkAvailable() ) 
-				return StatusCode.ERR_NETWORK_ISNOT_AVAILABLE();
+			
+			int status = Network.isNetworkAvailable();
+			if ( status != StatusCode.success ) 
+				return status;
 			
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
 			conn = DriverManager
@@ -46,9 +46,9 @@ public class MSSqlDriver extends DatabaseDriver {
 						"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
 						UserName, Password);
 		} catch (ClassNotFoundException e1) {
-			return StatusCode.ERR_JDBC_CLASS_NOT_FOUND();
+			return Logger.e(this, StatusCode.ERR_JDBC_CLASS_NOT_FOUND);
 		} catch (SQLException e) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
 		return StatusCode.success;
 	}
@@ -58,14 +58,15 @@ public class MSSqlDriver extends DatabaseDriver {
 				new AsyncTask<String, Integer, Integer>() {
 			@Override
 			protected Integer doInBackground(String... sql) {
-				if ( onConnect() != StatusCode.success ) { 
-					return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+				int status =  onConnect();
+				if ( status != StatusCode.success ) { 
+					return status;
 				}
 				try {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
-					return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 				}
 				return StatusCode.success;
 			}	
@@ -85,15 +86,16 @@ public class MSSqlDriver extends DatabaseDriver {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
 		return StatusCode.success;	
 	}
 	
 	@Override
 	public int insert(String sql) {
-		if (sql.isEmpty())
-			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+		if (sql == null || sql.isEmpty())
+			return  Logger.e(this, StatusCode.PARM_SQL_IS_ERROR);
+		
 		int retValue = 0;
 		System.out.println(sql);
 		if ( mode == MODE.NORMAL ) {
@@ -106,20 +108,20 @@ public class MSSqlDriver extends DatabaseDriver {
 		return retValue;
 	}
 
-
 	private int normalCreateTable(String sql) {
 		AsyncTask<String, Integer, Integer> asyncTask = 
 				new AsyncTask<String, Integer, Integer>() {
 			@Override
 			protected Integer doInBackground(String... sql) {
-				if ( onConnect() != StatusCode.success ) { 
-					return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+				int status =  onConnect();
+				if ( status != StatusCode.success ) { 
+					return status;
 				}
 				try {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
-					return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 				}
 				return StatusCode.success;
 			}	
@@ -139,83 +141,81 @@ public class MSSqlDriver extends DatabaseDriver {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
 		return StatusCode.success;
 	}
 	
 	@Override
 	public int createTable(String sql) {
-		if (sql.isEmpty())
-			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+		if (sql == null || sql.isEmpty())
+			return  Logger.e(this, StatusCode.PARM_SQL_IS_ERROR);
 
-		int retValue = 0;
+		int status = 0;
 		if ( mode == MODE.NORMAL ) {
 			System.out.println("normal create");
-			retValue = normalCreateTable(sql);
+			status = normalCreateTable(sql);
 		}else if ( mode == MODE.TRANSACATION) {
 			System.out.println("transacation create");
-			retValue = tranCreateTable(sql);
+			status = tranCreateTable(sql);
 		}
-		return retValue;
+		return status;
 	}
-
 	
-	private ResultSet normalSelect(String sql) {
-		AsyncTask<String, Integer, ResultSet> asyncTask = 
-				new AsyncTask<String, Integer, ResultSet>() {
+	private  MsResultSet normalSelect(String sql) {
+		AsyncTask<String, Integer, MsResultSet> asyncTask = 
+				new AsyncTask<String, Integer, MsResultSet>() {
 			@Override
-			protected ResultSet doInBackground(String... sql) {
-				if ( onConnect() != StatusCode.success ) { 
-					StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
-					return null;
+			protected MsResultSet doInBackground(String... sql) {
+				int status =  onConnect();
+				if ( status != StatusCode.success ) { 
+					return new MsResultSet(status);
 				}
+				
 				try {
 					stmt = conn.createStatement();
-					return stmt.executeQuery(sql[0]);
+					return new MsResultSet(stmt.executeQuery(sql[0]));
 				} catch (SQLException e) {
-					StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
-					return null;
-				}
+					return new MsResultSet(
+							Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage()));
+				}				
 			}	
 		}.execute(sql);
 
 		try {
-			return (ResultSet) asyncTask.get();
+			return (MsResultSet) asyncTask.get();
 		} catch (InterruptedException e) {
-			return null;
+			//return -2;
 		} catch (ExecutionException e) {
-			return null;
+			//return -3;
 		}
+		return null;
 	}
 	
-	private ResultSet tranSelect(String sql) {
+	private MsResultSet tranSelect(String sql) { 
 		try {
 			stmt = conn.createStatement();
-			return stmt.executeQuery(sql);
+			return new MsResultSet(stmt.executeQuery(sql));
 		} catch (SQLException e) {
-			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
-			return null;
+			return new MsResultSet(Logger.e(
+					this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage()));
 		}
 	}
 	
 	@Override
-	public ResultSet select(String sql) {
-		if (sql.isEmpty()) {
-			StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
-			return null;
-		}
+	public MsResultSet select(String sql) {
+		if (sql == null || sql.isEmpty())
+			return  new MsResultSet(Logger.e(this, StatusCode.PARM_SQL_IS_ERROR));
 		
-		ResultSet rs = null;
 		System.out.println(sql);
+		
 		if ( mode == MODE.NORMAL ) {
 			System.out.println("normal select");
-			rs = normalSelect(sql);
-		}else if ( mode == MODE.TRANSACATION) {
+			return normalSelect(sql);
+		}else {	// mode == MODE.TRANSACATION) 
 			System.out.println("transacation select");
-			rs = tranSelect(sql);
+			return tranSelect(sql);
 		}
-		return rs;
 	}
 	
 	private int normalDelete(String sql) {
@@ -223,14 +223,15 @@ public class MSSqlDriver extends DatabaseDriver {
 				new AsyncTask<String, Integer, Integer>() {
 			@Override
 			protected Integer doInBackground(String... sql) {
-				if ( onConnect() != StatusCode.success ) { 
-					return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+				int status =  onConnect();
+				if ( status != StatusCode.success ) { 
+					return status;
 				}
 				try {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
-					return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 				}
 				return StatusCode.success;
 			}	
@@ -250,15 +251,16 @@ public class MSSqlDriver extends DatabaseDriver {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
 		return StatusCode.success;
 	}
 	
 	@Override
 	public int delete(String sql) {
-		if (sql.isEmpty())
-			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+		if (sql == null || sql.isEmpty())
+			return  Logger.e(this, StatusCode.PARM_SQL_IS_ERROR);
+		
 		System.out.println(sql);
 		int retValue = 0;
 		if ( mode == MODE.NORMAL ) {
@@ -274,14 +276,15 @@ public class MSSqlDriver extends DatabaseDriver {
 				new AsyncTask<String, Integer, Integer>() {
 			@Override
 			protected Integer doInBackground(String... sql) {
-				if ( onConnect() != StatusCode.success ) { 
-					return StatusCode.ERR_INITIAL_DB_NOT_SUCCESS();
+				int status =  onConnect();
+				if ( status != StatusCode.success ) { 
+					return status;
 				}
 				try {
 					stmt = conn.createStatement();
 					stmt.executeUpdate(sql[0]);
 				} catch (SQLException e) {
-					return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+					return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 				}
 				return StatusCode.success;
 			}	
@@ -301,15 +304,18 @@ public class MSSqlDriver extends DatabaseDriver {
 			stmt = conn.createStatement();
 			stmt.executeUpdate(sql);
 		} catch (SQLException e) {
-			return StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
 		return StatusCode.success;
 	}
 	
 	@Override
 	public int update(String sql) {
-		if (sql.isEmpty())
-			return StatusCode.ERR_PARM_SQL_SYNTAX_IS_NULL();
+		if (conn == null)
+			return  Logger.e(this, StatusCode.ERR_INITIAL_DB_NOT_SUCCESS);
+		else if (sql.isEmpty())
+			return  Logger.e(this, StatusCode.PARM_SQL_IS_ERROR);
+		
 		System.out.println(sql);
 		int retValue = 0;
 		if ( mode == MODE.NORMAL ) {
@@ -324,36 +330,57 @@ public class MSSqlDriver extends DatabaseDriver {
 	}
 
 	@Override
-	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		if ( autoCommit == true ) 
-			mode = MODE.NORMAL;
-		else
-			mode = MODE.TRANSACATION;
-		conn.setAutoCommit(autoCommit);
+	protected int setAutoCommit(boolean autoCommit) {
+		if ( autoCommit == true ) mode = MODE.NORMAL;
+		else mode = MODE.TRANSACATION;
+		try {
+			conn.setAutoCommit(autoCommit);
+		} catch ( SQLException e ) {
+			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
+		}
+		return StatusCode.success;
 	}
 
 	@Override
-	public void commit() throws SQLException {
-		conn.commit();
+	protected int commit() {
+		try {
+			conn.commit();
+		} catch ( SQLException e ) {
+			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
+		}
+		return StatusCode.success;
 	}
-
+	
 	@Override
-	public void rollback() throws SQLException {
-		conn.rollback();
+	protected int rollback() {
+		try {
+			conn.rollback();
+		} catch ( SQLException e ) {
+			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
+		}
+		return StatusCode.success;
+		
 	}
 		
 	@Override
-	public boolean getAutoCommit() throws SQLException {
-		return conn.getAutoCommit();
+	protected int getAutoCommit() {
+		int status = StatusCode.success;
+		try {
+			if ( !conn.getAutoCommit() )
+				status = Logger.e(this, StatusCode.ERR_GET_AUTOCOMMIT_FAIL);
+		} catch ( SQLException e ) {
+			return Logger.e(this, StatusCode.ERR_SET_AUTOCOMMIT_FAIL, e.getMessage());
+		}
+		return status;
 	}
 
 	@Override
-	public void close() {
+	public int close() {
 		if(stmt != null) {
 			try {
 				stmt.close();
 			} catch(SQLException e) {
-				StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
+				Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 			}
 		}
 		
@@ -361,15 +388,15 @@ public class MSSqlDriver extends DatabaseDriver {
 			try {
 				conn.close();
 			} catch(SQLException e) {
-				StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());     
+				Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 			}
 		}
-		
+		return StatusCode.success;
 	}
 
 	@Override
-	public String[] getTables() {
-		String[] tables = null;
+	public int getTables(String[] tables) {
+		
 		try {
 			DatabaseMetaData  meta = conn.getMetaData();
 			
@@ -384,7 +411,7 @@ public class MSSqlDriver extends DatabaseDriver {
 			
 			if ( len <= 0 ) {
 				rs.close();
-				return null;
+				//Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 			}
 			
 			tables = new String[len];
@@ -397,53 +424,54 @@ public class MSSqlDriver extends DatabaseDriver {
 			
 			rs.close();
 		} catch (SQLException e) {
-			StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL(e.getMessage());
-			return null;
+			Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		}
-		return tables;
+		return StatusCode.success;
 	}
 
-	
-	public Object excuteTransation(final Transation tran) {
-		
-		
+	public Integer excuteTransation(final Transation tran,final Object retValue) {
 		AsyncTask<String, Integer, Object> asyncTask = 
 				new AsyncTask<String, Integer, Object >() {
 			@Override
 			protected Object doInBackground(String... arg) {
-				Object ret = null;
+				int status = StatusCode.success ; 
 				try {
-					if ( onConnect() != StatusCode.success )
-						return null;
+					status = onConnect();
+					if ( status != StatusCode.success ) 
+						return status;
 					
-					setAutoCommit(false);
-					ret = tran.execute();
-					commit();
-				} catch (SQLException e ) {
-					System.out.println(e.getMessage());
-					try {
-						rollback();
-					} catch (SQLException e1) {
-						System.out.println("AAAAAAAAAAA1");
+					status = setAutoCommit(false);
+					if ( status != StatusCode.success )
+						return status;
+				
+					status = tran.execute(retValue);
+					if ( status != StatusCode.success ) {
+						int status1 = rollback();	
+						status = (status1 != StatusCode.success)?status1:status;
+					} else {
+						status = commit();
+						if ( status != StatusCode.success ) {
+							int status1 = rollback();	
+							status = (status1 != StatusCode.success)?status1:status;
+						}
 					}
-			    } catch ( Exception e ) {
-			    	System.out.println("FFFFFFFF");
-			    }finally {
-			        try {
-						setAutoCommit(true);
-					} catch (SQLException e) {
-						System.out.println("AAAAAAAAAAA2");
-					}
-			    }
-				return ret;
+				} catch ( Exception e ) {
+					int status1 = rollback();	
+					status = (status1 != StatusCode.success)?status1:
+						Logger.e(this, StatusCode.ERR_EXE_TRANSCATION_FAIL, e.getMessage());
+				} 
+				
+				int status1 = setAutoCommit(true);
+				return ( status1 != StatusCode.success )?status1:status;
 			}
-			
 		}.execute();
-		return asyncTask;
 		
-		
-	}
-	
-	
-	 
+		try {
+			return (Integer) asyncTask.get();
+		} catch (InterruptedException e) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		} catch (ExecutionException e) {
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
+		}
+	} 
 }

@@ -1,6 +1,7 @@
 package edu.mcscheduling.model;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -9,8 +10,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.MsResultSet;
+import edu.mcscheduling.database.Transation;
 
 public class Account {
 	private DatabaseDriver db;
@@ -34,17 +38,17 @@ public class Account {
 	 */
 	public int register(String userid, String username, String userpasswd){	
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.ERR_PARM_USERID_ERROR();
+			return  Logger.e(this, StatusCode.PARM_USERID_ERROR);
 		else if ( username == null || username.isEmpty() )
-			return StatusCode.ERR_PARM_USERNAME_ERROR();
+			return Logger.e(this, StatusCode.PARM_USERNAME_ERROR);
 		else if ( userpasswd == null || userpasswd.isEmpty() )
-			return StatusCode.ERR_PARM_USERPASSWD_ERROR();
+			return Logger.e(this, StatusCode.PARM_USERPASSWD_ERROR);
 		
 		Date time = new Date();
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
 					Locale.getDefault());
 
-		
+		int status = StatusCode.success;
 		String sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
 				"VALUES ('%s','%s','%s','%s')",
 				// Columns
@@ -59,8 +63,9 @@ public class Account {
 				userpasswd,
 				formatter.format(time));
 		
-		if ( db.insert(sql) < 0) 
-			return StatusCode.WAR_REGISTER_FAIL();
+		status = db.insert(sql);
+		if ( status != StatusCode.success )
+			return status;
 		return StatusCode.success;
 	}
 	
@@ -73,29 +78,28 @@ public class Account {
 	 * @return
 	 */
 	private int matchUseridPasswd(String userid, String userpasswd) {
-		if ( userid == null || userid.isEmpty() )
-			return StatusCode.ERR_PARM_USERID_ERROR();
-		else if ( userpasswd == null || userpasswd.isEmpty() )
-			return StatusCode.ERR_PARM_USERPASSWD_ERROR();
-		
 		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' AND %s='%s'",
 				DatabaseTable.User.name,
 				DatabaseTable.User.colUserid, userid, 
 				DatabaseTable.User.colUserpasswd, userpasswd
 				);
-		
-		ResultSet rs = null;
-		
+
+		MsResultSet rtVal = new MsResultSet();
 		try {
-			rs = db.select(sql);
-			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
-				return StatusCode.WAR_LOGIN_FAIL();
+			rtVal = db.select(sql);
+
+			if ( rtVal.status != StatusCode.success )
+				return rtVal.status;
+			if ( rtVal.rs == null || !rtVal.rs.next() ) {
+				return Logger.e(this, StatusCode.ERR_GET_RESULTSET_FAIL);
+			} else if ( rtVal.rs.getInt(1) != 1 ) {
+				return Logger.e(this, StatusCode.ERR_LOGIN_FAIL);
 			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
+			Logger.e(this, StatusCode.ERR_UNKOWN_ERROR,e.getMessage());
 		} finally {
 			try {
-				rs.close();
+				rtVal.rs.close();
 			} catch ( Exception e ) {
 				// nothing
 			}
@@ -125,53 +129,47 @@ public class Account {
 	 * @param newPasswd
 	 * @return
 	 */
-	public int changePasswd(String userid,String oldPasswd, String newPasswd)  {
+	public int changePasswd(final String userid,final String oldPasswd,final String newPasswd)  {
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.ERR_PARM_USERID_ERROR();
+			return  Logger.e(this, StatusCode.PARM_USERID_ERROR);
 		else if ( oldPasswd == null || oldPasswd.isEmpty() )
-			return StatusCode.ERR_PARM_USERNAME_ERROR();
+			return Logger.e(this, StatusCode.PARM_OLDPASSWD_ERROR);
 		else if ( newPasswd == null || newPasswd.isEmpty() )
-			return StatusCode.ERR_PARM_USERPASSWD_ERROR(); 
+			return Logger.e(this, StatusCode.PARM_NEWPASSWD_ERROR);
 		
-		int ret = StatusCode.success; 
-		try {
-			db.setAutoCommit(false);
-			
-			String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' AND %s='%s'",
-					DatabaseTable.User.name,
-					DatabaseTable.User.colUserid, userid, 
-					DatabaseTable.User.colUserpasswd, oldPasswd
-					);
+		return db.excuteTransation(new Transation() {				
+			@Override
+			public 	Integer execute(Object retValue) throws Exception {
+				int status = StatusCode.success; 
+				String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s' AND %s='%s'",
+						DatabaseTable.User.name,
+						DatabaseTable.User.colUserid, userid, 
+						DatabaseTable.User.colUserpasswd, oldPasswd
+						);
 				
-		
-			ResultSet rs = db.select(sql);
-			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
-				ret = StatusCode.WAR_PASSWD_NOT_CHANGE_FAIL();
-				throw new SQLException();
-			}		
-		
-			sql = String.format("UPDATE %s SET %s='%s' WHERE %s='%s'" ,
-			// Table
-			DatabaseTable.User.name, 
-			// Value
-			DatabaseTable.User.colUserpasswd, newPasswd,
-			// WHERE
-			DatabaseTable.User.colUserid, userid);
-
-			if ( db.update(sql) < 0 ) {
-				StatusCode.ERR_PASSWD_CHANGE_ERROR();
-				throw new SQLException();
+				MsResultSet rtVal = new MsResultSet();
+				rtVal = db.select(sql);
+				if ( rtVal.status != StatusCode.success || rtVal.rs == null || !rtVal.rs.next() ) {
+					return rtVal.status;
+				} else if ( rtVal.rs.getInt(1) != 1 ) {
+					return Logger.e(this, StatusCode.ERR_MEMBER_NOT_EXIST);
+				}
+				
+				sql = String.format("UPDATE %s SET %s='%s' WHERE %s='%s'" ,
+						// Table
+						DatabaseTable.User.name, 
+						// Value
+						DatabaseTable.User.colUserpasswd, newPasswd,
+						// WHERE
+						DatabaseTable.User.colUserid, userid);
+						
+				status = db.update(sql);
+				if (  status != StatusCode.success ) {
+					return status;
+				}
+				return StatusCode.success;
 			}
-			db.commit();
-		} catch ( Exception  e ) {
-			try {
-				db.rollback();
-			} catch ( Exception e1 ) {
-				// nothing
-			}
-		}
-			
-		return ret;
+		}, null);
 	}
 	
 	
@@ -186,41 +184,42 @@ public class Account {
 				DatabaseTable.User.colUserpwdans, passwdAnswer,
 				// WHERE
 				DatabaseTable.User.colUserid, userid);
-		
-		if ( db.update(sql) < 0 )
-			return StatusCode.ERR_SET_MEMBER_INFO_ERROR();
-
-		return StatusCode.success;
+		return db.update(sql);
 	}
 
 	
-	private int getMemberCount(String userid) {
-		String sql = String.format("SELECT count(*) FROM %s WHERE %s='%s'", 
-				DatabaseTable.User.name,
-				DatabaseTable.User.colUserid, userid);
+	private int getMemberCount(String sql) {
+		MsResultSet rtVal = new MsResultSet();
+		rtVal = db.select(sql);
 		
-		ResultSet rs = db.select(sql);
 		int rowCount = 0;
-		if ( rs == null ) {
+		if ( rtVal.rs == null ) {
 			return rowCount;
 		} else {
 			try {
-				rs.next();
-				rowCount = rs.getInt(1);
-			} catch ( SQLException e ) {
+				rtVal.rs.next();
+				rowCount = rtVal.rs.getInt(1);
+			} catch ( Exception e ) {
 				rowCount = 0;
 			}
 		}
 		return rowCount;
 	}
 	
-	public ContentValues[]  getMemberInformation(String userid) {
-		int rowCount = getMemberCount(userid);
+	public MsContentValues getMemberInformation(String userid) {
+		if ( userid == null || userid.isEmpty() )
+			return new MsContentValues(Logger.e(this, StatusCode.PARM_USERID_ERROR));
 		
-		if ( rowCount <= 0 )
-			return null;
+		String sql = String.format("SELECT count(*) FROM %s WHERE %s='%s'", 
+				DatabaseTable.User.name,
+				DatabaseTable.User.colUserid, userid);	
 		
-		String sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
+		
+		int rowCount = getMemberCount(sql);
+		if ( rowCount <= 0 ) 
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_MEMBER_NOT_EXIST));
+		
+		sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
 								DatabaseTable.User.colUserid,
 								DatabaseTable.User.colUsername,
 								DatabaseTable.User.colUserpwdquestion,
@@ -230,29 +229,28 @@ public class Account {
 								DatabaseTable.User.colUserid, userid
 							);
 		
-		ResultSet rs = db.select(sql);
+		MsResultSet rsVal = null;
+		rsVal = db.select(sql);
 		
-		if ( rs == null ) {
-			return null;
-		}
+		if ( rsVal.status != StatusCode.success )
+			return new MsContentValues(rsVal.status);
 		
-		ContentValues[] content = new ContentValues[rowCount];
+		MsContentValues cvValue = new MsContentValues(StatusCode.success);
+				cvValue.cv = new ContentValues[rowCount];
 		try {
 			int i = 0;
-			ResultSetMetaData meta = rs.getMetaData();
-			while (rs.next()) {
-				content[i] = new ContentValues();
+			ResultSetMetaData meta = rsVal.rs.getMetaData();
+			while (rsVal.rs.next()) {
+				cvValue.cv[i] = new ContentValues();
 				for ( int j=1; j<=meta.getColumnCount(); j++ ){
-					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
+					cvValue.cv[i].put(meta.getColumnName(j),rsVal.rs.getString(meta.getColumnName(j)));
 				}
 				i++;
 			}
-			rs.close();
+			rsVal.rs.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_GET_MEMBER_INFO_FAIL));
 		}
-
-		return content;
+		return cvValue;
 	}
 }

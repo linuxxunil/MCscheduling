@@ -4,8 +4,12 @@ import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -24,12 +28,7 @@ public class LoginActivity extends ControllerActivity {
 	 * 以下為imageButton變數
 	 */
 	private Button button_login;
-
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
-
+	
 	/**
 	 * onCreate(Bundle savedInstanceState)
 	 * 
@@ -38,12 +37,9 @@ public class LoginActivity extends ControllerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setLayout();
+		initLayout();
 
-		thisActivity = this;
-
-		// Listen for button clicks
-		setListeners();
+		initListeners();
 	}
 
 	/**
@@ -62,7 +58,7 @@ public class LoginActivity extends ControllerActivity {
 	 * 
 	 * 設定layout
 	 */
-	private void setLayout() {
+	private void initLayout() {
 		// set layout without titleBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -81,53 +77,11 @@ public class LoginActivity extends ControllerActivity {
 	 * 
 	 * 設置每個button被click的時候，要執行的function
 	 */
-	public void setListeners() {
+	private void initListeners() {
 		button_login = (Button) findViewById(R.id.ImageButton_LoginPage_login);
 
 		button_login.setOnClickListener(login);
 	}
-	
-	
-	/**
-	 * Controller : Login
-	 * 
-	 * 
-	 */
-	
-	private void handleLogin(View v) {
-		String userid = ((EditText)
-				findViewById(R.id.userAccount)).getText().toString();
-		String userpasswd = ((EditText)
-				findViewById(R.id.password)).getText().toString();
-		
-		if ( userid == null || userid.equals("")) {
-			Toast.makeText(getApplicationContext(), "使用者帳號不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if ( userpasswd == null || userpasswd.equals("")) {
-			Toast.makeText(getApplicationContext(), "使用者密碼不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else {
-		
-			Account account = new Account(db);
-		
-			if ( account.login(userid, userpasswd) == StatusCode.success ) {
-				Toast.makeText(getApplicationContext(), "登入成功", Toast.LENGTH_LONG)	
-				.show();
-			
-				// keep loginid
-				setLoginID(userid);
-			
-				Intent intent = new Intent();
-				intent.setClass(LoginActivity.this, MenuActivity.class);
-				startActivity(intent);
-				finish();
-			} else {
-				Toast.makeText(getApplicationContext(), "登入失敗", Toast.LENGTH_LONG)
-				.show();
-			}
-		}
-	}
-	
 	
 	/**
 	 * login
@@ -137,9 +91,67 @@ public class LoginActivity extends ControllerActivity {
 	private ImageButton.OnClickListener login = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			handleLogin(v);
+			exeLogin(v);
 		}
 	};
+	
+	
+	private final int LOGIN_TAG = 1;
+	
+	private void initHandler() {
+		handler = new Handler(){
+		    @Override
+		    public void handleMessage(Message msg) {
+		        switch(msg.what){
+		            case LOGIN_TAG:
+		            	_exeLoginResult(msg);
+		           break;
+		        }
+		    }  
+		};
+	}
+	
+	private void exeLogin(final View v) {
+		String userid = ((EditText)
+				findViewById(R.id.userAccount)).getText().toString();
+		String userpasswd = ((EditText)
+				findViewById(R.id.password)).getText().toString();
+		
+		//	if ( userid == null || userid.equals("") ) 
+			//return -1;
+		//	else if ( userpasswd == null || userpasswd.equals(""))
+			//return -2;
+		
+		showProgessDialog(LoginActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
+		
+		initHandler();
+	
+		_exeLogin(userid, userpasswd);
+	}
+	
+	private void _exeLogin(final String userid,final String userpasswd) {
+		new Thread() {
+		    public void run() {
+		    	Account account = new Account(db);
+		    	int status = account.login(userid, userpasswd);
+		    	
+		    	if ( status == StatusCode.success ) {
+		    		setLoginID(userid);
+		    		sendMessage(LOGIN_TAG,111,"AAAAA");
+		    	} else {
+		    		sendMessage(LOGIN_TAG,111,"AAAAA");
+		    	}
+		    }
+		}.start();
+	}
+	
+	private void _exeLoginResult(Message msg) {
+		dismissProgresDialog();
+		
+		changeActivity(LoginActivity.this, LoginActivity.class);
+	}
+	
+	
 
 	/**
 	 * onKeyDown(int keyCode, KeyEvent event)
@@ -149,10 +161,7 @@ public class LoginActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(LoginActivity.this, AuthorizeActivity.class);
-			startActivity(intent);
-			finish();
+		//	changeActivity(LoginActivity.this, AuthorizeActivity.class);
 		}
 		return false;
 	}

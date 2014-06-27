@@ -1,9 +1,5 @@
 package edu.mcscheduling.database;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-
 public abstract class DatabaseDriver {
 	
 	/**
@@ -14,15 +10,15 @@ public abstract class DatabaseDriver {
 	abstract public int createTable(String sql) ;
 	
 	
-	abstract public void setAutoCommit(boolean value) throws SQLException ;
+	abstract protected int setAutoCommit(boolean value);
 	
-	abstract public void commit() throws SQLException ;
+	abstract protected int commit();
 
-	abstract public void rollback() throws SQLException ;
+	abstract protected int rollback();
 	
-	abstract public boolean getAutoCommit() throws SQLException ;
+	abstract protected int getAutoCommit();
 	
-	abstract public Object excuteTransation(Transation tran);
+	abstract public Integer excuteTransation(Transation tran, Object retValue);
 
 	
 	/**
@@ -36,7 +32,7 @@ public abstract class DatabaseDriver {
 	 * 
 	 * @return
 	 */
-	abstract public void close();
+	abstract public int close();
 	
 	
 	/**
@@ -51,7 +47,7 @@ public abstract class DatabaseDriver {
 	 * @param sql
 	 * @return 
 	 */
-	abstract public ResultSet select(String sql) ;
+	abstract public MsResultSet select(String sql) ;
 
 	
 	/**
@@ -68,7 +64,7 @@ public abstract class DatabaseDriver {
 	 */
 	abstract public int delete(String sql);
 
-	abstract public String[] getTables();	
+	abstract public int getTables(String[] tables);	
 	protected void finalize()  {
 		close();
 	}

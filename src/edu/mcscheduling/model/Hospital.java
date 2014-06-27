@@ -1,56 +1,45 @@
 package edu.mcscheduling.model;
 
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
 import android.content.ContentValues;
-import android.database.Cursor;
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.MsResultSet;
 import edu.mcscheduling.database.Transation;
 
 public class Hospital {
 	protected static final int Integer = 0;
 	private DatabaseDriver db;
-	private boolean exist = false;
 
 	public Hospital(DatabaseDriver db) {
 		if ( db != null ) {
 			this.db = db;
-			exist = true;
 		} 
 	}
 	
 	private boolean existsUpdateID(String userid) {
-		if ( this.exist == false ) {
-			return false;
-		} else if ( userid == null || userid.isEmpty() ) {
-			return false;
-		}
-		
 		String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s'", 
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,
 				userid);
 		
-		
-		ResultSet rs = null;
-		
+		MsResultSet rsVal = new MsResultSet();
+		rsVal = db.select(sql);
+
 		try {
-			rs = db.select(sql);
-			if ( rs == null || !rs.next() || rs.getInt(1) != 1 ) {
+			if ( rsVal.rs == null || !rsVal.rs.next() || rsVal.rs.getInt(1) != 1 ) {
 				return false;
 			}
-		} catch (SQLException e) {
-			System.out.println(e.getMessage());
+		} catch (Exception e) {
 			return false;
 		} finally {
 			try {
-				rs.close();
+				rsVal.rs.close();
 			} catch ( SQLException e ) {
 				// nothing
 			}
@@ -64,34 +53,27 @@ public class Hospital {
 				DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colHospitalNo);
 
-		ResultSet rs = db.select(sql);
+		MsResultSet rsVal = null;
+		rsVal = db.select(sql);
+		
 		int number = 1;
-		if ( rs == null ) {
+		if ( rsVal.rs == null ) {
 			return number;
 		} else {
 			try {
-				rs.next();
-				 number =  rs.getInt(DatabaseTable.Hospital.colHospitalNo) + 1;
+				rsVal.rs.next();
+				number =  rsVal.rs.getInt(DatabaseTable.Hospital.colHospitalNo) + 1;
 			} catch ( Exception e ) {
 				return number;
 			}
-
 		}
 		return number;
 	}
 	
 	private int createHospitalNo(final String userid) {
-		if ( this.exist == false ) {
-			
-		} else if ( userid == null || userid.isEmpty() ) {
-			
-		} 
-		
-		Object obj =
-			db.excuteTransation( new Transation() {
-			
+		return db.excuteTransation(new Transation() {				
 			@Override
-			public 	Integer execute() throws SQLException {
+			public 	Integer execute(Object retValue) throws Exception {
 				int number = calcuteHospitalNumber();
 				String hospitalNo =  String.format("%05d", number);
 				
@@ -102,13 +84,12 @@ public class Hospital {
 						DatabaseTable.Hospital.colUpdateID,
 						hospitalNo, "NULL", userid);
 
-				if ( db.insert(sql) < 0 )
-					throw new SQLException();
+				int status = db.insert(sql);
+				if ( status != StatusCode.success )
+					return status;
 				return StatusCode.success;
 			}
-		});
-		
-		return 0;
+		}, null);
 	}
 	
 	private int updateHospital(String userid, String hospitalName, String areaID,
@@ -152,13 +133,10 @@ public class Hospital {
 				// WHERE
 				DatabaseTable.Hospital.colUpdateID,userid
 				);
-	
-		System.out.println(sql);
-		if ( db.update(sql) < 0 ) 
-			return StatusCode.WAR_REGISTER_FAIL();
-		return StatusCode.success;
-	}
 		
+		return db.update(sql);
+	}
+	/*
 	public String getHospitalNo(String userid) {
 		
 		if ( this.exist == false ) {
@@ -188,7 +166,7 @@ public class Hospital {
 		} 
 		
 		return hospitalNo;
-	}
+	}*/
 	
 	/**
 	 * ¨ç¼Æ¦WºÙ : setHospital </br>
@@ -222,9 +200,8 @@ public class Hospital {
 					String opdSt3, String opdEt3,
 					String hispitalSchedule,String hospitalState,
 					String picPath) {
-		
 		if ( userid == null || userid.isEmpty() )
-			return StatusCode.ERR_PARM_USERID_ERROR();
+			return Logger.e(this, StatusCode.PARM_USERID_ERROR);
 		else if ( !existsUpdateID(userid) ) {
 			createHospitalNo(userid);
 		} 
@@ -240,14 +217,17 @@ public class Hospital {
 	}
 
 	private int getHospitalCount(String sql) {
-		ResultSet rs = db.select(sql);
+		MsResultSet rsVal = new MsResultSet();
+		rsVal = db.select(sql);
+		
 		int rowCount = 0;
-		if ( rs == null ) {
+		
+		if ( rsVal.status != StatusCode.success) {
 			return rowCount;
 		} else {
 			try {
-				rs.next();
-				rowCount = rs.getInt(1);
+				rsVal.rs.next();
+				rowCount = rsVal.rs.getInt(1);
 			} catch ( SQLException e ) {
 				rowCount = 0;
 			}
@@ -255,31 +235,34 @@ public class Hospital {
 		return rowCount;
 	}
 	
-	private ContentValues[] setResultSetToContentValues(int rowCount, String sql) {
-		ResultSet rs = db.select(sql);
+	private MsContentValues getHospitalContentValues(int rowCount, String sql) {
 		
-		if ( rs == null ) {
-			return null;
-		}
-
-		ContentValues[] content = new ContentValues[rowCount];
+		MsResultSet rsVal = null;
+		rsVal = db.select(sql);
+		
+		if ( rsVal.status != StatusCode.success )
+			return new MsContentValues(rsVal.status);
+		
+		MsContentValues cvValue = new MsContentValues(StatusCode.success);
+		cvValue.cv = new ContentValues[rowCount];
+		
 		try {
 			int i = 0;
-			ResultSetMetaData meta = rs.getMetaData();
-			while (rs.next()) {
-				content[i] = new ContentValues();
+			ResultSetMetaData meta = rsVal.rs.getMetaData();
+			while (rsVal.rs.next()) {
+				cvValue.cv[i] = new ContentValues();
 				for ( int j=1; j<=meta.getColumnCount(); j++ ){
-					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
+					cvValue.cv[i].put(meta.getColumnName(j),rsVal.rs.getString(meta.getColumnName(j)));
 				}
 				i++;
 			}
-			rs.close();
-		}  catch (SQLException e) {
-			content = null;
+			rsVal.rs.close();
+		} catch (SQLException e) {
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_GET_MEMBER_INFO_FAIL));
 		} catch (Exception e ) {
-			content = null;
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_UNKOWN_ERROR));
 		}
-		return content;
+		return cvValue;
 	}
 	
 	/**
@@ -289,22 +272,24 @@ public class Hospital {
 	 *
 	 * @return ContentValues[]
 	 */
-	public ContentValues[] getHospital(String userid){
+	public MsContentValues getHospital(String userid){
+		if ( userid == null || userid.isEmpty() )
+			return new MsContentValues(Logger.e(this, StatusCode.PARM_USERID_ERROR));
 		
 		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
 				DatabaseTable.User.name,DatabaseTable.Hospital.name,
 				DatabaseTable.User.colUserid, DatabaseTable.Hospital.colUpdateID,
 				DatabaseTable.User.colUserid, userid);
-		
+				
 		int rowCount = getHospitalCount(sql);
 		
 		if ( rowCount <= 0 )
-			return null;
+			return new MsContentValues(Logger.e(this, StatusCode.WAR_HOSPITAL_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,
 				DatabaseTable.Hospital.colUpdateID,userid);
 		
-		return setResultSetToContentValues(rowCount, sql);
+		return getHospitalContentValues(rowCount, sql);
 	}
 
 }

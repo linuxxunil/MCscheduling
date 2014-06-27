@@ -4,20 +4,19 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.database.DatabaseDriver;
+import edu.mcscheduling.database.MsResultSet;
 import edu.mcscheduling.database.Transation;
-
 import android.content.ContentValues;
 
 public class Department {
 	private DatabaseDriver db;
-	private boolean exist = false;
 	
 	public Department(DatabaseDriver db) {
 		if ( db != null ) {
 			this.db = db;
-			exist = true;
 		} 
 	}
 	
@@ -29,30 +28,25 @@ public class Department {
 	}
 	
 	public int setDepartment(final String updateID,final String depName, final String desc) {
-		if ( this.exist == false ) {
-			return -1;
-		}else if ( updateID == null || updateID.isEmpty() )
-			return -2;
-		else if ( depName == null || depName.isEmpty() ) 
-			return -3;
+		if ( updateID == null || updateID.isEmpty() )
+			return Logger.e(this, StatusCode.PARM_UPDATEID_ERROR);
+		else if ( depName == null || depName.isEmpty() )
+			return Logger.e(this, StatusCode.PARM_DEPART_NAME_ERROR);
 		else if ( desc == null || desc.isEmpty() ) 
-			return -4;
+			return Logger.e(this, StatusCode.PARM_DESC_ERROR);
 		
-		
-		Object obj =
-		
-		db.excuteTransation( new Transation() {
-				
+		return db.excuteTransation( new Transation() {
 			@Override
-			public 	Integer execute() throws SQLException {
-			
+			public 	Integer execute(Object retVale) throws Exception {
+				int status = 0;
 				String sql = String.format("DELETE FROM %s WHERE %s='%s'", 
 							DatabaseTable.Department.name,
 							DatabaseTable.Department.colUpdateID,
 							updateID);
-			
-				if ( db.delete(sql) < 0 ) {
-					return -1;
+				
+				status = db.delete(sql);
+				if ( status != StatusCode.success ) {
+					return status;
 				} 
 				
 				String[] depart = depName.split(",");
@@ -70,72 +64,81 @@ public class Department {
 						updateID,
 						new DateTime().getDateTime()
 						 );
-					System.out.println(sql);
-					if ( db.insert(sql) < 0 ) 
-						throw new SQLException();
+					//System.out.println(sql);
+					status = db.insert(sql);
+					if ( status != StatusCode.success ) 
+						return status;
 				}
-				return 0;
+				return StatusCode.success;
 			}
-		});
-		
-		return StatusCode.success;
+		}, null);
 	}
 
-	private int getDepartmentCount(String userid) {
-		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
-				DatabaseTable.User.name,DatabaseTable.Department.name,
-				DatabaseTable.User.colUserid, DatabaseTable.Department.colUpdateID,
-				DatabaseTable.User.colUserid, userid);
+	private MsContentValues getDepartmentContentValues(int rowCount, String sql) {
 		
-		ResultSet rs = db.select(sql);
+		MsResultSet rsVal = null;
+		rsVal = db.select(sql);
+		
+		if ( rsVal.status != StatusCode.success )
+			return new MsContentValues(rsVal.status);
+		
+		MsContentValues cvValue = new MsContentValues(StatusCode.success);
+		cvValue.cv = new ContentValues[rowCount];
+		
+		try {
+			int i = 0;
+			ResultSetMetaData meta = rsVal.rs.getMetaData();
+			while (rsVal.rs.next()) {
+				cvValue.cv[i] = new ContentValues();
+				for ( int j=1; j<=meta.getColumnCount(); j++ ){
+					cvValue.cv[i].put(meta.getColumnName(j),rsVal.rs.getString(meta.getColumnName(j)));
+				}
+				i++;
+			}
+			rsVal.rs.close();
+		} catch (SQLException e) {
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_GET_MEMBER_INFO_FAIL));
+		} catch (Exception e ) {
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_UNKOWN_ERROR));
+		}
+		return cvValue;
+	}
+		
+	private int getDepartmentCount(String sql) {
+		MsResultSet rsVal = new MsResultSet();
+		rsVal = db.select(sql);
+		
 		int rowCount = 0;
-		if ( rs == null ) {
+		if ( rsVal.status != StatusCode.success) {
 			return rowCount;
 		} else {
 			try {
-				rs.next();
-				rowCount = rs.getInt(1);
-			} catch ( Exception e ) {
+				rsVal.rs.next();
+				rowCount = rsVal.rs.getInt(1);
+			} catch ( SQLException e ) {
 				rowCount = 0;
 			}
 		}
 		return rowCount;
 	}
 	
-	public ContentValues[] getDepartment(String userid) {
-		int rowCount = getDepartmentCount(userid);
+	public MsContentValues getDepartment(String userid) {
+		if ( userid == null || userid.isEmpty() )
+			return new MsContentValues(Logger.e(this, StatusCode.PARM_USERID_ERROR));
 		
+		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
+				DatabaseTable.User.name,DatabaseTable.Department.name,
+				DatabaseTable.User.colUserid, DatabaseTable.Department.colUpdateID,
+				DatabaseTable.User.colUserid, userid);
+		
+		int rowCount = getDepartmentCount(sql);
 		if ( rowCount <= 0 )
-			return null;
-		
-		
-		String sql = String.format("SELECT * FROM %s WHERE %s='%s'", 
+			return new MsContentValues(Logger.e(this, StatusCode.WAR_DEPARTMENT_NOT_SETTING));
+	
+		sql = String.format("SELECT * FROM %s WHERE %s='%s'", 
 					DatabaseTable.Department.name,
 					DatabaseTable.Department.colUpdateID, userid);
-
-		ResultSet rs = db.select(sql);
 		
-		if ( rs == null ) {
-			return null;
-		}
-
-		ContentValues[] content = new ContentValues[rowCount];
-		try {
-			int i = 0;
-			ResultSetMetaData meta = rs.getMetaData();
-			while (rs.next()) {
-				content[i] = new ContentValues();
-				for ( int j=1; j<=meta.getColumnCount(); j++ ){
-					content[i].put(meta.getColumnName(j),rs.getString(meta.getColumnName(j)));
-				}
-				i++;
-			}
-			rs.close();
-		} catch (SQLException e) {
-			content = null;
-		} catch (Exception e ) {
-			content = null;
-		}
-		return content;
+		return getDepartmentContentValues(rowCount, sql);
 	}
 }

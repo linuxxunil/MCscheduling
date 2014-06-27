@@ -1,8 +1,5 @@
 package edu.mcscheduling.database;
 
-import java.sql.SQLException;
-
-
 public interface Transation {
-	Object execute() throws SQLException;
+	public Integer execute(Object retVale) throws Exception;
 }

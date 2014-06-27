@@ -11,14 +11,15 @@ public class Network {
 		_context = context;
 	}
 	
-	static public boolean isNetworkAvailable() {
-		if ( _context == null ) {
-			StatusCode.ERR_NETWORK_DONT_SET_CONTEXT();
-			return false ;
-		}
+	
+	static public int isNetworkAvailable() {
+		if ( _context == null ) 
+			return Logger.e(Network.class, StatusCode.ERR_NETWORK_DONT_SET_CONTEXT);
 		ConnectivityManager connectivityManager 
         		= (ConnectivityManager) _context.getSystemService(Context.CONNECTIVITY_SERVICE);
 	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-  		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+	    	    
+  		return (activeNetworkInfo != null && activeNetworkInfo.isConnected())
+  				?StatusCode.success:Logger.e(Network.class, StatusCode.ERR_NETWORK_ISNOT_AVAILABLE);
 	}
 }
