@@ -5,14 +5,18 @@ import java.util.List;
 
 import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.model.Account;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Hospital;
 import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.AlertDialog.Builder;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,9 +44,6 @@ public class HospitalInformationActivity extends ControllerActivity {
 	private Button button_revise;
 	private Button button_selectConsultingHour;
 
-	/**
-	 * 以下為dialog變數
-	 */
 	private Dialog dialog_selectConsultingHour;
 	private Hospital hospital = null;
 	private MsContentValues hospitalContent = null;
@@ -85,63 +86,60 @@ public class HospitalInformationActivity extends ControllerActivity {
 	private CheckBox SunNight = null;
 	 
 	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
-
-	/**
 	 * onCreate(Bundle savedInstanceState)
 	 * 
 	 * Activity的起始function(ex main function)
 	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setLayout();
-
-		thisActivity = this;
-
-		// Listen for button clicks
-		setListeners();
+				
+		initHandler();
 		
-		initSelectConsultingHourView();
-		
-		hospital = new Hospital(db);
-		depart = new Department(db);
-		hospitalContent = hospital.getHospital(getLoginID());
-		if ( hospitalContent.status != StatusCode.success ) {
-			// show message
-		}
-		
-		bindViewComponent();
-		
-		setValueOfView();
-
+		initValueToView();
 	}
 	
-	private void initSelectConsultingHourView() {
-		// custom dialog
+	
+	private final int INIT_TAG = 1;
+	private final int SET_TAG = 2;
+
+	private void initLayout() {
+		// set layout
+		setContentView(R.layout.activity_hospital_information);
+
+		// let screen orientation be vertical
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+		// Sets the focus on the layout not the edittext
+		findViewById(R.id.layout_hospitalInformation).requestFocus();
+	}
+	
+	private void initDialogListeners() {
 		dialog_selectConsultingHour = new Dialog(this);
 		dialog_selectConsultingHour.setContentView(R.layout.dialog_select_consulting_hour);
 		dialog_selectConsultingHour.setTitle("選擇看診時間");
-
+		
 		Button buttonConfirm = (Button) dialog_selectConsultingHour.findViewById(R.id.Dialog_button_confirm);
 		Button buttonCancel = (Button) dialog_selectConsultingHour.findViewById(R.id.Dialog_button_cancel);
-		
+	
 		buttonConfirm.setOnClickListener(dialogConfirm);
 		buttonCancel.setOnClickListener(dialogCancel);
 	}
 	
-	private void bindViewComponent() {
-		hospitalNo = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalNumber);
-		areaID = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_medicalGroup);
-		hospitalName = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalName);
-		hospitalAddress = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalAddress);
-		contactName = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalManagerName); 
-		hospitalPhone = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalPhoneNumber); 
-		contactPhone = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalManagerPhoneNumber); 
-		depName =  (EditText) findViewById(R.id.EditText_HospitalInformationPage_medicalDepartment); 
+	private void initListeners() {
+		button_selectUploadManagerPhoto = (Button)  findViewById(R.id.button_HospitalInformationPage_uploadHospitalManagerPhoto);
+		button_selectConsultingHour  = (Button)  findViewById(R.id.button_HospitalInformationPage_selectConsultingHour);
+		button_revise = (Button)  findViewById(R.id.button_HospitalInformationPage_revise);
 		
+
+		hospitalNo 		= (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalNumber);
+		hospitalName 	= (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalName);
+		hospitalAddress = (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalAddress);
+		contactName 	= (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalManagerName); 
+		hospitalPhone 	= (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalPhoneNumber); 
+		contactPhone 	= (EditText) findViewById(R.id.EditText_HospitalInformationPage_hospitalManagerPhoneNumber); 
+		depName 		=  (EditText) findViewById(R.id.EditText_HospitalInformationPage_medicalDepartment); 
+		
+		areaID = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_medicalGroup);
 		opdSt1 = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_mornStartTime);
 		opdEt1 = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_mornEndTime);
 		opdSt2 = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_noonStartTime);
@@ -149,6 +147,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 		opdSt3 = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_nightStartTime);
 		opdEt3 = (Spinner) findViewById(R.id.Spinner_HospitalInformationPage_nightEndTime);
 		
+		initDialogListeners();
 		MonMorning  = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.MonMorning);
 		MonNoon     = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.MonNoon );
 		MonNight    = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.MonNight);
@@ -169,185 +168,236 @@ public class HospitalInformationActivity extends ControllerActivity {
 		SatNight    = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.SatNight);
 		SunMorning  = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.SunMorning);
 		SunNoon     = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.SunNoon);
-		SunNight    = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.SunNight);		
+		SunNight    = (CheckBox)dialog_selectConsultingHour.findViewById(R.id.SunNight);	
+		
+		button_selectUploadManagerPhoto.setOnClickListener(selectUploadManagerPhoto);
+		button_revise.setOnClickListener(revise);
+		button_selectConsultingHour.setOnClickListener(selectConsultingHour);
 	}
 	
-	private void setValueOfView() {
+	private void initHandler() {
+		handler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case INIT_TAG:
+					initValueToViewResult(msg);
+					break;
+				case SET_TAG:
+					setHospitalInformationResult(msg);
+					break;
+				}
+			}
+		};
+	}
+	
+	private void initValueToView() {
+		showProgessDialog(HospitalInformationActivity.this,
+				"資料讀取中，讀取時間依據您的網路速度而有不同");
+		new Thread() {
+			public void run() {
+				hospital = new Hospital(db);
+				depart = new Department(db);
+				hospitalContent = hospital.getHospital(getLoginID());
+				sendMessage(INIT_TAG, hospitalContent.status);
+			}
+		}.start();
+
+	}
+	
+	private void initValueToViewResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+
+		initLayout();
+		initListeners();
+		setSpinner_MedicalGroup();
+
 		String strTmp = null;
 		boolean isNull = true;
 		
-		
-		setSpinner_MedicalGroup();
-		if ( hospitalContent != null ) {
+		if (status != StatusCode.success) {
+			Builder alertDialog = new AlertDialog.Builder(
+					HospitalInformationActivity.this);
+			alertDialog.setTitle("提示");
 			
-			// Hospital No
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalNo);
-			hospitalNo.setText(strTmp == null ? "":strTmp);
+			switch (status) {
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"連線失敗。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(HospitalInformationActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			case -23303:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"讀取失敗。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(HospitalInformationActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"未知錯誤。"));
+				alertDialog.setPositiveButton("確定",null);
+				break;
+			}
+			alertDialog.show();
+		} else {
+			if ( hospitalContent.cv == null ) {
+				// Hospital No
+				hospitalNo.setText("");
+				// Area ID
+				// Hospital Name 
+				hospitalName.setText("");
+				// Hospital Address 
+				hospitalAddress.setText("");
+				// Contact Name 
+				contactName.setText("");
+				// Hospital Phone 
+				hospitalPhone.setText("");
+				// Contact Phone 
+				contactPhone.setText("");
+				// Dep Name
+				depName.setText("");
+				// Morning Start Time
+				setSpinner_MorningStartTime("");
+				// Morning End Time
+				setSpinner_MorningEndTime("");
+				// Moon Start Time
+				setSpinner_NoonStartTime("");
+				// Moon End Time
+				setSpinner_NoonEndTime("");
+				// Night Start Time
+				showSpinner_NightStartTime("");
+				// Might End Time
+				setSpinner_NightEndTime("");
+		        // Consulting Hour
+				MonMorning.setChecked(false);
+				MonNoon.setChecked(false);
+				MonNight.setChecked(false);
+				TueMorning.setChecked(false);
+				TueNoon.setChecked(false);
+				TueNight.setChecked(false);
+				WedMorning.setChecked(false);
+				WedNoon.setChecked(false);
+				WedNight.setChecked(false);
+				ThuMorning.setChecked(false);
+				ThuNoon.setChecked(false);
+				ThuNight.setChecked(false);
+				FriMorning.setChecked(false);
+				FriNoon.setChecked(false);
+				FriNight.setChecked(false);
+				SatMorning.setChecked(false);
+				SatNoon.setChecked(false);
+				SatNight.setChecked(false);
+				SunMorning.setChecked(false);
+				SunNoon.setChecked(false);
+				SunNight.setChecked(false);
+			} else {
 			
-			// Area ID
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colAreaID);
-			if ( strTmp != null ) {
-				for ( int i=0; i<medicalGroup.length; i++ ) {
-					if ( medicalGroup[i].equals(strTmp) ) {
-						areaID.setSelection(i);
-						break;
+				// Hospital No
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalNo);
+				hospitalNo.setText(strTmp == null ? "":strTmp);
+			
+				// Area ID
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colAreaID);
+				if ( strTmp != null ) {
+					for ( int i=0; i<medicalGroup.length; i++ ) {
+						if ( medicalGroup[i].equals(strTmp) ) {
+							areaID.setSelection(i);
+							break;
+						}
+					}
+				} else {
+					areaID.setSelection(0);
+				}
+			
+				// Hospital Name 
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalName);
+				hospitalName.setText(strTmp == null ? "":strTmp);
+				// Hospital Address 
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalAddress);
+				hospitalAddress.setText(strTmp == null ? "":strTmp);
+				// Contact Name 
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactName);
+				contactName.setText(strTmp == null ? "":strTmp);
+				// Hospital Phone 
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalPhone);
+				hospitalPhone.setText(strTmp == null ? "":strTmp);
+				// Contact Phone 
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactPhone);
+				contactPhone.setText(strTmp == null ? "":strTmp);			
+				// Dep Name
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colDepName);
+				depName.setText(strTmp == null ? "":strTmp);
+				// Morning Start Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST1);
+				setSpinner_MorningStartTime(strTmp == null ? "":strTmp);
+
+				// Morning End Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET1);
+				setSpinner_MorningEndTime(strTmp == null ? "":strTmp);
+	
+				// Moon Start Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST2);
+				setSpinner_NoonStartTime(strTmp == null ? "":strTmp);
+			
+				// Moon End Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET2);
+				setSpinner_NoonEndTime(strTmp == null ? "":strTmp);
+			
+				// Night Start Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST3);
+				showSpinner_NightStartTime(strTmp == null ? "":strTmp);
+			
+				// Night End Time
+				strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET3);
+				setSpinner_NightEndTime(strTmp == null ? "":strTmp);
+			
+				// Consulting Hour
+				strTmp =  (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalschedule);
+				if ( strTmp != null && ! strTmp.equals("")) {
+					isNull = false;
+				}
+			
+				int value = 0;
+				if ( !isNull ) {
+					for ( int i=0; i<7; i++ ) {
+						value = Integer.valueOf(strTmp.substring(i,i+1));
+						switch ( i ) {
+						case 0:
+							setConsultingHour(value, MonMorning, MonNoon, MonNight);
+							break;
+						case 1:
+							setConsultingHour(value, TueMorning, TueNoon, TueNight);
+							break;
+						case 2:
+							setConsultingHour(value, WedMorning, WedNoon, WedNight);
+							break;
+						case 3:
+							setConsultingHour(value, ThuMorning, ThuNoon, ThuNight);
+							break;
+						case 4:
+							setConsultingHour(value, FriMorning, FriNoon, FriNight);
+							break;
+						case 5:
+							setConsultingHour(value, SatMorning, SatNoon, SatNight);
+							break;
+						case 6:
+							setConsultingHour(value, SunMorning, SunNoon, SunNight);
+							break;
+						}	
 					}
 				}
-			} else {
-				areaID.setSelection(0);
-			}
-			
-			// Hospital Name 
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalName);
-			hospitalName.setText(strTmp == null ? "":strTmp);
-			
-			// Hospital Address 
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalAddress);
-			hospitalAddress.setText(strTmp == null ? "":strTmp);
-			
-			// Contact Name 
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactName);
-			contactName.setText(strTmp == null ? "":strTmp);
-			
-			// Hospital Phone 
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalPhone);
-			hospitalPhone.setText(strTmp == null ? "":strTmp);
-			
-			// Contact Phone 
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colContactPhone);
-			contactPhone.setText(strTmp == null ? "":strTmp);
-			
-			// Dep Name
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colDepName);
-			depName.setText(strTmp == null ? "":strTmp);
-					
-			// Morning Start Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST1);
-			setSpinner_MorningStartTime(strTmp == null ? "":strTmp);
-
-			// Morning End Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET1);
-			setSpinner_MorningEndTime(strTmp == null ? "":strTmp);
-	
-			// Moon Start Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST2);
-			setSpinner_NoonStartTime(strTmp == null ? "":strTmp);
-			
-			// Moon End Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET2);
-			setSpinner_NoonEndTime(strTmp == null ? "":strTmp);
-			
-			// Night Start Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ST3);
-			showSpinner_NightStartTime(strTmp == null ? "":strTmp);
-			
-			// Night End Time
-			strTmp = (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colOPD_ET3);
-			setSpinner_NightEndTime(strTmp == null ? "":strTmp);
-			
-			// Consulting Hour
-			strTmp =  (String)hospitalContent.cv[0].get(DatabaseTable.Hospital.colHospitalschedule);
-			if ( strTmp != null && ! strTmp.equals("")) {
-				isNull = false;
-			}
-			
-			int value = 0;
-			if ( !isNull ) {
-				for ( int i=0; i<7; i++ ) {
-					value = Integer.valueOf(strTmp.substring(i,i+1));
-					switch ( i ) {
-					case 0:
-						setConsultingHour(value, MonMorning, MonNoon, MonNight);
-					break;
-					case 1:
-						setConsultingHour(value, TueMorning, TueNoon, TueNight);
-					break;
-					case 2:
-						setConsultingHour(value, WedMorning, WedNoon, WedNight);
-					break;
-					case 3:
-						setConsultingHour(value, ThuMorning, ThuNoon, ThuNight);
-					break;
-					case 4:
-						setConsultingHour(value, FriMorning, FriNoon, FriNight);
-					break;
-					case 5:
-						setConsultingHour(value, SatMorning, SatNoon, SatNight);
-					break;
-					case 6:
-						setConsultingHour(value, SunMorning, SunNoon, SunNight);
-					break;
-					}	
-				}
-			}
-		} else {
-			// Hospital No
-			hospitalNo.setText("");
-			
-			// Area ID
-			
-			// Hospital Name 
-			hospitalName.setText("");
-			
-			// Hospital Address 
-			hospitalAddress.setText("");
-			
-			// Contact Name 
-			contactName.setText("");
-			
-			// Hospital Phone 
-			hospitalPhone.setText("");
-			
-			// Contact Phone 
-			contactPhone.setText("");
-			
-			// Dep Name
-			depName.setText("");
-			
-			// Morning Start Time
-			setSpinner_MorningStartTime("");
-
-			// Morning End Time
-			setSpinner_MorningEndTime("");
-	        
-			// Moon Start Time
-			setSpinner_NoonStartTime("");
-	        
-			// Moon End Time
-			setSpinner_NoonEndTime("");
-	        
-			// Night Start Time
-			showSpinner_NightStartTime("");
-	        
-			// Might End Time
-			setSpinner_NightEndTime("");
-	       
-	        // Consulting Hour
-			MonMorning.setChecked(false);
-			MonNoon.setChecked(false);
-			MonNight.setChecked(false);
-			TueMorning.setChecked(false);
-			TueNoon.setChecked(false);
-			TueNight.setChecked(false);
-			WedMorning.setChecked(false);
-			WedNoon.setChecked(false);
-			WedNight.setChecked(false);
-			ThuMorning.setChecked(false);
-			ThuNoon.setChecked(false);
-			ThuNight.setChecked(false);
-			FriMorning.setChecked(false);
-			FriNoon.setChecked(false);
-			FriNight.setChecked(false);
-			SatMorning.setChecked(false);
-			SatNoon.setChecked(false);
-			SatNight.setChecked(false);
-			SunMorning.setChecked(false);
-			SunNoon.setChecked(false);
-			SunNight.setChecked(false);
+			} 
 		}
-		
 	}
-	
+		
     private void setSpinner_MedicalGroup() {
     	 
         //get reference to the spinner from the XML layout
@@ -357,7 +407,7 @@ public class HospitalInformationActivity extends ControllerActivity {
         List<String> list = new ArrayList<String>();
         
         for ( int i=0; i<medicalGroup.length; i++ )
-        	list.add(medicalGroup[i]);
+       	list.add(medicalGroup[i]);
   
         //create an ArrayAdaptar from the String Array
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this,
@@ -487,7 +537,6 @@ public class HospitalInformationActivity extends ControllerActivity {
         //attach the listener to the spinner
         spinner.setOnItemSelectedListener(new UtilitySpinnerOnItemSelectedListener());
     }    
-  
    
     private void setSpinner_NoonEndTime(String opd) {
         //get reference to the spinner from the XML layout
@@ -599,114 +648,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 	    //attach the listener to the spinner
 	    spinner.setOnItemSelectedListener(new UtilitySpinnerOnItemSelectedListener());
 	}    
-	/**
-	 * onCreateOptionsMenu(Menu menu)
-	 * 
-	 * 設定menu button要執行的操作
-	 */
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.home, menu);
-		return true;
-	}
 
-	/**
-	 * setLayout()
-	 * 
-	 * 設定layout
-	 */
-	private void setLayout() {
-		// set layout without titleBar
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		// set layout
-		setContentView(R.layout.activity_hospital_information);
-
-		// let screen orientation be vertical
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
-		// Sets the focus on the layout not the edittext
-		findViewById(R.id.layout_hospitalInformation).requestFocus();
-	}
-
-	/**
-	 * setListeners()
-	 * 
-	 * 設置每個button被click的時候，要執行的function
-	 */
-	public void setListeners() {
-		button_selectUploadManagerPhoto = (Button)  findViewById(R.id.button_HospitalInformationPage_uploadHospitalManagerPhoto);
-		button_revise = (Button)  findViewById(R.id.button_HospitalInformationPage_revise);
-		button_selectConsultingHour  = (Button)  findViewById(R.id.button_HospitalInformationPage_selectConsultingHour);
-
-		button_selectUploadManagerPhoto.setOnClickListener(selectUploadManagerPhoto);
-		button_revise.setOnClickListener(revise);
-		button_selectConsultingHour.setOnClickListener(selectConsultingHour);
-	}
-
-	private Button.OnClickListener selectUploadManagerPhoto = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(),"selectUploadManagerPhoto", Toast.LENGTH_LONG).show();
-		}
-	};
-		
-	private Button.OnClickListener revise = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			int status = 0;
-			
-			if ( depName == null || depName.getText().toString().equals("") ) {
-				Toast.makeText(getApplicationContext(),"[科別] 至少選擇一科", Toast.LENGTH_LONG).show();
-				return ;
-			} 
-			
-			String hispitalSchedule = "";
-			hispitalSchedule += getConsultingHour( MonMorning, MonNoon, MonNight);
-			hispitalSchedule += getConsultingHour( TueMorning, TueNoon, TueNight);
-			hispitalSchedule += getConsultingHour( WedMorning, WedNoon, WedNight);
-			hispitalSchedule += getConsultingHour( ThuMorning, ThuNoon, ThuNight);
-			hispitalSchedule += getConsultingHour( FriMorning, FriNoon, FriNight);
-			hispitalSchedule += getConsultingHour( SatMorning, SatNoon, SatNight);
-			hispitalSchedule += getConsultingHour( SunMorning, SunNoon, SunNight);
-			
-			status = hospital.setHospital(getLoginID(), 
-							hospitalNo.getText().toString(),			// Hospital Name
-							areaID.getSelectedItem().toString(),		// Area ID
-							hospitalPhone.getText().toString(),			// Hospital Phone
-							hospitalAddress.getText().toString(),		// Hospital Address
-							contactName.getText().toString(),			// Contact Name
-							contactPhone.getText().toString(),			// Contact Phone,
-							depName.getText().toString(),				// Dep Name
-							opdSt1.getSelectedItem().toString(),		// opdSt1
-							opdEt1.getSelectedItem().toString(),		// opdEt1
-							opdSt2.getSelectedItem().toString(),		// opdSt2
-							opdEt2.getSelectedItem().toString(),		// opdEt2
-							opdSt3.getSelectedItem().toString(),		// opdSt3
-							opdEt3.getSelectedItem().toString(),		// opdEt3
-							hispitalSchedule,							// hispitalSchedule
-							"1",										// hospitalState
-							"UploadImg\\BillPic.jpg"						// picPath
-							);
-			
-			status += depart.setDepartment(getLoginID(), depName.getText().toString(), "NULL");
-			
-			
-			if ( status < 0 ) {
-				Toast.makeText(getApplicationContext(),"修改失敗", Toast.LENGTH_LONG).show();
-			} else {
-				Toast.makeText(getApplicationContext(),"修改成功", Toast.LENGTH_LONG).show();
-			}
-		}
-	};
-	
-	private Button.OnClickListener selectConsultingHour = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			dialog_selectConsultingHour.show();
-		}
-	};
-	
 	private void setConsultingHour(int value, CheckBox morning, CheckBox noon, CheckBox night) {
 		
 		if ( value >= 5 ) {
@@ -721,7 +663,6 @@ public class HospitalInformationActivity extends ControllerActivity {
 			morning.setChecked(true);
 			value -= 1;
 		}
-
 	}
 
 	private String getConsultingHour(CheckBox morning, CheckBox noon, CheckBox night) {
@@ -739,6 +680,35 @@ public class HospitalInformationActivity extends ControllerActivity {
 		return String.valueOf(value);
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.home, menu);
+		return true;
+	}
+
+	private Button.OnClickListener selectUploadManagerPhoto = new Button.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			Toast.makeText(getApplicationContext(),"selectUploadManagerPhoto", Toast.LENGTH_LONG).show();
+		}
+	};
+	
+		
+	private Button.OnClickListener revise = new Button.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			showProgessDialog(HospitalInformationActivity.this, "儲存中...");
+			setHospitalInformation();
+		}
+	};
+	
+	private Button.OnClickListener selectConsultingHour = new Button.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			dialog_selectConsultingHour.show();
+		}
+	};
+	
 	private Button.OnClickListener dialogCancel = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -755,12 +725,83 @@ public class HospitalInformationActivity extends ControllerActivity {
 		}
 	};
 	
-	/**
-	 * onKeyDown(int keyCode, KeyEvent event)
-	 * 
-	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
-	 * 
-	 */
+	private void setHospitalInformation() {
+		int status = 0;
+		if ( depName == null || depName.getText().toString().equals("") ) {
+			Toast.makeText(getApplicationContext(),"[科別] 至少選擇一科", Toast.LENGTH_LONG).show();
+			return ;
+		} 
+		
+		new Thread() {
+			public void run() {
+				int status = StatusCode.success;
+
+				String hispitalSchedule = "";
+				hispitalSchedule += getConsultingHour( MonMorning, MonNoon, MonNight);
+				hispitalSchedule += getConsultingHour( TueMorning, TueNoon, TueNight);
+				hispitalSchedule += getConsultingHour( WedMorning, WedNoon, WedNight);
+				hispitalSchedule += getConsultingHour( ThuMorning, ThuNoon, ThuNight);
+				hispitalSchedule += getConsultingHour( FriMorning, FriNoon, FriNight);
+				hispitalSchedule += getConsultingHour( SatMorning, SatNoon, SatNight);
+				hispitalSchedule += getConsultingHour( SunMorning, SunNoon, SunNight);
+				
+				status = hospital.setHospital(getLoginID(), 
+								hospitalNo.getText().toString(),			// Hospital Name
+								areaID.getSelectedItem().toString(),		// Area ID
+								hospitalPhone.getText().toString(),			// Hospital Phone
+								hospitalAddress.getText().toString(),		// Hospital Address
+								contactName.getText().toString(),			// Contact Name
+								contactPhone.getText().toString(),			// Contact Phone,
+								depName.getText().toString(),				// Dep Name
+								opdSt1.getSelectedItem().toString(),		// opdSt1
+								opdEt1.getSelectedItem().toString(),		// opdEt1
+								opdSt2.getSelectedItem().toString(),		// opdSt2
+								opdEt2.getSelectedItem().toString(),		// opdEt2
+								opdSt3.getSelectedItem().toString(),		// opdSt3
+								opdEt3.getSelectedItem().toString(),		// opdEt3
+								hispitalSchedule,							// hispitalSchedule
+								"1",										// hospitalState
+								"UploadImg\\BillPic.jpg"						// picPath
+								);
+				if ( status != StatusCode.success )
+					sendMessage(SET_TAG, status);
+				
+				status = depart.setDepartment(getLoginID(), depName.getText().toString(), "NULL");
+				sendMessage(SET_TAG, status);
+			}
+		}.start();
+	}
+	
+	private void setHospitalInformationResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+		
+		Builder alertDialog = new AlertDialog.Builder(
+				HospitalInformationActivity.this);
+		alertDialog.setTitle("提示");
+		alertDialog.setPositiveButton("確定", null);
+		if (status != StatusCode.success) {
+			switch (status) {
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"連線失敗。"));
+				break;
+			case -23303:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"儲存失敗。"));
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"未知錯誤。"));
+				break;
+			}
+			alertDialog.show();
+		} else {
+			alertDialog.setMessage(String.format("[%d] %s", status, "儲存成功。"));
+			alertDialog.show();
+		}
+	}
+	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			changeActivity(HospitalInformationActivity.this, MenuActivity.class);

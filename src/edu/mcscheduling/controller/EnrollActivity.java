@@ -4,8 +4,11 @@ import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -20,45 +23,27 @@ import android.widget.Toast;
 
 public class EnrollActivity extends ControllerActivity {
 
-	/**
-	 * 以下為imageButton變數
-	 */
 	private Button button_enroll;
+	
+	private final int ENROLL_TAG = 1;
 
-	/**
-	 * onCreate(Bundle savedInstanceState)
-	 * 
-	 * Activity的起始function(ex main function)
-	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setLayout();
-
-		// Listen for button clicks
-		setListeners();
+		initHandler();
+		
+		initLayout();
+		
+		initListeners();
 	}
 
-	/**
-	 * onCreateOptionsMenu(Menu menu)
-	 * 
-	 * 設定menu button要執行的操作
-	 */
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.home, menu);
 		return true;
 	}
 
-	/**
-	 * setLayout()
-	 * 
-	 * 設定layout
-	 */
-	private void setLayout() {
-		// set layout without titleBar
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+	private void initLayout() {
 		// set layout
 		setContentView(R.layout.activity_enroll);
 
@@ -69,83 +54,100 @@ public class EnrollActivity extends ControllerActivity {
 		findViewById(R.id.layout_enroll).requestFocus();
 	}
 
-	/**
-	 * setListeners()
-	 * 
-	 * 設置每個button被click的時候，要執行的function
-	 */
-	public void setListeners() {
+	private void initListeners() {
 		button_enroll = (Button) findViewById(R.id.Button_EnrollPage_enroll);
 
 		button_enroll.setOnClickListener(enroll);
 	}
-	
-	/**
-	 * Controller : Enroll
-	 * 
-	 * 
-	 */
-	
-	private void handleEnroll(View v) {
-		String userid = ((EditText)
-				findViewById(R.id.userAccount)).getText().toString();
-		String username = ((EditText)
-				findViewById(R.id.userName)).getText().toString();
-		String userpasswd = ((EditText)
-				findViewById(R.id.password)).getText().toString();
-		String userpasswdConfirm = ((EditText)
-				findViewById(R.id.passwordConfirm)).getText().toString();
-		
-		if ( userid == null || userid.equals("")) {
-			Toast.makeText(getApplicationContext(), "使用者帳號不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if ( username == null || userpasswd.equals("")) {
-			Toast.makeText(getApplicationContext(), "使用者姓名不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if ( userpasswd == null || userpasswd.equals("")) {
-			Toast.makeText(getApplicationContext(), "密碼不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if ( !userpasswd.equals(userpasswdConfirm)) {
-			Toast.makeText(getApplicationContext(), "密碼確認不一致", Toast.LENGTH_LONG)
-			.show();
-		} else {
-			
-			Account account = new Account(db);
-	
-			if ( account.register(userid, username, userpasswd) == StatusCode.success ) {
-				Toast.makeText(getApplicationContext(), "註冊成功", Toast.LENGTH_LONG)
-				.show();
-			
-				Intent intent = new Intent();
-				intent.setClass(this, LoginActivity.class);
-				startActivity(intent);
-				finish();
-			} else {
-				Toast.makeText(getApplicationContext(), "註冊失敗:使用者已存在", Toast.LENGTH_LONG)
-				.show();
-			}
-		}
+
+	private void initHandler() {
+		handler = new Handler(){
+		    @Override
+		    public void handleMessage(Message msg) {
+		        switch(msg.what){
+		            case ENROLL_TAG:
+		            	exeEnrollResult(msg);
+		           break;
+		        }
+		    }  
+		};
 	}
 	
-	/**
-	 * enroll
-	 * 
-	 * 當你按下註冊按鈕，執行對應的操作
-	 */
 	private ImageButton.OnClickListener enroll = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			handleEnroll(v);			
+			String userid = ((EditText)
+					findViewById(R.id.userAccount)).getText().toString();
+			String username = ((EditText)
+					findViewById(R.id.userName)).getText().toString();
+			String userpasswd = ((EditText)
+					findViewById(R.id.password)).getText().toString();
+			String userpasswdConfirm = ((EditText)
+					findViewById(R.id.passwordConfirm)).getText().toString();
+			
+			if ( !userpasswd.equals(userpasswdConfirm)) {
+				Builder alertDialog = new AlertDialog.Builder(EnrollActivity.this);
+				alertDialog.setTitle("提示");
+				alertDialog.setMessage(String.format("[%d] %s", 0, "密碼確認不一致。"));
+				alertDialog.setPositiveButton("確定", null);
+				alertDialog.show();
+			}
+			
+			showProgessDialog(EnrollActivity.this, "註冊中...");
 
+			exeEnroll(userid, username, userpasswd);	
 		}
 	};
+	
+	private void exeEnroll(final String userid,final String username, 
+												final String userpasswd) {	
+		new Thread() {
+		    public void run() {
+		    	Account account = new Account(db);
+		    	int status = account.register(userid, username, userpasswd);
+	    		sendMessage(ENROLL_TAG, status);	
+		    }
+		}.start();
+	}
+	
+	private void exeEnrollResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+		
+		Builder alertDialog = new AlertDialog.Builder(EnrollActivity.this);
+		alertDialog.setTitle("提示");
+		if ( status != StatusCode.success ) {
+			
+			switch(status){
+			case -31102:
+				alertDialog.setMessage(String.format("[%d] %s", status, "帳號欄不能為空。"));
+				break;
+			case -31104:
+				alertDialog.setMessage(String.format("[%d] %s", status, "密碼欄不能為空。"));
+				break;
+			case -31001:
+				alertDialog.setMessage(String.format("[%d] %s", status, "登入失敗，您的帳號密碼錯誤。"));
+				break;
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status, "連線失敗。"));
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status, "未知錯誤。"));
+				break;
+			}
+			alertDialog.setPositiveButton("確定", null);
+			alertDialog.show();
+		} else {
+			alertDialog.setMessage(String.format("[%d] %s", status, "註冊成功。"));
+			alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+	        	public void onClick(DialogInterface dialog, int id) {
+	        		changeActivity(EnrollActivity.this, LoginActivity.class);
+	        	}
+	        });
+			alertDialog.show();
+		}
+	}
 
-	/**
-	 * onKeyDown(int keyCode, KeyEvent event)
-	 * 
-	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
-	 * 
-	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
 			changeActivity(EnrollActivity.this, HomeActivity.class);

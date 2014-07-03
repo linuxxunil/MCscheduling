@@ -45,7 +45,7 @@ public class Department {
 							updateID);
 				
 				status = db.delete(sql);
-				if ( status != StatusCode.success ) {
+				if ( status < StatusCode.success ) {
 					return status;
 				} 
 				
@@ -66,7 +66,7 @@ public class Department {
 						 );
 					//System.out.println(sql);
 					status = db.insert(sql);
-					if ( status != StatusCode.success ) 
+					if ( status < StatusCode.success ) 
 						return status;
 				}
 				return StatusCode.success;

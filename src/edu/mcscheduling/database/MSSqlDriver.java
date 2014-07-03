@@ -33,24 +33,23 @@ public class MSSqlDriver extends DatabaseDriver {
 	@Override
 	public int onConnect() {		
 		try {
-			if ( mode == MODE.TRANSACATION ) 
-				return StatusCode.success;
-			
 			int status = Network.isNetworkAvailable();
 			if ( status != StatusCode.success ) 
 				return status;
 			
+			if ( mode == MODE.TRANSACATION ) 
+				return StatusCode.success;
+		
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
 			conn = DriverManager
-						.getConnection(
-						"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
-						UserName, Password);
+					.getConnection(
+					"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
+					UserName, Password);
 		} catch (ClassNotFoundException e1) {
 			return Logger.e(this, StatusCode.ERR_JDBC_CLASS_NOT_FOUND);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
 		} catch (Exception e ) {
-			System.out.println(e.getMessage());
 			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 		}
 		return StatusCode.success;
@@ -324,9 +323,7 @@ public class MSSqlDriver extends DatabaseDriver {
 	
 	@Override
 	public int update(String sql) {
-		if (conn == null)
-			return  Logger.e(this, StatusCode.ERR_INITIAL_DB_NOT_SUCCESS);
-		else if (sql.isEmpty())
+		if (sql.isEmpty())
 			return  Logger.e(this, StatusCode.PARM_SQL_IS_ERROR);
 		
 		System.out.println(sql);

@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Window;
 
 public class ControllerActivity extends Activity {
 	static protected DatabaseDriver db = null ;
@@ -27,11 +28,15 @@ public class ControllerActivity extends Activity {
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initSqlite();
+		disableWindowTitle();
 		setAccessDriver(AccessDriver.MSSQL);
 		
-		if ( accessMode == AccessMode.ONLINE )
+		//if ( accessMode == AccessMode.ONLINE )
 			Network.setContext(getBaseContext());
+	}
+	
+	private void disableWindowTitle() {
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 	}
 	
 	protected void setLoginID(String userid) {
@@ -119,6 +124,12 @@ public class ControllerActivity extends Activity {
 	
 	protected void changeActivity(Context  from, Class to) {
 		Intent intent = new Intent();
+		intent.setClass(from, to);
+		startActivity(intent);
+		finish();
+	}
+	
+	protected void changeActivity(Context  from, Class to, Intent intent) {
 		intent.setClass(from, to);
 		startActivity(intent);
 		finish();

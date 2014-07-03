@@ -1,8 +1,9 @@
 package edu.mcscheduling.model;
 
+
 import android.content.ContentValues;
 
-public class MsContentValues {
+public class MsContentValues implements java.io.Serializable { 
 	public int status;
 	public ContentValues[] cv = null;
 	

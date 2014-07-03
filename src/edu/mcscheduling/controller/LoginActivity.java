@@ -34,6 +34,8 @@ public class LoginActivity extends ControllerActivity {
 		initLayout();
 
 		initListeners();
+		
+		initHandler();
 	}
 
 	/**
@@ -81,11 +83,11 @@ public class LoginActivity extends ControllerActivity {
 			String userpasswd = ((EditText)
 					findViewById(R.id.password)).getText().toString();
 			
-			showProgessDialog(LoginActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
-			
-			initHandler();
+			setLoginID("sme79");
+			changeActivity(LoginActivity.this, MenuActivity.class);
+			//showProgessDialog(LoginActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
 		
-			exeLogin(userid, userpasswd);
+			//exeLogin(userid, userpasswd);
 		}
 	};
 	
@@ -120,21 +122,23 @@ public class LoginActivity extends ControllerActivity {
 	
 	private void exeLoginResult(Message msg) {
 		int status = msg.getData().getInt("status");
-		System.out.println(status);
 		dismissProgresDialog();
 		
 		if ( status != StatusCode.success ) {
 			Builder alertDialog = new AlertDialog.Builder(LoginActivity.this);
 			alertDialog.setTitle("提示");
 			switch(status){
-			case -00031102:
+			case -31102:
 				alertDialog.setMessage(String.format("[%d] %s", status, "帳號欄不能為空。"));
 				break;
-			case -00031104:
+			case -31104:
 				alertDialog.setMessage(String.format("[%d] %s", status, "密碼欄不能為空。"));
 				break;
-			case -00031001:
+			case -31001:
 				alertDialog.setMessage(String.format("[%d] %s", status, "登入失敗，您的帳號密碼錯誤。"));
+				break;
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status, "連線失敗。"));
 				break;
 			default:
 				alertDialog.setMessage(String.format("[%d] %s", status, "登入失敗，未知錯誤。"));

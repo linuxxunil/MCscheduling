@@ -94,8 +94,8 @@ public class Doctor {
 							new DateTime().getDateTime(),
 							//desc,
 							picPath);
-						System.out.println(sql);
-						return db.insert(sql);			
+						int status = db.insert(sql);
+						return (status < 0)?status:StatusCode.success;
 					}
 			},null);	
 	}
@@ -126,7 +126,8 @@ public class Doctor {
 			DatabaseTable.Doctor.colHospitalNo, getHospitalNoSQL(userid),
 			DatabaseTable.Doctor.colDorNo, dorNo);
 	
-		return db.update(sql);
+		int status =  db.update(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 	
 	public int deleteDoctor(String userid, String dorNo) {
@@ -139,8 +140,8 @@ public class Doctor {
 						DatabaseTable.Doctor.name,
 						DatabaseTable.Doctor.colHospitalNo, getHospitalNoSQL(userid),
 						DatabaseTable.Doctor.colDorNo, dorNo);
-		System.out.println(sql);
-		return db.delete(sql);
+		int status = db.delete(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 	
 	public int deleteDoctorAll(String userid) {
@@ -150,8 +151,8 @@ public class Doctor {
 		String sql = String.format("DELETE FROM %s WHERE %s=%s", 
 				DatabaseTable.Doctor.name,
 				DatabaseTable.Doctor.colHospitalNo, getHospitalNoSQL(userid));
-		
-		return db.delete(sql);
+		int status = db.delete(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 	
 	private int getDoctorCount(String sql) {
@@ -159,15 +160,14 @@ public class Doctor {
 		rsVal = db.select(sql);
 		
 		int rowCount = 0;
-		
-		if ( rsVal.status != StatusCode.success) {
-			return rowCount;
+		if ( rsVal.status != StatusCode.success || rsVal.rs == null ) {
+			return rsVal.status;
 		} else {
 			try {
 				rsVal.rs.next();
 				rowCount = rsVal.rs.getInt(1);
-			} catch ( SQLException e ) {
-				rowCount = 0;
+			} catch ( Exception e ) {
+				return Logger.e(this, StatusCode.ERR_GET_RESULTSET_FAIL);
 			}
 		}
 		return rowCount;
@@ -233,7 +233,10 @@ public class Doctor {
 				DatabaseTable.Doctor.colDepName, depName);
 		
 		int rowCount = getDoctorCount(sql);
-		if ( rowCount <= 0 ) 
+		
+		if ( rowCount < 0 )
+			return new MsContentValues(rowCount);
+		else if ( rowCount == 0 )
 			return new MsContentValues(Logger.e(this, StatusCode.WAR_DOCTOR_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s'",

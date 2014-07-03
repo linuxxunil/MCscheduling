@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
 import android.content.ContentValues;
 import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
@@ -40,7 +41,7 @@ public class Hospital {
 		} finally {
 			try {
 				rsVal.rs.close();
-			} catch ( SQLException e ) {
+			} catch ( Exception e ) {
 				// nothing
 			}
 		}
@@ -136,62 +137,7 @@ public class Hospital {
 		
 		return db.update(sql);
 	}
-	/*
-	public String getHospitalNo(String userid) {
-		
-		if ( this.exist == false ) {
-		} else if ( userid == null || userid.isEmpty() )
-			return null;
-
-		String hospitalNo = null;
-		String sql = String.format("SELECT %s,%s FROM %s WHERE %s='%s'", 
-				DatabaseTable.Hospital.colHospitalNo,
-				DatabaseTable.Hospital.colUpdateID,
-				DatabaseTable.Hospital.name,
-				DatabaseTable.Hospital.colUpdateID,
-				userid);
-
-		ResultSet rs = db.select(sql);
-		
-		if ( rs == null ) {
-			return null;
-		}
-		
-		try {
-			rs.next();
-			hospitalNo = rs.getString(DatabaseTable.Hospital.colHospitalNo);
-			rs.close();
-		} catch (SQLException e) {
-			return null;
-		} 
-		
-		return hospitalNo;
-	}*/
 	
-	/**
-	 * 函數名稱 : setHospital </br>
-	 * 函數說明 : set Hospital 的所有資訊 </br>
-	 * 函數範例 : None </br>
-	 * 
-	 * @param updateID
-	 * @param hospitalName
-	 * @param areaID
-	 * @param hospitalPhone
-	 * @param hospitalAddress
-	 * @param contactName
-	 * @param contactPhone
-	 * @param depName
-	 * @param opdSt1
-	 * @param opdEt1
-	 * @param opdSt2
-	 * @param opdEt2
-	 * @param opdSt3
-	 * @param opdEt3
-	 * @param hispitalSchedule
-	 * @param hospitalState
-	 * @param picPath
-	 * @return
-	 */
 	public int setHospital(String userid, String hospitalName, String areaID, 
 					String hospitalPhone, String hospitalAddress, 
 					String contactName, String contactPhone, String depName,
@@ -206,7 +152,7 @@ public class Hospital {
 			createHospitalNo(userid);
 		} 
 		
-		return updateHospital(userid, hospitalName, areaID, 
+		int status = updateHospital(userid, hospitalName, areaID, 
 						hospitalPhone, hospitalAddress,
 						contactName, contactPhone, depName,
 						opdSt1, opdEt1,  
@@ -214,6 +160,8 @@ public class Hospital {
 						opdSt3, opdEt3,
 						hispitalSchedule, hospitalState,
 						picPath);
+		
+		return  (status < 0)?status:StatusCode.success;
 	}
 
 	private int getHospitalCount(String sql) {
@@ -221,15 +169,14 @@ public class Hospital {
 		rsVal = db.select(sql);
 		
 		int rowCount = 0;
-		
-		if ( rsVal.status != StatusCode.success) {
-			return rowCount;
+		if ( rsVal.status != StatusCode.success || rsVal.rs == null ) {
+			return rsVal.status;
 		} else {
 			try {
 				rsVal.rs.next();
 				rowCount = rsVal.rs.getInt(1);
-			} catch ( SQLException e ) {
-				rowCount = 0;
+			} catch ( Exception e ) {
+				return Logger.e(this, StatusCode.ERR_GET_RESULTSET_FAIL);
 			}
 		}
 		return rowCount;
@@ -283,7 +230,9 @@ public class Hospital {
 				
 		int rowCount = getHospitalCount(sql);
 		
-		if ( rowCount <= 0 )
+		if ( rowCount < 0 )
+			return new MsContentValues(rowCount);
+		else if ( rowCount == 0 )
 			return new MsContentValues(Logger.e(this, StatusCode.WAR_HOSPITAL_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s='%s'", DatabaseTable.Hospital.name,

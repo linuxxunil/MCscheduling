@@ -189,23 +189,27 @@ public class Account {
 				DatabaseTable.User.colUserpwdans, passwdAnswer,
 				// WHERE
 				DatabaseTable.User.colUserid, userid);
-		return db.update(sql);
+		
+		int status = db.update(sql);
+		
+		
+		return (status < 0)?status:StatusCode.success;
 	}
 
 	
 	private int getMemberCount(String sql) {
-		MsResultSet rtVal = new MsResultSet();
-		rtVal = db.select(sql);
+		MsResultSet rsVal = new MsResultSet();
+		rsVal = db.select(sql);
 		
 		int rowCount = 0;
-		if ( rtVal.rs == null ) {
-			return rowCount;
+		if ( rsVal.status != StatusCode.success || rsVal.rs == null ) {
+			return rsVal.status;
 		} else {
 			try {
-				rtVal.rs.next();
-				rowCount = rtVal.rs.getInt(1);
+				rsVal.rs.next();
+				rowCount = rsVal.rs.getInt(1);
 			} catch ( Exception e ) {
-				rowCount = 0;
+				return Logger.e(this, StatusCode.ERR_GET_RESULTSET_FAIL);
 			}
 		}
 		return rowCount;
@@ -221,7 +225,10 @@ public class Account {
 		
 		
 		int rowCount = getMemberCount(sql);
-		if ( rowCount <= 0 ) 
+		
+		if ( rowCount < 0 )
+			return new MsContentValues(rowCount);
+		else if ( rowCount == 0 )
 			return new MsContentValues(Logger.e(this, StatusCode.ERR_MEMBER_NOT_EXIST));
 		
 		sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 

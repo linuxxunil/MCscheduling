@@ -58,7 +58,9 @@ public class DoctorSchedule {
 							userid,
 							new DateTime().getDateTime());
 							//desc);
-					return db.insert(sql);
+						
+					int status = db.insert(sql);
+					return (status < 0)?status:StatusCode.success;
 				}
 			}, null);
 	}
@@ -87,7 +89,8 @@ public class DoctorSchedule {
 									DatabaseTable.DoctorSchedule.colDorNo, dorNo,
 									DatabaseTable.DoctorSchedule.colSchYear, schYear,
 									DatabaseTable.DoctorSchedule.colSchMonth, schMonth);
-		return db.update(sql);
+		int status = db.update(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 		
 	public int deleteDoctorSchedule(String userid, String dorNo) {
@@ -100,8 +103,8 @@ public class DoctorSchedule {
 						DatabaseTable.DoctorSchedule.name,
 						DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid),
 						DatabaseTable.DoctorSchedule.colDorNo, dorNo);
-		
-		return db.delete(sql);
+		int status = db.delete(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 	
 	public int deleteDoctorScheduleAll(String userid) {
@@ -111,7 +114,8 @@ public class DoctorSchedule {
 		String sql = String.format("DELETE FROM %s WHERE %s=%s", 
 						DatabaseTable.DoctorSchedule.name,
 						DatabaseTable.DoctorSchedule.colHospitalNo, getHospitalNoSQL(userid));
-		return db.delete(sql);
+		int status = db.delete(sql);
+		return (status < 0)?status:StatusCode.success;
 	}
 	
 	private int getDoctorScheduleCount(String sql) {
@@ -120,14 +124,14 @@ public class DoctorSchedule {
 		
 		int rowCount = 0;
 		
-		if ( rsVal.status != StatusCode.success) {
-			return rowCount;
+		if ( rsVal.status != StatusCode.success || rsVal.rs == null ) {
+			return rsVal.status;
 		} else {
 			try {
 				rsVal.rs.next();
 				rowCount = rsVal.rs.getInt(1);
-			} catch ( SQLException e ) {
-				rowCount = 0;
+			} catch ( Exception e ) {
+				return Logger.e(this, StatusCode.ERR_GET_RESULTSET_FAIL);
 			}
 		}
 		return rowCount;

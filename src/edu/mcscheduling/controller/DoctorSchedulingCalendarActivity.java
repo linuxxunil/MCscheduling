@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.DatabaseTable;
 import edu.mcscheduling.model.Department;
 import edu.mcscheduling.model.Doctor;
@@ -15,10 +16,15 @@ import edu.mcscheduling.model.Hospital;
 import edu.mcscheduling.model.MsContentValues;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.format.DateFormat;
 import android.view.KeyEvent;
 import android.view.View;
@@ -37,15 +43,10 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 @TargetApi(3)
 public class DoctorSchedulingCalendarActivity extends ControllerActivity {
-	//private static final String tag = "MyCalendarActivity";
-	
 	@SuppressLint({ "NewApi", "NewApi", "NewApi", "NewApi" })
 	private final DateFormat dateFormatter = new DateFormat();
 	private static final String dateTemplate = "yyyy   MMMM";
-	
-	/**
-	 * 以下為imageButton變數
-	 */
+
 	// View Componet
 	private Button button_save	= null;
 	private ImageView 	button_prevMonth = null;
@@ -75,30 +76,20 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private int currentYear = 0;
 	private int currentMonth = 0;
 	
-	/** Called when the activity is first created. */
+	private final int INIT_TAG = 1;
+	private final int SET_DOCTOR_SCHEDULING_TAG = 2;
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		setLayout();
-		
 		setCurrentTime();
 	
-		depart = new Department(db);
-		doctor = new Doctor(db);
-		schedule = new DoctorSchedule(db);
-		hospital = new Hospital(db);
-		
 		monthInfo = new HashMap<String, String>();
 		
-		departContent = depart.getDepartment(getLoginID());
-		hospitalContent = hospital.getHospital(getLoginID());
+		initHandler();
 		
-		bindViewComponent();
-		
-		setValueOfView();
-		
-		setListeners();
+		initValueToView();
+			
 	}
 	
 	private void setCurrentTime() {
@@ -107,22 +98,117 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		currentYear = comCalendar.get(Calendar.YEAR);
 	}
 	
-	private void bindViewComponent(){
+	private void initHandler() {
+		handler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case INIT_TAG:
+					initValueToViewResult(msg);
+					break;
+				case SET_DOCTOR_SCHEDULING_TAG:
+					setDoctorScheduleResult(msg);
+					break;
+				}
+			}
+		};
+	}
+	
+	private void initLayout() {
+		// set layout
+		setContentView(R.layout.activity_doctor_scheduling_calendar);
+
+		// let screen orientation be landscape
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+	}
+	
+	private void initListeners() {
+		
+		button_save = (Button) findViewById(R.id.Button__DoctorSchedulingCalendarPage_save);
+		button_prevMonth = (ImageView) this.findViewById(R.id.prevMonth);
+		button_nextMonth = (ImageView) this.findViewById(R.id.nextMonth);
+		
 		comDepName = (Spinner)findViewById(R.id.Spinner_DoctorSchedulingCalendarPage_medicalDepartment);
 		comDorName = (Spinner)findViewById(R.id.Spinner_DoctorSchedulingCalendarPage_doctorName);
 		comYearMonth = (TextView) this.findViewById(R.id.currentMonth);
 		comCalendarView = (GridView) this.findViewById(R.id.calendar);
-	}
 
-	private void setValueOfView() {
-		
-		setSpinner_MedicalDepartment();
-		
-		setSpinner_DoctorName();
-				
-		setCalendar_ValueOfView(currentYear, currentMonth);
+		button_save.setOnClickListener(save);
+		button_prevMonth.setOnClickListener(prevMonth);
+		button_nextMonth.setOnClickListener(nextMonth);
+		comDepName.setOnItemSelectedListener(spinner_depName);
+		comDorName.setOnItemSelectedListener(spinner_doctorName);
 	}
 	
+	private void initValueToView() {
+		showProgessDialog(DoctorSchedulingCalendarActivity.this,
+				"資料讀取中，讀取時間依據您的網路速度而有不同");
+		new Thread() {
+			public void run() {
+				depart = new Department(db);
+				doctor = new Doctor(db);
+				schedule = new DoctorSchedule(db);
+				hospital = new Hospital(db);
+				
+
+				hospitalContent = hospital.getHospital(getLoginID());
+				if (hospitalContent.status != StatusCode.success)
+					sendMessage(INIT_TAG, hospitalContent.status);
+				
+				departContent = depart.getDepartment(getLoginID());
+				if (departContent.status != StatusCode.success)
+					sendMessage(INIT_TAG, departContent.status);
+				
+				sendMessage(INIT_TAG, StatusCode.success);
+			}
+		}.start();
+	}
+
+	private void initValueToViewResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+
+		initLayout();
+		initListeners();
+	
+		if (status != StatusCode.success) {
+			Builder alertDialog = new AlertDialog.Builder(
+					DoctorSchedulingCalendarActivity.this);
+			
+			alertDialog.setTitle("提示");
+			switch (status) {
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"連線失敗。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			case -23303:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"讀取失敗。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"未知錯誤。"));
+				alertDialog.setPositiveButton("確定",null);
+				break;
+			}
+			alertDialog.show();
+		} else {
+			setSpinner_MedicalDepartment();
+			setSpinner_DoctorName();
+			setCalendar_ValueOfView(currentYear, currentMonth);
+		}
+	}
+
 	private void setConsultingTime(String key, String substring) {
 			String[] consultingChecked = {"false","false","false"};
 			int value = Integer.valueOf(substring);
@@ -210,30 +296,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		
 	}
 		
-	private void setLayout() {
-		// set layout without titleBar
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
-		// set layout
-		setContentView(R.layout.activity_doctor_scheduling_calendar);
-
-		// let screen orientation be landscape
-		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-	}
-	
-	public void setListeners() {
-		
-		button_save = (Button) findViewById(R.id.Button__DoctorSchedulingCalendarPage_save);
-		button_prevMonth = (ImageView) this.findViewById(R.id.prevMonth);
-		button_nextMonth = (ImageView) this.findViewById(R.id.nextMonth);
-
-		button_save.setOnClickListener(save);
-		button_prevMonth.setOnClickListener(prevMonth);
-		button_nextMonth.setOnClickListener(nextMonth);
-		comDepName.setOnItemSelectedListener(spinner_depName);
-		comDorName.setOnItemSelectedListener(spinner_doctorName);
-	}
-    
 	private void setSpinner_MedicalDepartment() {
       	 
         //get reference to the spinner from the XML layout
@@ -302,7 +364,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		}
 	};
 
-    
 	private OnItemSelectedListener spinner_doctorName = new OnItemSelectedListener() { 
     	@Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -316,7 +377,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		}
 	};
 
-	
 	private ImageButton.OnClickListener prevMonth = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
@@ -342,6 +402,86 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			setCalendar_ValueOfView(currentYear, currentMonth);
 		}
 	};
+
+	private Button.OnClickListener save = new Button.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			showProgessDialog(DoctorSchedulingCalendarActivity.this, "儲存中...");
+			setDoctorSchedule();
+		}
+	};
+	
+	private void setDoctorSchedule() {
+		final String dorNo = (String)doctorContent.cv[dorNoRowId].get(DatabaseTable.Doctor.colDorNo);
+		final String depName = (String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName);
+		final String schYear = String.valueOf(currentYear);
+		final String schMonth = String.valueOf(currentMonth);
+		
+		new Thread() {
+			public void run() {				
+				int status ;
+				scheduleContent = schedule.getDoctorScheduleByDorNo_ShcYear_ShcMonth(
+							getLoginID(),
+							dorNo,
+							schYear,
+							schMonth);
+						
+				if ( scheduleContent.status != StatusCode.success ) {
+					status = schedule.addDoctorSchedule(
+							getLoginID(), 
+							dorNo,
+							depName, 
+							schYear, 
+							schMonth,
+							getConsultingTime(), 
+							"null");
+					sendMessage(SET_DOCTOR_SCHEDULING_TAG, status);
+				} else {
+					status = schedule.updateDoctorSchedule(
+							getLoginID(), 
+							dorNo, 
+							depName, 
+							schYear, 
+							schMonth, 
+							getConsultingTime(), 
+							"null");
+					sendMessage(SET_DOCTOR_SCHEDULING_TAG, status);
+				}
+						
+				sendMessage(SET_DOCTOR_SCHEDULING_TAG, status);
+			}
+		}.start();
+	}
+	
+	private void setDoctorScheduleResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+
+		Builder alertDialog = new AlertDialog.Builder(
+				DoctorSchedulingCalendarActivity.this);
+		alertDialog.setTitle("提示");
+		alertDialog.setPositiveButton("確定", null);
+		if (status != StatusCode.success) {
+			switch (status) {
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"連線失敗。"));
+				break;
+			case -23303:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"儲存失敗。"));
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"未知錯誤。"));
+				break;
+			}
+			alertDialog.show();
+		} else {
+			alertDialog.setMessage(String.format("[%d] %s", status, "儲存成功。"));
+			alertDialog.show();
+		}
+	}
 	
 	private String getConsultingTime() {
 		String consultingTime = "";
@@ -376,71 +516,11 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		return consultingTime;
 	}
 	
-	private Button.OnClickListener save = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			
-			
-			String dorNo = (String)doctorContent.cv[dorNoRowId].get(DatabaseTable.Doctor.colDorNo);
-			String depName = (String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName);
-			String schYear = String.valueOf(currentYear);
-			String schMonth = String.valueOf(currentMonth);
-
-			scheduleContent = schedule.getDoctorScheduleByDorNo_ShcYear_ShcMonth(
-					getLoginID(),
-					dorNo,
-					schYear,
-					schMonth);
-			
-			if ( scheduleContent == null ) 
-				if ( schedule.addDoctorSchedule(
-						getLoginID(), 
-						dorNo,
-						depName, 
-						schYear, 
-						schMonth,
-						getConsultingTime(), 
-						"null") == 0 ) { 
-					Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_LONG).show();
-				}else {
-					Toast.makeText(getApplicationContext(), "修改失敗", Toast.LENGTH_LONG).show();
-				}
-			else
-				if ( schedule.updateDoctorSchedule(
-						getLoginID(), 
-						dorNo, 
-						depName, 
-						schYear, 
-						schMonth, 
-						getConsultingTime(), 
-						"null") == 0 ) {
-					Toast.makeText(getApplicationContext(), "修改成功", Toast.LENGTH_LONG).show();
-				}else {
-					Toast.makeText(getApplicationContext(), "修改失敗", Toast.LENGTH_LONG).show();
-				}
-		}
-	};
-	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-			return true;
+			changeActivity(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
 		}
-		return false;
-	}
-	
-    /**
-	 * 
-	 * @param month
-	 * @param year
-	 */
-	@Override
-	
-	public void onDestroy() {
-		super.onDestroy();
+		return true;
 	}
 }
 

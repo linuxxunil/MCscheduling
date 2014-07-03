@@ -37,10 +37,7 @@ public class ScheduleViewActivity extends ControllerActivity {
 	@SuppressLint({ "NewApi", "NewApi", "NewApi", "NewApi" })
 	private final DateFormat dateFormatter = new DateFormat();
 	private static final String dateTemplate = "yyyy   MMMM";
-	
-	/**
-	 * 以下為imageButton變數
-	 */
+
 	// View Componet
 	private ImageView 	button_prevMonth = null;
 	private ImageView 	button_nextMonth = null;
@@ -215,8 +212,7 @@ public class ScheduleViewActivity extends ControllerActivity {
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 	}
 	
-	public void setListeners() {
-		
+	private void setListeners() {
 		button_prevMonth = (ImageView) this.findViewById(R.id.prevMonth);
 		button_nextMonth = (ImageView) this.findViewById(R.id.nextMonth);
 
@@ -247,8 +243,6 @@ public class ScheduleViewActivity extends ControllerActivity {
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //set the ArrayAdapter to the spinner
         spinner.setAdapter(dataAdapter);
-
-        
     }
     
     private void setSpinner_DoctorName() {
@@ -291,8 +285,6 @@ public class ScheduleViewActivity extends ControllerActivity {
     	}
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
-			// TODO Auto-generated method stub
-			
 		}
 	};
 
@@ -339,37 +331,6 @@ public class ScheduleViewActivity extends ControllerActivity {
 		}
 	};
 	
-	private ImageButton.OnClickListener back = new ImageButton.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent intent = new Intent();
-			intent.setClass(ScheduleViewActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-		}
-	};
-	
-	/**
-	 * onKeyDown(int keyCode, KeyEvent event)
-	 * 
-	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
-	 * 
-	 */
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			Intent intent = new Intent();
-			intent.setClass(ScheduleViewActivity.this, MenuActivity.class);
-			startActivity(intent);
-			finish();
-		}
-		return false;
-	}
-	
-	@Override
-	public void onDestroy() {
-		super.onDestroy();
-	}
-	
 	private class GridCellAdapter extends CalendarGridCellAdapter {	
 		public GridCellAdapter(Activity activity, Context context,
 				int textViewResourceId, HashMap<String, String> monthInfo) {
@@ -379,5 +340,14 @@ public class ScheduleViewActivity extends ControllerActivity {
 		public void onClick(View view) {
 			// nothing
 		}
-	}		
+	}	
+	
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
+			changeActivity(ScheduleViewActivity.this, MenuActivity.class);
+		}
+		return false;
+	}
+	
+	
 }

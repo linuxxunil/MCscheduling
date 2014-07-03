@@ -1,7 +1,14 @@
 package edu.mcscheduling.controller;
 
+import java.io.IOException;
+
 import edu.mcscheduling.R;
+import edu.mcscheduling.common.StatusCode;
+import edu.mcscheduling.model.Account;
+import edu.mcscheduling.model.MsContentValues;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -27,6 +34,8 @@ public class MenuActivity extends ControllerActivity {
 	private ImageButton button_membershipInformation;
 	private ImageButton button_healthInformation;
 
+	
+	private final int MEMBER_TAG = 0;
 
 	
 	/**
@@ -42,12 +51,11 @@ public class MenuActivity extends ControllerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setLayout();
-
-		thisActivity = this;
-
+		initLayout();
 		// Listen for button clicks
-		setListeners();
+		initListeners();
+		
+		initHandler();
 	}
 
 	/**
@@ -66,7 +74,7 @@ public class MenuActivity extends ControllerActivity {
 	 * 
 	 * 設定layout
 	 */
-	private void setLayout() {
+	private void initLayout() {
 		// set layout without titleBar
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -82,7 +90,7 @@ public class MenuActivity extends ControllerActivity {
 	 * 
 	 * 設置每個button被click的時候，要執行的function
 	 */
-	public void setListeners() {
+	public void initListeners() {
 		button_hospital_profile      = (ImageButton) findViewById(R.id.ImageButton_MenuPage_hospitalProfile);
 		button_doctor_profile	     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_doctorProfile);
 		button_schedule			     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_schedule);
@@ -153,15 +161,57 @@ public class MenuActivity extends ControllerActivity {
 		}
 	};
 	
+	private void initHandler() {
+		handler = new Handler() {
+			@Override
+			public void handleMessage(Message msg) {
+				switch (msg.what) {
+				case MEMBER_TAG:
+					exeMemberInformationResult(msg);
+					break;
+				}
+			}
+		};
+	}
+	
+	
+	private MsContentValues accountContent = null;
+	private void exeMemberInformation() {
+		new Thread() {
+			public void run() {
+				Account account = new Account(db);
+				accountContent = account.getMemberInformation(getLoginID());
+				sendMessage(MEMBER_TAG, accountContent.status);
+			}
+		}.start();
+	}
+	
+	private void exeMemberInformationResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+		try {
+		if ( accountContent != null ){
+		Bundle bundle = new Bundle();
+		bundle.putSerializable("accountContent", accountContent);
+		Intent intent = new Intent();
+		intent.putExtras(bundle);
+		intent.setClass(MenuActivity.this, MemberInformationActivity.class);
+		startActivity(intent);
+		finish();
+		}
+		} catch ( Exception e ) {
+			System.out.println("AAAAAA" + e.getMessage());
+		}
+	
+		
+	}
+	
+	
 	
 	private ImageButton.OnClickListener membershipInformation = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			
-			Intent intent = new Intent();
-			intent.setClass(MenuActivity.this, MemberInformationActivity.class);
-			startActivity(intent);
-			finish();
+			changeActivity(MenuActivity.this, MemberInformationActivity.class);
 		}
 	};
 	
