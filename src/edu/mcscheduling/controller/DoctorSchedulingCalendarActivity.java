@@ -205,7 +205,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		} else {
 			setSpinner_MedicalDepartment();
 			setSpinner_DoctorName();
-			setCalendar_ValueOfView(currentYear, currentMonth);
+			setCalendarValueToView(currentYear, currentMonth);
 		}
 	}
 
@@ -275,7 +275,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		}
 	}
 	
-	private void setCalendar_ValueOfView(int year, int month) {
+	private void setCalendarValueToView(int year, int month) {
 		
 		setMonthInfo(year, month);
 		
@@ -386,7 +386,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			} else {
 				currentMonth--;
 			}
-			setCalendar_ValueOfView(currentYear, currentMonth);
+			setCalendarValueToView(currentYear, currentMonth);
 		}
 	};
 
@@ -399,7 +399,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			} else {
 				currentMonth++;
 			}
-			setCalendar_ValueOfView(currentYear, currentMonth);
+			setCalendarValueToView(currentYear, currentMonth);
 		}
 	};
 
@@ -414,8 +414,8 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private void setDoctorSchedule() {
 		final String dorNo = (String)doctorContent.cv[dorNoRowId].get(DatabaseTable.Doctor.colDorNo);
 		final String depName = (String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName);
-		final String schYear = String.valueOf(currentYear);
-		final String schMonth = String.valueOf(currentMonth);
+		final String schYear = String.format("%02d", currentYear);
+		final String schMonth = String.format("%02d", currentMonth);
 		
 		new Thread() {
 			public void run() {				
