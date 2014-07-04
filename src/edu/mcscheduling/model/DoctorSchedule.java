@@ -176,7 +176,7 @@ public class DoctorSchedule {
 		
 		int rowCount = getDoctorScheduleCount(sql);
 		if ( rowCount <= 0 ) 
-			return new MsContentValues(Logger.e(this, StatusCode.WAR_DOCTORSCHEDULE_NOT_SETTING));
+			return new MsContentValues(Logger.e(this, StatusCode.WAR_SCHEDULE_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s=%s",
 				DatabaseTable.Doctor.name,
@@ -203,7 +203,7 @@ public class DoctorSchedule {
 		
 		int rowCount = getDoctorScheduleCount(sql);
 		if ( rowCount <= 0 ) 
-			return new MsContentValues(Logger.e(this, StatusCode.WAR_DOCTORSCHEDULE_NOT_SETTING));
+			return new MsContentValues(Logger.e(this, StatusCode.WAR_SCHEDULE_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%d' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,
@@ -236,7 +236,7 @@ public class DoctorSchedule {
 		int rowCount = getDoctorScheduleCount(sql);
 		
 		if ( rowCount <= 0 ) 
-			return new MsContentValues(Logger.e(this, StatusCode.WAR_DOCTORSCHEDULE_NOT_SETTING));
+			return new MsContentValues(Logger.e(this, StatusCode.WAR_SCHEDULE_NOT_SETTING));
 		
 		sql = String.format("SELECT * FROM %s WHERE %s=%s AND %s='%s' AND %s='%s' AND %s='%02d'",
 				DatabaseTable.DoctorSchedule.name,

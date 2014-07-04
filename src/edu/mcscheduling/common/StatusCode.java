@@ -91,7 +91,11 @@ public class StatusCode {
 	// Doctor
 	final static public String WAR_DOCTOR_NOT_SETTING		= "001,Doctor is not setting";
 	// DoctorSchedule
-	final static public String WAR_DOCTORSCHEDULE_NOT_SETTING= "001,Doctor is not setting";
+	final static public String WAR_SCHEDULE_NOT_SETTING		= "001,Doctor Schudule is not setting";
+	final static public String WAR_NOT_SUPPORT_YEAR			= "002, value must gather than 2012 year";
+	final static public String ERR_GET_DEAPART_DATA_ERROR	= "-001,Get depart data error";
+	final static public String ERR_GET_DOCTOR_DATA_ERROR	= "-002,Get doctor data error";
+	final static public String ERR_GET_SCHEDULE_DATA_ERROR	= "-003,Get schudule data error";
 	
 	// controller
 	// AuthorizeActivty

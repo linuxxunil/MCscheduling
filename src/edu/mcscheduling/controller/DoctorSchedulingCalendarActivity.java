@@ -58,7 +58,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private GridView comCalendarView = null;
 	private Calendar comCalendar = null;
 	
-	//
+	
 	private CalendarGridCellAdapter adapter;
 	private Department depart = null;
 	private Doctor doctor = null;
@@ -75,6 +75,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	
 	private int currentYear = 0;
 	private int currentMonth = 0;
+	private boolean isInitialized = false;
 	
 	private final int INIT_TAG = 1;
 	private final int SET_DOCTOR_SCHEDULING_TAG = 2;
@@ -159,6 +160,8 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 				if (departContent.status != StatusCode.success)
 					sendMessage(INIT_TAG, departContent.status);
 				
+				setMonthInfo(currentYear, currentMonth);
+				
 				sendMessage(INIT_TAG, StatusCode.success);
 			}
 		}.start();
@@ -206,6 +209,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			setSpinner_MedicalDepartment();
 			setSpinner_DoctorName();
 			setCalendarValueToView(currentYear, currentMonth);
+			isInitialized = true;
 		}
 	}
 
@@ -254,9 +258,12 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		for (int i=0; i<7; i++ ) 
 			setConsultingTime("week"+String.valueOf(i), hospitalschedule.substring(i,i+1));
 		
-		if ( departContent == null || doctorContent == null ) {
-			return ;
+		if ( departContent == null || departContent.cv == null || 
+				doctorContent == null || doctorContent.cv == null ) {
+			for ( int i=0; i<31; i++ ) 
+				monthInfo.put(String.valueOf(i), "false-false-false");
 		} else {
+			
 			scheduleContent = schedule.getDoctorScheduleByDepName_AND_DorNo_AND_SchYear_SchMonth(
 					getLoginID(), 
 					(String)departContent.cv[depNameRowId].get(DatabaseTable.Doctor.colDepName), 
@@ -268,7 +275,6 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 					monthInfo.put(String.valueOf(i), "false-false-false");
 			} else {
 				String tmp = (String) scheduleContent.cv[0].get(DatabaseTable.DoctorSchedule.colSchedule);				
-				System.out.println(tmp.length());
 				for ( int i=0; i<31; i++ ) 
 					setConsultingTime(String.valueOf(i), tmp.substring(i,i+1) );
 			}
@@ -276,9 +282,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	}
 	
 	private void setCalendarValueToView(int year, int month) {
-		
-		setMonthInfo(year, month);
-		
+
 		if ( adapter == null ) {
 			adapter = new CalendarGridCellAdapter(
 					this,getApplicationContext(),
@@ -291,7 +295,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 		comYearMonth.setText(DateFormat.format(dateTemplate,
 					comCalendar.getTime()));
 		
-		adapter.updateMonthInfoToButton(year, month);
+		adapter.updateMonthInfoToButton(currentYear, currentMonth);
 		adapter.notifyDataSetChanged();
 		
 	}
@@ -333,7 +337,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 			doctorContent = doctor.getDoctorByDepName(getLoginID(),
 					(String)departContent.cv[depNameRowId].get(DatabaseTable.Department.colDepName));
 			
-			if ( doctorContent != null ) {
+			if ( doctorContent.cv != null ) {
 				for ( int i=0; i<doctorContent.cv.length; i++ ) {
 					list.add((String)doctorContent.cv[i].get(DatabaseTable.Doctor.colDorName));
 				}
@@ -345,6 +349,7 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
                 android.R.layout.simple_spinner_item, list);
         //set the view for the Drop down list
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         //set the ArrayAdapter to the spinner
         spinner.setAdapter(dataAdapter);
     }
@@ -352,30 +357,32 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
     private OnItemSelectedListener spinner_depName = new OnItemSelectedListener() { 
     	@Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-    		dorNoRowId = 0;
-    		depNameRowId = pos;
-    		setSpinner_DoctorName();
-    		setMonthInfo(currentYear, currentMonth);
-    		adapter.updateMonthInfoToButton(currentYear, currentMonth);
-    		adapter.notifyDataSetChanged();
+    			dorNoRowId = 0;
+    			depNameRowId = pos;
+    			setSpinner_DoctorName();
+    			setMonthInfo(currentYear, currentMonth);
+    			adapter.updateMonthInfoToButton(currentYear, currentMonth);
+    			adapter.notifyDataSetChanged();
     	}
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
 		}
 	};
+	
 
 	private OnItemSelectedListener spinner_doctorName = new OnItemSelectedListener() { 
     	@Override
         public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-    		dorNoRowId = pos;
-    		setMonthInfo(currentYear, currentMonth);
-    		adapter.updateMonthInfoToButton(currentYear, currentMonth);
-    		adapter.notifyDataSetChanged();
+    			dorNoRowId = pos;
+    			setMonthInfo(currentYear, currentMonth);
+    			adapter.updateMonthInfoToButton(currentYear, currentMonth);
+    			adapter.notifyDataSetChanged();
     	}
 		@Override
 		public void onNothingSelected(AdapterView<?> arg0) {
 		}
 	};
+	
 
 	private ImageButton.OnClickListener prevMonth = new ImageButton.OnClickListener() {
 		@Override
@@ -406,8 +413,14 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
 	private Button.OnClickListener save = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			showProgessDialog(DoctorSchedulingCalendarActivity.this, "儲存中...");
-			setDoctorSchedule();
+			if ( departContent == null || departContent.cv == null ) {
+				Toast.makeText(v.getContext(), "無法儲存，無科別資料", Toast.LENGTH_LONG).show();
+			} else if ( doctorContent == null || doctorContent.cv == null ) {
+				Toast.makeText(v.getContext(), "無法儲存，無醫生資料", Toast.LENGTH_LONG).show();
+			} else {
+				showProgessDialog(DoctorSchedulingCalendarActivity.this, "儲存中...");
+				setDoctorSchedule();
+			}
 		}
 	};
 	
