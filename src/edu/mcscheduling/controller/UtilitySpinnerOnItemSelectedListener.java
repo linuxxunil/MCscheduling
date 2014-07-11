@@ -164,26 +164,6 @@ public class UtilitySpinnerOnItemSelectedListener implements OnItemSelectedListe
 	        	   schedulePage_week = selectedItem;
 	            
 	            break;	 	
-	        case R.id.Spinner_DoctorSchedulingCalendarPage_medicalDepartment:
-	            //make sure the country was already selected during the onCreate
-	 
-	        	   if(DoctorSchedulingCalendarPage_selectedMedicalDepartment != null){
-	                   Toast.makeText(parent.getContext(), "你選擇的科別是: " + selectedItem,
-	                   Toast.LENGTH_LONG).show();
-	               }
-	        	   DoctorSchedulingCalendarPage_selectedMedicalDepartment = selectedItem;
-	            
-	            break;	 
-	        case R.id.Spinner_DoctorSchedulingCalendarPage_doctorName:
-	            //make sure the country was already selected during the onCreate
-	 
-	        	   if(DoctorSchedulingCalendarPage_doctorName != null){
-	                   Toast.makeText(parent.getContext(), "你選擇的醫生是: " + selectedItem,
-	                   Toast.LENGTH_LONG).show();
-	               }
-	        	   DoctorSchedulingCalendarPage_doctorName = selectedItem;
-	            
-	            break;	 
         }
     }
 

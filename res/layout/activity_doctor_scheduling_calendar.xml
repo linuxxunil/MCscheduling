@@ -1,92 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/repeat" >
-<RelativeLayout
-	    android:id="@+id/menubar"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:background="@drawable/menubar_color">
-	<TextView 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:textColor="#ffffff"
-	    android:textSize="25sp"
-	    android:layout_marginLeft="10dp"
-	    android:layout_alignParentLeft="true"
-	    android:layout_centerVertical="true"
-	    android:text="@string/app_name"/>
-	
-	</RelativeLayout>	
-	
+    android:orientation="vertical" >
+
+   	<TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+       	android:background="@drawable/menubar_color"
+        android:text="@string/app_name"
+        android:textColor="#ffffff"
+        android:textSize="25sp" />
+
     <LinearLayout
-        android:id="@+id/buttonlayout"
-        android:layout_width="wrap_content"
-        android:layout_height="60sp"
-        android:layout_below="@+id/menubar"
-        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="horizontal" >
-<TextView
-android:paddingTop="-5dp"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:textSize="20sp"
-android:layout_gravity="center_vertical"
-android:text="科別"/>	
-<Spinner
-android:id="@+id/Spinner_DoctorSchedulingCalendarPage_medicalDepartment"
-android:layout_width="80dp"
-android:layout_height="wrap_content"
-android:layout_gravity="center_vertical"
-android:background="@drawable/spinner_style2_half"/>	
-<TextView
-android:paddingTop="-5dp"
-android:layout_marginLeft="10dp"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_gravity="center_vertical"
-android:textSize="20sp"
-android:text="醫生姓名"
-/>	
-<Spinner
-android:id="@+id/Spinner_DoctorSchedulingCalendarPage_doctorName"
-android:layout_width="80dp"
-android:layout_height="wrap_content"
-android:layout_gravity="center_vertical"
-android:background="@drawable/spinner_style2_half"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:text="科別: "
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tViw_depart_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:text="醫生: "
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/tViw_doctor_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="10dp"
+            android:textSize="20sp" />
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/Monthlayout"
         android:layout_width="fill_parent"
-        android:layout_height="60sp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/buttonlayout"
         android:background="@drawable/topbar"
         android:gravity="left|top"
         android:height="60sp"
-        android:layout_below="@+id/buttonlayout"
         android:orientation="horizontal" >
 
-<!--
-<Button
-android:id="@+id/settings"
-android:layout_width="54sp"
-android:layout_height="60sp"
-android:background="@drawable/meenu" />
--->
-
         <ImageView
-            android:id="@+id/prevMonth"
+            android:id="@+id/iViw_prevMonth"
             android:layout_width="20sp"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="10sp"
             android:src="@drawable/calendar_left_arrow_selector" >
         </ImageView>
 
         <TextView
-            android:id="@+id/currentMonth"
-            android:layout_width="fill_parent"
+            android:id="@+id/tViw_currentMonth"
+            android:layout_width="wrap_content"
             android:layout_height="60sp"
             android:layout_weight="0.6"
             android:gravity="center"
@@ -95,96 +82,95 @@ android:background="@drawable/meenu" />
         </TextView>
 
         <ImageView
-            android:id="@+id/nextMonth"
+            android:id="@+id/iViw_nextMonth"
             android:layout_width="20sp"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginRight="10sp"
             android:src="@drawable/calendar_right_arrow_selector" >
         </ImageView>
-
-<!--
-<Button
-android:id="@+id/addEvent"
-android:layout_width="54sp"
-android:layout_height="60sp"
-android:background="@drawable/plus" />
--->
     </LinearLayout>
 
-<!--
-<Button
-android:id="@+id/selectedDayMonthYear"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_gravity="center"
-android:background="@drawable/calendar_top_header"
-android:textAppearance="?android:attr/textAppearanceMedium"
-android:textColor="#FFFFFF" >
-</Button>
--->
-
-        <ImageView
-            android:id="@+id/calendarheader"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:scaleType="fitXY"
-            android:layout_below="@+id/Monthlayout"
-            android:src="@drawable/calendar_days" >
-        </ImageView>
-
-
-    <GridView
-        android:id="@+id/calendar"
+    <ImageView
+        android:id="@+id/calendarheader"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/calendarheader"
+        android:scaleType="fitXY"
+        android:src="@drawable/calendar_days" />
+
+    <GridView
+        android:id="@+id/gViw_calendar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/layout_explaination"
+        android:layout_below="@+id/calendarheader"
         android:numColumns="7" >
     </GridView>
-    
+
     <LinearLayout
         android:id="@+id/layout_explaination"
-     	android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/Layout_DoctorSchedulingCalendarPage_save"
-        android:orientation="horizontal">
+        android:layout_marginTop="10dp"
+        android:background="#FFFFFF"
+        android:gravity="fill_horizontal"
+        android:orientation="horizontal" >
+		
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/explaination_morn" >
-        </ImageView>
+            android:layout_gravity="left"
+            android:layout_weight="1"
+            android:src="@drawable/explaination_morn" />
+        
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/explaination_noon" >
-        </ImageView>
+            android:layout_weight="1"
+            android:src="@drawable/explaination_noon" />
+
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/explaination_night" >
-        </ImageView>
+            android:layout_weight="1"
+            android:src="@drawable/explaination_night" />
+        
     </LinearLayout>
 
-		    <LinearLayout
-		        android:id="@+id/Layout_DoctorSchedulingCalendarPage_save"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_alignParentBottom="true"
-		        android:layout_marginBottom="10dp"
-		        android:gravity="center_horizontal" >
-    				<Button 
-			         	android:id="@+id/Button__DoctorSchedulingCalendarPage_save"
-			         	android:layout_span="1"
-			         	android:layout_width="wrap_content"
-	            		android:layout_height="wrap_content"
-	            		android:background="@drawable/button_bk"
-            			android:textColor="#FFFFFF"
-            			android:textSize="20sp"
-	            		android:text="修改" />
-		    </LinearLayout>
-  
+    <LinearLayout
+        android:id="@+id/Layout_DoctorSchedulingCalendarPage_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:gravity="center_horizontal" >
 
-</RelativeLayout>
+        
+        <Button
+            android:id="@+id/btn_query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_bk"
+            android:textColor="#FFFFFF"
+             android:text="查尋"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_span="1"
+            android:background="@drawable/button_bk"
+            android:text="儲存"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+</LinearLayout>
