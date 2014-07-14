@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -83,11 +84,9 @@ public class LoginActivity extends ControllerActivity {
 			String userpasswd = ((EditText)
 					findViewById(R.id.password)).getText().toString();
 			
-			setLoginID("sme79");
-			changeActivity(LoginActivity.this, MenuActivity.class);
-			//showProgessDialog(LoginActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
-		
-			//exeLogin(userid, userpasswd);
+			showProgessDialog(LoginActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
+			
+			exeLogin(userid, userpasswd);
 		}
 	};
 	
@@ -159,9 +158,26 @@ public class LoginActivity extends ControllerActivity {
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-		//	changeActivity(LoginActivity.this, AuthorizeActivity.class);
-			changeActivity(LoginActivity.this, HomeActivity.class);
+			AlertDialog.Builder builder = new AlertDialog.Builder(
+					LoginActivity.this);
+			builder.setTitle("APP訊息");
+			builder.setMessage("真的要離開此APP");
+			builder.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					
+				}
+			});
+
+			builder.setNegativeButton("確認", new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int i) {
+					finish();
+				}
+			});
+			builder.show();
 		}
-		return false;
+		return true;
 	}
 }

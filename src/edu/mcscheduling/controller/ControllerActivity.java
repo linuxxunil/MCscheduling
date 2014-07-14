@@ -29,10 +29,9 @@ public class ControllerActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		disableWindowTitle();
-		//setAccessDriver(AccessDriver.MSSQL);
-		//initSqlite();
-		//setAccessDriver(AccessDriver.SQLITE);
-		if ( accessMode == AccessMode.ONLINE )
+		setDatabaseMode(AccessMode.ONLINE);
+		setAccessDriver(AccessDriver.MSSQL);
+		//if ( accessMode == AccessMode.ONLINE )
 			Network.setContext(getBaseContext());
 	}
 	

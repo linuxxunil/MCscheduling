@@ -21,11 +21,6 @@ public class HomeActivity extends ControllerActivity {
 	private Button button_login;
 
 	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
-
-	/**
 	 * onCreate(Bundle savedInstanceState)
 	 * 
 	 * Activity的起始function(ex main function)
@@ -34,8 +29,6 @@ public class HomeActivity extends ControllerActivity {
 		super.onCreate(savedInstanceState);
 
 		setLayout();
-
-		thisActivity = this;
 
 		// Listen for button clicks
 		setListeners();
@@ -117,7 +110,7 @@ public class HomeActivity extends ControllerActivity {
 		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int i) {
-				thisActivity.finish();
+				finish();
 			}
 		});
 

@@ -30,7 +30,7 @@ public class MenuActivity extends ControllerActivity {
 	private ImageButton button_hospital_profile;
 	private ImageButton button_doctor_profile;
 	private ImageButton button_schedule;
-	private ImageButton button_registeredinquiry;
+	private ImageButton button_changepasswd;
 	private ImageButton button_membershipInformation;
 	private ImageButton button_healthInformation;
 
@@ -94,14 +94,14 @@ public class MenuActivity extends ControllerActivity {
 		button_hospital_profile      = (ImageButton) findViewById(R.id.ImageButton_MenuPage_hospitalProfile);
 		button_doctor_profile	     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_doctorProfile);
 		button_schedule			     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_schedule);
-		button_registeredinquiry     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_registeredinquiry);
+		button_changepasswd     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_registeredinquiry);
 		button_membershipInformation = (ImageButton) findViewById(R.id.ImageButton_MenuPage_membershipInformation);
 		button_healthInformation     = (ImageButton) findViewById(R.id.ImageButton_MenuPage_healthInformation);
 
 		button_hospital_profile.setOnClickListener(hospital_profile);      
 		button_doctor_profile.setOnClickListener(doctor_profile);	    
 		button_schedule.setOnClickListener(schedule);			 
-		button_registeredinquiry.setOnClickListener(registeredinquiry);     
+		button_changepasswd.setOnClickListener(changepasswd);     
 		button_membershipInformation.setOnClickListener(membershipInformation); 
 		button_healthInformation.setOnClickListener(healthInformation);  
 	}
@@ -151,11 +151,11 @@ public class MenuActivity extends ControllerActivity {
 	};
 	
 	
-	private ImageButton.OnClickListener registeredinquiry = new ImageButton.OnClickListener() {
+	private ImageButton.OnClickListener changepasswd = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			Intent intent = new Intent();
-			intent.setClass(MenuActivity.this, ScheduleViewActivity.class);
+			intent.setClass(MenuActivity.this, RevisePasswordActivity.class);
 			startActivity(intent);
 			finish();
 		}

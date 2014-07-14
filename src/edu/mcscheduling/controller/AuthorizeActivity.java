@@ -146,7 +146,7 @@ public class AuthorizeActivity extends ControllerActivity {
 						 //getOfflineDatabase("sme79","aaa");
 						break;
 	    			 }
-	    			 changeActivity(AuthorizeActivity.this, AuthorizeActivity.class);
+	    			 changeActivity(AuthorizeActivity.this, LoginActivity.class);
 	    		 } else {
 	    			 setDatabaseMode( AccessMode.NONE );
 	    			 AlertDialog.Builder builder = new AlertDialog.Builder(

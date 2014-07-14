@@ -55,7 +55,7 @@ public class StatusCode {
 	final static public String PARM_SCH_MONTH_ERROR			= "-113,PARM: SchMonth is error";
 
 	// Logger
-	final static public String ERR_CLASS_NUMBER_NOT_FOUND 	= "-201,class number not found";
+	final static public String ERR_LOGER_NUMBER_NOT_FOUND 	= "-201,Loger number not define";
 	// Database
 	final static public String ERR_JDBC_CLASS_NOT_FOUND 	= "-301,JDBC class not found";
 	final static public String ERR_INITIAL_DB_NOT_SUCCESS 	= "-302,Inital DB don't success";
@@ -82,7 +82,7 @@ public class StatusCode {
 	// model
 	// Account
 	final static public String ERR_LOGIN_FAIL				= "-001,Login fail (userid or password is error)";
-	final static public String ERR_MEMBER_NOT_EXIST			= "-002,Member info is not found";
+	final static public String ERR_MEMBER_INFO_IS_NOT		= "-002,Member info is not found";
 	final static public String ERR_GET_MEMBER_INFO_FAIL		= "-003,Get Member information fail";
 	// Hospital
 	final static public String WAR_HOSPITAL_NOT_SETTING		= "001,Hospital is not setting";

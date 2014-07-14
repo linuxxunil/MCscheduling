@@ -18,12 +18,10 @@ import edu.mcscheduling.database.Transation;
 
 public class Account {
 	private DatabaseDriver db;
-	private boolean exist = false;
 	
 	public Account(DatabaseDriver db) {
 		if ( db != null ) {
 			this.db = db;
-			exist = true;
 		} 
 	}
 
@@ -157,7 +155,7 @@ public class Account {
 				if ( rtVal.status != StatusCode.success || rtVal.rs == null || !rtVal.rs.next() ) {
 					return rtVal.status;
 				} else if ( rtVal.rs.getInt(1) != 1 ) {
-					return Logger.e(this, StatusCode.ERR_MEMBER_NOT_EXIST);
+					return Logger.e(this, StatusCode.ERR_MEMBER_INFO_IS_NOT);
 				}
 				
 				sql = String.format("UPDATE %s SET %s='%s' WHERE %s='%s'" ,
@@ -169,10 +167,7 @@ public class Account {
 						DatabaseTable.User.colUserid, userid);
 						
 				status = db.update(sql);
-				if (  status != StatusCode.success ) {
-					return status;
-				}
-				return StatusCode.success;
+				return (status < 0)?status:StatusCode.success;
 			}
 		}, null);
 	}
@@ -229,7 +224,7 @@ public class Account {
 		if ( rowCount < 0 )
 			return new MsContentValues(rowCount);
 		else if ( rowCount == 0 )
-			return new MsContentValues(Logger.e(this, StatusCode.ERR_MEMBER_NOT_EXIST));
+			return new MsContentValues(Logger.e(this, StatusCode.ERR_MEMBER_INFO_IS_NOT));
 		
 		sql = String.format("SELECT %s,%s,%s,%s,%s FROM %s WHERE %s='%s'", 
 								DatabaseTable.User.colUserid,

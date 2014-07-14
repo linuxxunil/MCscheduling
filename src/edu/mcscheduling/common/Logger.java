@@ -1,16 +1,29 @@
 package edu.mcscheduling.common;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.util.Log;
 
 public class Logger {
 	
 	private static int getClassNumber(String className) {
 		int i;
+		String patternStr;//= "^Account\\z|^Account\\$[1-9]";
+		Pattern pattern;
+		Matcher matcher;
+		boolean matchFound;
+		
 		for ( i=0; i<StatusCode.ClassInfo.length; i++ ) {
-			if ( StatusCode.ClassInfo[i].equals(className) )
+			patternStr = String.format("^%s\\z|^%s\\$[1-9]", 
+					StatusCode.ClassInfo[i], StatusCode.ClassInfo[i]);
+			pattern = Pattern.compile(patternStr);
+			matcher = pattern.matcher(className);
+			matchFound  = matcher.find();
+			if ( matchFound ) 
 				return Integer.valueOf(StatusCode.ClassInfo[i+1]);
 		}
-		return e(Logger.class,StatusCode.ERR_CLASS_NUMBER_NOT_FOUND);
+		return e(Logger.class,StatusCode.ERR_LOGER_NUMBER_NOT_FOUND);
 	}
 	
 	public static synchronized Integer e(Class cls, String errMsg, String extMsg) {

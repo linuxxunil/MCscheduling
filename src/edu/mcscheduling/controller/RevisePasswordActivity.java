@@ -4,8 +4,11 @@ import edu.mcscheduling.R;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.model.Account;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -20,59 +23,22 @@ import android.widget.Toast;
 
 public class RevisePasswordActivity extends ControllerActivity {
 
-	/**
-	 * 以下為imageButton變數
-	 */
-	private ImageButton button_RevisePasswordback;
-
-	/**
-	 * 以下為Button變數
-	 */
-	private Button button_newPasswordConfirm;
-	private Button button_newPasswordCancel;
+	private Button btnNewPasswordConfirm;
 	
+	private final int REVISE_TAG = 1;
 	
-	/**
-	 * 目前這個Activity
-	 */
-	public static Activity thisActivity;
 
-	/**
-	 * onCreate(Bundle savedInstanceState)
-	 * 
-	 * Activity的起始function(ex main function)
-	 */
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setLayout();
+		initLayout();
 
-		thisActivity = this;
-
-		// Listen for button clicks
-		setListeners();
+		initListeners();
+		
+		initHandler();
 	}
 
-	/**
-	 * onCreateOptionsMenu(Menu menu)
-	 * 
-	 * 設定menu button要執行的操作
-	 */
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.home, menu);
-		return true;
-	}
-
-	/**
-	 * setLayout()
-	 * 
-	 * 設定layout
-	 */
-	private void setLayout() {
-		// set layout without titleBar
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+	private void initLayout() {
 		// set layout
 		setContentView(R.layout.activity_revise_password);
 
@@ -83,108 +49,91 @@ public class RevisePasswordActivity extends ControllerActivity {
 		findViewById(R.id.layout_revise_password).requestFocus();
 	}
 
-	/**
-	 * setListeners()
-	 * 
-	 * 設置每個button被click的時候，要執行的function
-	 */
-	public void setListeners() {
-		button_newPasswordConfirm = (Button) findViewById(R.id.button_RevisePasswordPage_newPasswordConfirm);
-		button_newPasswordCancel = (Button) findViewById(R.id.button_RevisePasswordPage_newPasswordCancel);
-
-		button_newPasswordConfirm.setOnClickListener(newPasswordConfirm);
-		button_newPasswordCancel.setOnClickListener(newPasswordCancel);
+	public void initListeners() {
+		btnNewPasswordConfirm = (Button) findViewById(R.id.button_RevisePasswordPage_newPasswordConfirm);
+		
+		btnNewPasswordConfirm.setOnClickListener(bOclNewPasswordConfirm);
+		
 	}
 	
-	private void handleRevisePassword(View v) {
-		String oldPassword = ((EditText)
-				findViewById(R.id.oldPassword)).getText().toString();
-		String newPassword = ((EditText)
-				findViewById(R.id.newPassword)).getText().toString();
-		String newPasswordConfirm = ((EditText)
-				findViewById(R.id.newPasswordConfirm)).getText().toString();
 
-		
-		if ( oldPassword == null || oldPassword.equals("")) {
-			Toast.makeText(getApplicationContext(), "舊密碼不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if ( newPassword == null || newPassword.equals("")) {
-			Toast.makeText(getApplicationContext(), "新密碼不能為空", Toast.LENGTH_LONG)
-			.show();
-		} else if (!oldPassword.equals(newPassword) ) {
-			Toast.makeText(getApplicationContext(), "密碼未修改", Toast.LENGTH_LONG)
-			.show();
-		}else if ( !newPassword.equals(newPasswordConfirm)) {
-			Toast.makeText(getApplicationContext(), "密碼確認不一致", Toast.LENGTH_LONG)
-			.show();
-		} else {
-		
-			Account account = new Account(db);
 	
-			if ( account.changePasswd(getLoginID(), oldPassword, newPassword) == StatusCode.success ) {
-				Toast.makeText(getApplicationContext(), "密碼更換成功", Toast.LENGTH_LONG)
-				.show();
-
-			} else {
-				Toast.makeText(getApplicationContext(), "密碼更換失敗: 請確認就密碼是否正確", Toast.LENGTH_LONG)
-				.show();
+	private void initHandler() {
+		handler = new Handler(){
+		    @Override
+		    public void handleMessage(Message msg) {
+		        switch(msg.what){
+		            case REVISE_TAG:
+		            	revisePasswordResult(msg);
+		           break;
+		        }
+		    }  
+		};
+	}
+	
+	private void revisePassword(final String userid,final String oldPassword,final String newPassword) {	
+		new Thread() {
+		    public void run() {
+		    	Account account = new Account(db);
+		    	int status = account.changePasswd(userid, oldPassword, newPassword);
+	    		sendMessage(REVISE_TAG,status);	
+		    }
+		}.start();
+	}
+	
+	private void revisePasswordResult(Message msg) {
+		int status = msg.getData().getInt("status");
+		dismissProgresDialog();
+		
+		Builder alertDialog = new AlertDialog.Builder(RevisePasswordActivity.this);
+		alertDialog.setTitle("提示");
+		if ( status != StatusCode.success ) {
+			switch(status){
+			case -31002:
+				alertDialog.setMessage(String.format("[%d] %s", status, "修改失敗。"));
+				break;
+			case -12402:
+				alertDialog.setMessage(String.format("[%d] %s", status, "連線失敗。"));
+				break;
+			default:
+				alertDialog.setMessage(String.format("[%d] %s", status, "未知錯誤。"));
+				break;
 			}
+			alertDialog.setPositiveButton("確定", null);
+			alertDialog.show();
+		} else {
+			alertDialog.setPositiveButton("確定", null);
+			alertDialog.setMessage(String.format("[%d] %s", status, "修改成功。"));
+			alertDialog.show();
 		}
+
 	}
 
-
-	private Button.OnClickListener newPasswordConfirm = new Button.OnClickListener() {
+	private Button.OnClickListener bOclNewPasswordConfirm = new Button.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			handleRevisePassword(v);
+			String oldPassword = ((EditText)
+					findViewById(R.id.oldPassword)).getText().toString();
+			String newPassword = ((EditText)
+					findViewById(R.id.newPassword)).getText().toString();
+			String newPasswordConfirm = ((EditText)
+					findViewById(R.id.newPasswordConfirm)).getText().toString();
+		
+			if ( newPassword.equals(newPasswordConfirm) ) {
+				showProgessDialog(RevisePasswordActivity.this, "修改中...");
+				revisePassword(getLoginID(), oldPassword, newPassword);
+			} else {
+				Toast.makeText(v.getContext(), "密碼不一致", Toast.LENGTH_LONG).show();
+			}
 			
 		}
 	};
-
-	private Button.OnClickListener newPasswordCancel = new Button.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Toast.makeText(getApplicationContext(), "newPasswordConfirm", Toast.LENGTH_LONG)
-			.show();
-		}
-	};
 	
-	/**
-	 * openOptionsDialog_leaveAPP()
-	 * 
-	 * 想要離開app時，開啟optionDialog，確認使用者是否真的要離開
-	 */
-	public void openOptionsDialog_leaveAPP() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(
-				RevisePasswordActivity.this);
-		builder.setTitle("APP訊息");
-		builder.setMessage("真的要離開此APP");
-		builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-				thisActivity.finish();
-			}
-		});
 
-		builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-			@Override
-			public void onClick(DialogInterface dialog, int i) {
-			}
-		});
-		builder.show();
-	}
-
-	/**
-	 * onKeyDown(int keyCode, KeyEvent event)
-	 * 
-	 * 設定按下硬體的返回鍵時，要執行的操作。目前這裡讓使用者按下返回鍵時，不執行任何操作
-	 * 
-	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0) {
-			openOptionsDialog_leaveAPP();
+			changeActivity(RevisePasswordActivity.this, MenuActivity.class);
 		}
-		return false;
+		return true;
 	}
 }
