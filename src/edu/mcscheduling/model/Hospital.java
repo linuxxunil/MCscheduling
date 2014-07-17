@@ -84,11 +84,9 @@ public class Hospital {
 						DatabaseTable.Hospital.colHospitalName,
 						DatabaseTable.Hospital.colUpdateID,
 						hospitalNo, "NULL", userid);
-
+			
 				int status = db.insert(sql);
-				if ( status != StatusCode.success )
-					return status;
-				return StatusCode.success;
+				return  (status < 0)?status:StatusCode.success;
 			}
 		}, null);
 	}
@@ -146,13 +144,16 @@ public class Hospital {
 					String opdSt3, String opdEt3,
 					String hispitalSchedule,String hospitalState,
 					String picPath) {
+		int status = StatusCode.success;
 		if ( userid == null || userid.isEmpty() )
 			return Logger.e(this, StatusCode.PARM_USERID_ERROR);
 		else if ( !existsUpdateID(userid) ) {
-			createHospitalNo(userid);
+			status = createHospitalNo(userid);
+			if ( status != StatusCode.success )
+				return status;
 		} 
 		
-		int status = updateHospital(userid, hospitalName, areaID, 
+		status = updateHospital(userid, hospitalName, areaID, 
 						hospitalPhone, hospitalAddress,
 						contactName, contactPhone, depName,
 						opdSt1, opdEt1,  

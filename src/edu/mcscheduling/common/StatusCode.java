@@ -65,6 +65,7 @@ public class StatusCode {
 	final static public String ERR_GET_AUTOCOMMIT_FAIL		= "-306,AutoCommit get fail";
 	final static public String ERR_EXE_ROLLBACK_FAIL		= "-307,Execute rollback fail";
 	final static public String ERR_EXE_TRANSCATION_FAIL		= "-308,Execute transcation fail";
+	final static public String ERR_CONNECT_MSSERVER_FAIL 	= "-309,Connect to SQL Server fail";
 	// Network
 	final static public String ERR_NETWORK_DONT_SET_CONTEXT	= "-401,Network Context variable is null";
 	final static public String ERR_NETWORK_ISNOT_AVAILABLE 	= "-402,Network isn't avaiable";
@@ -84,6 +85,7 @@ public class StatusCode {
 	final static public String ERR_LOGIN_FAIL				= "-001,Login fail (userid or password is error)";
 	final static public String ERR_MEMBER_INFO_IS_NOT		= "-002,Member info is not found";
 	final static public String ERR_GET_MEMBER_INFO_FAIL		= "-003,Get Member information fail";
+	final static public String WAR_REGISTERED_USER			= "001,Registed user";
 	// Hospital
 	final static public String WAR_HOSPITAL_NOT_SETTING		= "001,Hospital is not setting";
 	// Depatment

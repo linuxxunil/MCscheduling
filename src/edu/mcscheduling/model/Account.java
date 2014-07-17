@@ -34,7 +34,7 @@ public class Account {
 	 * @param userpasswd	"¨Ï¥ÎªÌ±K½X"
 	 * @return 
 	 */
-	public int register(String userid, String username, String userpasswd){	
+	public int register(final String userid,final String username,final String userpasswd){	
 		if ( userid == null || userid.isEmpty() )
 			return  Logger.e(this, StatusCode.PARM_USERID_ERROR);
 		else if ( username == null || username.isEmpty() )
@@ -42,29 +42,46 @@ public class Account {
 		else if ( userpasswd == null || userpasswd.isEmpty() )
 			return Logger.e(this, StatusCode.PARM_USERPASSWD_ERROR);
 		
-		Date time = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
-					Locale.getDefault());
-
-		int status = StatusCode.success;
-		String sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
-				"VALUES ('%s','%s','%s','%s')",
-				// Columns
-				DatabaseTable.User.name,
-				DatabaseTable.User.colUserid, 
-				DatabaseTable.User.colUsername,
-				DatabaseTable.User.colUserpasswd,
-				DatabaseTable.User.colUservalid,
-				// Values
-				 userid, 
-				 username,
-				userpasswd,
-				formatter.format(time));
 		
-		status = db.insert(sql);
-		if ( status != StatusCode.success )
-			return status;
-		return StatusCode.success;
+		return db.excuteTransation(new Transation() {				
+			@Override
+			public 	Integer execute(Object retValue) throws Exception {
+				int status = StatusCode.success; 
+				String sql = String.format("SELECT COUNT(*) FROM %s WHERE %s='%s'",
+						DatabaseTable.User.name,
+						DatabaseTable.User.colUserid, userid
+						);
+				
+				MsResultSet rtVal = new MsResultSet();
+				rtVal = db.select(sql);
+				if ( rtVal.status != StatusCode.success || rtVal.rs == null || !rtVal.rs.next() ) {
+					return rtVal.status;
+				} else if ( rtVal.rs.getInt(1) != 0 ) {
+					return Logger.e(this, StatusCode.WAR_REGISTERED_USER);
+				}
+				
+				Date time = new Date();
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd",
+							Locale.getDefault());
+
+				sql = String.format("INSERT INTO %s (%s,%s,%s,%s) " +
+						"VALUES ('%s','%s','%s','%s')",
+						// Columns
+						DatabaseTable.User.name,
+						DatabaseTable.User.colUserid, 
+						DatabaseTable.User.colUsername,
+						DatabaseTable.User.colUserpasswd,
+						DatabaseTable.User.colUservalid,
+						// Values
+						 userid, 
+						 username,
+						userpasswd,
+						formatter.format(time));
+				
+				status = db.insert(sql);
+				return (status < 0)?status:StatusCode.success;
+			}
+		}, null);
 	}
 	
 	/**

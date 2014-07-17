@@ -216,7 +216,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 		String strTmp = null;
 		boolean isNull = true;
 		
-		if (status != StatusCode.success) {
+		if (status < StatusCode.success) {
 			Builder alertDialog = new AlertDialog.Builder(
 					HospitalInformationActivity.this);
 			alertDialog.setTitle("´£¥Ü");
@@ -744,7 +744,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 				hispitalSchedule += getConsultingHour( FriMorning, FriNoon, FriNight);
 				hispitalSchedule += getConsultingHour( SatMorning, SatNoon, SatNight);
 				hispitalSchedule += getConsultingHour( SunMorning, SunNoon, SunNight);
-				
+
 				status = hospital.setHospital(getLoginID(), 
 								hospitalNo.getText().toString(),			// Hospital Name
 								areaID.getSelectedItem().toString(),		// Area ID
@@ -763,6 +763,7 @@ public class HospitalInformationActivity extends ControllerActivity {
 								"1",										// hospitalState
 								"UploadImg\\BillPic.jpg"						// picPath
 								);
+				
 				if ( status != StatusCode.success )
 					sendMessage(SET_TAG, status);
 				

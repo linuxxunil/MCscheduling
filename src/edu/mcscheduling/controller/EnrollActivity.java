@@ -119,6 +119,9 @@ public class EnrollActivity extends ControllerActivity {
 		if ( status != StatusCode.success ) {
 			
 			switch(status){
+			case 31001:
+				alertDialog.setMessage(String.format("[%d] %s", status, "使用者已存在。"));
+				break;
 			case -31102:
 				alertDialog.setMessage(String.format("[%d] %s", status, "帳號欄不能為空。"));
 				break;

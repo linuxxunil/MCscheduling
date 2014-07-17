@@ -43,12 +43,13 @@ public class MSSqlDriver extends DatabaseDriver {
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
 			conn = DriverManager
 					.getConnection(
-					"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
+					//"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
+					"jdbc:jtds:sqlserver://140.116.82.214:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
 					UserName, Password);
 		} catch (ClassNotFoundException e1) {
 			return Logger.e(this, StatusCode.ERR_JDBC_CLASS_NOT_FOUND);
 		} catch (SQLException e) {
-			return Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage());
+			return Logger.e(this, StatusCode.ERR_CONNECT_MSSERVER_FAIL, e.getMessage());
 		} catch (Exception e ) {
 			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 		}
