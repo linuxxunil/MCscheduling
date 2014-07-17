@@ -230,6 +230,25 @@ public class DoctorSchedulingCalendarActivity extends ControllerActivity {
     	        	}
     	        });
 				break;
+				
+			case 34001:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"尚未建立醫生資料，請先建立醫生資料"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			case 32001:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"尚未建立醫院資料，請先建立醫院資料"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(DoctorSchedulingCalendarActivity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
 			default:
 				alertDialog.setMessage(String.format("[%d] %s", status,
 						"未知錯誤。"));

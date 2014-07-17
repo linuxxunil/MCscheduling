@@ -49,7 +49,9 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 	
 	
 	private Doctor doctor = null;
+	private Department depart = null;
 	private MsContentValues doctorContent = null;
+	private MsContentValues departContent = null;
 	private ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 	private int clickPosition=-1;
 	private View previousListView=null;
@@ -129,6 +131,14 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 				"資料讀取中，讀取時間依據您的網路速度而有不同");
 		new Thread() {
 			public void run() {
+				depart = new Department(db);
+				departContent = depart.getDepartment(getLoginID());
+				
+				if ( departContent.status != StatusCode.success ) {
+					sendMessage(INIT_TAG, departContent.status);
+					return ;
+				}
+				
 				doctor = new Doctor(db);
 				doctorContent = doctor.getDoctor(getLoginID());
 				sendMessage(INIT_TAG, doctorContent.status);
@@ -164,6 +174,24 @@ public class DoctorInformation_Display_Activity extends ControllerActivity {
 				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
     	        	public void onClick(DialogInterface dialog, int id) {
     	        		changeActivity(DoctorInformation_Display_Activity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			case 33001:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"尚未建立部門資料。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		changeActivity(DoctorInformation_Display_Activity.this, MenuActivity.class);
+    	        	}
+    	        });
+				break;
+			case 34001:
+				alertDialog.setMessage(String.format("[%d] %s", status,
+						"尚未建立醫生資料。"));
+				alertDialog.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+    	        	public void onClick(DialogInterface dialog, int id) {
+    	        		
     	        	}
     	        });
 				break;
