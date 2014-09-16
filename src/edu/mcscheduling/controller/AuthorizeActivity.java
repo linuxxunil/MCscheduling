@@ -1,5 +1,6 @@
 package edu.mcscheduling.controller;
 
+import edu.mcau.Mapi;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -8,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 public class AuthorizeActivity extends ControllerActivity {
@@ -40,6 +43,7 @@ public class AuthorizeActivity extends ControllerActivity {
 	String CLASS_NAME = "au.project.mact.MainActivity";
 	String CSP_APP_ID = "csp01";
 	String LICENSE;	
+	private Mapi mapi;
 	 
 	private boolean checkMactInstalled(){
 			PackageManager pm = getPackageManager();
@@ -112,9 +116,8 @@ public class AuthorizeActivity extends ControllerActivity {
 	
 	private boolean isLicenseOK (String license) {
 		try {
-			JSONObject obj = new JSONObject(license);
-			String status = (String)obj.get("STATUS");
-			if ( status.equals("507000"))
+			
+			if ( license.equals("50701000"))
 				return true;
 		} catch (Exception e ) {
 			return false;
@@ -125,47 +128,8 @@ public class AuthorizeActivity extends ControllerActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		try{   
-	    	 Intent getIntent = getIntent();
-	    	 String license = getIntent.getStringExtra("LICENSE");
-	    	 if ( license == null || license.equals("")) {
-	    		 setDatabaseMode( AccessMode.NONE );
-	    	 } else {
-	    		 if ( isLicenseOK(license) ) {	    			
-	    			 
-	    			 switch ( getDatabaseMode() ) {
-	    			 case OFFLINE:	
-	    				 setAccessDriver(AccessDriver.SQLITE);
-	    			 break;
-	    			 case ONLINE:	
-	    				 setAccessDriver(AccessDriver.MSSQL); 
-	    			 break;
-	    			 default:
-						 setAccessDriver(AccessDriver.SQLITE);
-						 //getOfflineDatabase("sme79","aaa");
-						break;
-	    			 }
-	    			 changeActivity(AuthorizeActivity.this, LoginActivity.class);
-	    		 } else {
-	    			 setDatabaseMode( AccessMode.NONE );
-	    			 AlertDialog.Builder builder = new AlertDialog.Builder(
-	    						AuthorizeActivity.this);
-	    				builder.setTitle("授權失敗");
-	    				builder.setMessage("請連訊貴公司資訊人員");
-	    				builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
-	    					@Override
-	    					public void onClick(DialogInterface dialog, int i) {
-	    						finish();
-	    					}
-	    				});
-	    				builder.show();
-	    		 }
-	    	 }
-	     }
-	     catch (Exception e){
-	    	 System.out.println(e.getMessage());
-	     }
+		mapi = new Mapi(getIntent(), this);
+		
 		
 		setLayout();
 		
@@ -214,7 +178,8 @@ public class AuthorizeActivity extends ControllerActivity {
 	private ImageButton.OnClickListener online = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			getCsmpAuthorize();
+			//getCsmpAuthorize();
+			mapi.authorize(Mapi.ONLINE_MODE);
 			setDatabaseMode( AccessMode.ONLINE );
 		}
 	};
@@ -222,11 +187,70 @@ public class AuthorizeActivity extends ControllerActivity {
 	private ImageButton.OnClickListener offline = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			getCsmpAuthorize();
+			//getCsmpAuthorize();
+			mapi.authorize(Mapi.OFFLINE_MODE);
 			setDatabaseMode( AccessMode.OFFLINE );
 		}
 		
 	};
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == Mapi.REQUEST_CODE) {
+			if(resultCode == RESULT_OK){
+				Bundle bundle = data.getExtras();
+				String jsonStr = bundle.getString("RESPONSE");
+				Map<String, String> result = mapi.getAuthorizationResult(data);
+				String license =  result.get("STATUS").toString();
+				Toast.makeText(AuthorizeActivity.this, license, Toast.LENGTH_LONG).show();
+				
+				try{   
+			    	 
+			    	 if ( license == null || license.equals("")) {
+			    		 setDatabaseMode( AccessMode.NONE );
+			    	 } else {
+			    		 if ( isLicenseOK(license) ) {	    			
+			    			 
+			    			 switch ( getDatabaseMode() ) {
+			    			 case OFFLINE:	
+			    				 setAccessDriver(AccessDriver.SQLITE);
+			    			 break;
+			    			 case ONLINE:	
+			    				 setAccessDriver(AccessDriver.MSSQL); 
+			    			 break;
+			    			 default:
+								 setAccessDriver(AccessDriver.SQLITE);
+								 //getOfflineDatabase("sme79","aaa");
+								break;
+			    			 }
+			    			 changeActivity(AuthorizeActivity.this, LoginActivity.class);
+			    		 } else {
+			    			 setDatabaseMode( AccessMode.NONE );
+			    			 AlertDialog.Builder builder = new AlertDialog.Builder(
+			    						AuthorizeActivity.this);
+			    				builder.setTitle("授權失敗");
+			    				builder.setMessage("請連訊貴公司資訊人員");
+			    				builder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
+			    					@Override
+			    					public void onClick(DialogInterface dialog, int i) {
+			    						finish();
+			    					}
+			    				});
+			    				builder.show();
+			    		 }
+			    	 }
+			     }
+			     catch (Exception e){
+			    	 System.out.println(e.getMessage());
+			     }
+				//textView.setText(result.toString());
+	        }
+	        if (resultCode == RESULT_CANCELED) {
+	            //Write your code if there's no result
+	        	
+	        }
+	    }
+	}
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
