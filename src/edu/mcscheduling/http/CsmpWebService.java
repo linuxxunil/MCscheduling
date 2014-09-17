@@ -19,12 +19,13 @@ import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
 import android.os.AsyncTask;
+import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.StatusCode;
 import edu.mcscheduling.utilities.StringUtility;
 
 // for test
 public class CsmpWebService {
-	private String webSite = "http://mcdm.servehttp.com";
+	private String webSite = "http://csmp.servehttp.com";
 	private URL url = null;
 	
 	public CsmpWebService() {
@@ -43,9 +44,7 @@ public class CsmpWebService {
 			httpConn.setReadTimeout(50000);
 			httpConn.setDoOutput(true); 
 			httpConn.setDoInput(true); 
-			//httpConn.connect();
 		} catch (ProtocolException e) {
-			//StatusCode.ERR_HTTP_PROTOCOL_ERR(e.getMessage());
 			return null;
 		}
 		return httpConn;
@@ -178,11 +177,11 @@ public class CsmpWebService {
 				new AsyncTask<String, Integer, Integer>() {
 			@Override
 			protected Integer doInBackground(String... parm) {
-				System.out.println(parm[0]);
-				
 				File dir = new File(StringUtility.getDirectory(dbPath));
-				if ( !dir.exists() && !dir.mkdirs() );
-					//return StatusCode.ERR_OPEN_DIR(StringUtility.getDirectory(dbPath));
+				
+				if ( !dir.exists() && !dir.mkdirs() )
+					return Logger.e(this, StatusCode.ERR_MAKE_DB_FOLDER_ERROR);
+				
 				
 				BufferedOutputStream buff;
 				DataOutputStream dbOut = null;
@@ -190,23 +189,24 @@ public class CsmpWebService {
 					buff = new BufferedOutputStream(new FileOutputStream(dbPath));
 					dbOut = new DataOutputStream( buff );
 				} catch (FileNotFoundException e1) {
-					//return StatusCode.ERR_OPEN_SQLITE_FILE(dbPath);
+					return Logger.e(this, StatusCode.ERR_MAKE_DB_FILE_ERROR);
 				}
-				 
 				
 				try {
 					HttpURLConnection httpConn = onConnect("DownloadDatabase.php");	
 					
-					if ( httpConn == null ) ;
-						//return StatusCode.ERR_HTTP_CONNECT_ERR();
+					
+					if ( httpConn == null ) {
+						return Logger.e(this, StatusCode.ERR_HTTP_CONNECT_ERROR); 
+					}
 					
 					OutputStream om = httpConn.getOutputStream();
 					om.write(parm[0].getBytes());
 				
 					int statusCode = httpConn.getResponseCode();
 
-					if ( statusCode != 200 );
-						//return StatusCode.ERR_HTTP_RESPONSE_CODE_ERR(statusCode);
+					if ( statusCode != 200 )
+						return Logger.e(this, StatusCode.ERR_HTTP_REQUEST_ERROR);  
 										
 					InputStream im = httpConn.getInputStream();
 					
@@ -223,10 +223,12 @@ public class CsmpWebService {
 					om.close();
 				
 				} catch (MalformedURLException e ){
-					//return StatusCode.ERR_HTTP_URL_ILLEGAL(e.getMessage());
+					return Logger.e(this, StatusCode.ERR_MALFORMED_URL_ERROR);  
 				} catch (IOException e ) {
-					//return StatusCode.ERR_HTTP_IO_ERR(e.getMessage());
-				} 
+					return Logger.e(this, StatusCode.ERR_MAKE_DB_FILE_ERROR);
+				} catch (Exception e) {
+					return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR);
+				}
 				return StatusCode.success;
 			}
 	
@@ -235,7 +237,7 @@ public class CsmpWebService {
 		try {
 			return (Integer) asyncTask.get();
 		} catch (Exception e) {
-			return -1;
+			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR);
 		}
 	}
 }

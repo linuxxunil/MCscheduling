@@ -38,75 +38,22 @@ import android.widget.Toast;
 
 public class AuthorizeActivity extends ControllerActivity {
 
-	/***************** SLM Provide Library ****************************/
-	String PACKAGE_NAME = "au.project.mact";
-	String CLASS_NAME = "au.project.mact.MainActivity";
-	String CSP_APP_ID = "csp01";
-	String LICENSE;	
 	private Mapi mapi;
-	 
-	private boolean checkMactInstalled(){
-			PackageManager pm = getPackageManager();
-			List<ApplicationInfo> m_appList = pm.getInstalledApplications(0);
-			boolean mactInstallFlag = false;
-			for (ApplicationInfo ai : m_appList) {
-				Log.e("PACKAGES",ai.packageName.toString());
-				if(ai.packageName.equals(PACKAGE_NAME)){
-					mactInstallFlag = true;
-					break;
-				}
-			}
-			return mactInstallFlag;
-		} 
-	 
-	 private String getLicense(){
-			String license = "";
-			String MY_PACKAGE_NAME = getApplicationContext().getPackageName();
-			String MY_CLASS_NAME = MY_PACKAGE_NAME +".controller."+  this.getClass().getSimpleName();
-			Intent sendIntent = new Intent();
-			sendIntent.setAction("android.intent.action.MAIN");
-			sendIntent.setClassName(PACKAGE_NAME, CLASS_NAME);
-			sendIntent.putExtra("MY_PACKAGE_NAME", MY_PACKAGE_NAME);
-			sendIntent.putExtra("MY_CLASS_NAME", MY_CLASS_NAME);
-			Log.e("MY_PACKAGE_NAME",MY_PACKAGE_NAME);
-			Log.e("MY_CLASS_NAME", MY_CLASS_NAME);
-			startActivity(sendIntent);
-			this.finish();
-			return license;
-		}
-	
-	 /***************** SLM Provide Library ****************************/
-	
 	private Button button_online;
 	private Button button_offline;
 	
-	 /***************** Test ****************************/
-	private int getOfflineDatabase(String smeId,String appId) {
+	private int downloadOfflieDb(String syncDbId) {
 	
-		smeId="sme79";
-		appId="aaa";
-		
 		CsmpWebService web = new CsmpWebService();
-		String result = web.getAllTableOfApp(smeId, appId);
 		
-		JSONObject obj;
-		String syncDbId = null;
+		if ( getDatabaseId().equals(syncDbId) ) {
+			return StatusCode.success;
+		}
+
 		try {
-			obj = new JSONObject(result);
-			if ( obj.getInt("STATUS") != 0 )
-				return -1;
-			
-			syncDbId = (String)obj.get("APP_DB_ID");
-			
-			result = web.slowSyncDatabase(syncDbId, smeId);
-			obj = new JSONObject(result);
-			
-			if ( obj.getInt("STATUS") != 0 )
-				return -2;
-			
 			web.downloadDatabase(syncDbId, dbPath);
 				
-		} catch (JSONException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} 
 		return StatusCode.success;
@@ -129,7 +76,6 @@ public class AuthorizeActivity extends ControllerActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		mapi = new Mapi(getIntent(), this);
-		
 		
 		setLayout();
 		
@@ -161,49 +107,34 @@ public class AuthorizeActivity extends ControllerActivity {
 		button_online.setOnClickListener(online);
 		button_offline.setOnClickListener(offline);
 	}
-	
-	private int getCsmpAuthorize() {
-		try{
-        	if(checkMactInstalled()){
-        		getLicense();
-        	}else{
-        		return Logger.e(this, StatusCode.WAR_MACT_UNINSTALLED);
-        	}
-    	} catch (Exception e){
-    		return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR);
-	    }
-		return StatusCode.success;
-	}
 
 	private ImageButton.OnClickListener online = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			//getCsmpAuthorize();
-			mapi.authorize(Mapi.ONLINE_MODE);
 			setDatabaseMode( AccessMode.ONLINE );
+			mapi.authorize(Mapi.ONLINE_MODE);
 		}
 	};
 	
 	private ImageButton.OnClickListener offline = new ImageButton.OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			//getCsmpAuthorize();
-			mapi.authorize(Mapi.OFFLINE_MODE);
 			setDatabaseMode( AccessMode.OFFLINE );
+			mapi.authorize(Mapi.OFFLINE_MODE);
 		}
-		
 	};
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == Mapi.REQUEST_CODE) {
 			if(resultCode == RESULT_OK){
-				Bundle bundle = data.getExtras();
-				String jsonStr = bundle.getString("RESPONSE");
+				//Bundle bundle = data.getExtras();
+				//String jsonStr = bundle.getString("RESPONSE");
 				Map<String, String> result = mapi.getAuthorizationResult(data);
 				String license =  result.get("STATUS").toString();
-				Toast.makeText(AuthorizeActivity.this, license, Toast.LENGTH_LONG).show();
+				String syncDbId = result.get("DB_DOWNLOAD_LINK").toString();
 				
+				System.out.println(syncDbId);
 				try{   
 			    	 
 			    	 if ( license == null || license.equals("")) {
@@ -214,13 +145,15 @@ public class AuthorizeActivity extends ControllerActivity {
 			    			 switch ( getDatabaseMode() ) {
 			    			 case OFFLINE:	
 			    				 setAccessDriver(AccessDriver.SQLITE);
+			    				 //showProgessDialog(AuthorizeActivity.this, "資料讀取中，讀取時間依據您的網路速度而有不同");
+			    				 downloadOfflieDb(syncDbId);
+			    				 //dismissProgresDialog();
 			    			 break;
 			    			 case ONLINE:	
 			    				 setAccessDriver(AccessDriver.MSSQL); 
 			    			 break;
 			    			 default:
-								 setAccessDriver(AccessDriver.SQLITE);
-								 //getOfflineDatabase("sme79","aaa");
+			    				 setAccessDriver(AccessDriver.MSSQL); 
 								break;
 			    			 }
 			    			 changeActivity(AuthorizeActivity.this, LoginActivity.class);

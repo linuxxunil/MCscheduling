@@ -35,7 +35,8 @@ public class StatusCode {
 		"edu.mcscheduling.model.Department"				,"00033000",
 		"edu.mcscheduling.model.Doctor"					,"00034000",
 		"edu.mcscheduling.model.DoctorSchedule"			,"00035000",
-		"edu.mcscheduling.controller.AuthorizeActivty"	,"00041000"
+		"edu.mcscheduling.http.CsmpWebService"			,"00041000",
+		"edu.mcscheduling.controller.AuthorizeActivty"	,"00051000"
 	};
 	
 	/* Common Define */
@@ -103,6 +104,12 @@ public class StatusCode {
 	// AuthorizeActivty
 	final static public String WAR_MACT_UNINSTALLED			= "001,Mact uninstalled";
 	
+	// CsmpWebService
+	final static public String ERR_MAKE_DB_FOLDER_ERROR		= "-001,Database folder make failure";
+	final static public String ERR_MAKE_DB_FILE_ERROR		= "-002,Database file make failure";
+	final static public String ERR_HTTP_CONNECT_ERROR		= "-003,Http connect failure";
+	final static public String ERR_HTTP_REQUEST_ERROR		= "-004,Http request failure";
+	final static public String ERR_MALFORMED_URL_ERROR		= "-005,Malfformed url";
 	//final static public String ERR_DEPART_NOT_EXIST			= "-002,Depart is not found";
 	//final static public String ERR_GET_MEMBER_INFO_FAIL		= "-003,Get Member information fail";
 	/*

@@ -25,6 +25,15 @@ public class ControllerActivity extends Activity {
 	static protected enum AccessDriver { SQLITE,MSSQL,CACHE}
 	static private AccessMode accessMode = AccessMode.NONE;
 	final static protected String dbPath = "/sdcard/data/cscheduling/cscheduling.db2";
+	static protected String dbId = "";
+	
+	protected void setDatabaseId(String dbId) {
+		this.dbId = dbId;
+	}
+	
+	protected String getDatabaseId() {
+		return this.dbId;
+	}
 	
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
