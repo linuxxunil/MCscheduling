@@ -224,10 +224,9 @@ public class Hospital {
 		if ( userid == null || userid.isEmpty() )
 			return new MsContentValues(Logger.e(this, StatusCode.PARM_USERID_ERROR));
 		
-		String sql = String.format("SELECT count(*) FROM %s,%s WHERE %s=%s AND %s='%s'", 
-				DatabaseTable.User.name,DatabaseTable.Hospital.name,
-				DatabaseTable.User.colUserid, DatabaseTable.Hospital.colUpdateID,
-				DatabaseTable.User.colUserid, userid);
+		String sql = String.format("SELECT count(*) FROM %s WHERE %s='%s'", 
+				DatabaseTable.Hospital.name,
+				DatabaseTable.Hospital.colUpdateID, userid);
 				
 		int rowCount = getHospitalCount(sql);
 		

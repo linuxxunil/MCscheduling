@@ -78,7 +78,7 @@ public class AuthorizeActivity extends ControllerActivity {
 		mapi = new Mapi(getIntent(), this);
 		
 		setLayout();
-		
+		 
 		setListeners();
 	}
 	

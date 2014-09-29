@@ -8,10 +8,8 @@ import java.sql.Statement;
 import java.sql.SQLException;
 import java.util.concurrent.ExecutionException;
 
-
-
-
-
+import csmp.dmm.dispatcher.api.DispatcherAPI;
+import csmp.dmm.dispatcher.api.DispatcherConnection;
 import android.os.AsyncTask;
 import edu.mcscheduling.common.Logger;
 import edu.mcscheduling.common.Network;
@@ -39,17 +37,24 @@ public class MSSqlDriver extends DatabaseDriver {
 			
 			if ( mode == MODE.TRANSACATION ) 
 				return StatusCode.success;
-		
+			
+			String url = "dmm.servehttp.com";
+			
+			conn = (DispatcherConnection) DispatcherAPI.getConnection(url);
+			
+			/*
 			Class.forName("net.sourceforge.jtds.jdbc.Driver");
 			conn = DriverManager
 					.getConnection(
 					//"jdbc:jtds:sqlserver://175.99.86.134:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
 					"jdbc:jtds:sqlserver://140.116.82.214:1433;instance=Cscheduling_SQL;DatabaseName=cscheduling;charset=utf-8",
 					UserName, Password);
+			 
 		} catch (ClassNotFoundException e1) {
 			return Logger.e(this, StatusCode.ERR_JDBC_CLASS_NOT_FOUND);
 		} catch (SQLException e) {
 			return Logger.e(this, StatusCode.ERR_CONNECT_MSSERVER_FAIL, e.getMessage());
+		}*/ 
 		} catch (Exception e ) {
 			return Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage());
 		}
@@ -184,6 +189,7 @@ public class MSSqlDriver extends DatabaseDriver {
 					return new MsResultSet(
 							Logger.e(this, StatusCode.ERR_SQL_SYNTAX_IS_ILLEGAL, e.getMessage()));
 				} catch (Exception e ) {
+					System.out.println(e.getMessage());
 					return new MsResultSet(
 							Logger.e(this, StatusCode.ERR_UNKOWN_ERROR, e.getMessage()));
 				}				

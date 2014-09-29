@@ -191,7 +191,6 @@ public class Account {
 	
 	
 	public int setMemberInformation(String userid,String username, String passwdQuestion, String  passwdAnswer) {
-		
 		String sql = String.format("UPDATE %s SET %s='%s',%s='%s',%s='%s' WHERE %s='%s'" ,
 				// Table
 				DatabaseTable.User.name, 
